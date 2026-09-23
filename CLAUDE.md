@@ -10,7 +10,6 @@ Repositorio de talleres del curso IA Generativa. Entrega individual, en español
 - Idioma: docs, prompts y mensajes en español; identificadores de código en inglés.
 - Tests sin red (proveedor `fake`). Nunca commitear `.env` ni keys. Datos siempre sintéticos y sin PII.
 - Cada taller: `docs/` (fases en Markdown), `data/`, `prompts/` (TOML), `src/`, `notebooks/`, `outputs/` (evidencia), `tests/`.
-- Taller nuevo: copiar `_plantilla/` y seguir "Cómo agregar un taller" en `README.md`.
 - Ante decisiones de contenido académico (qué argumentar), consultar siempre al usuario.
   Los documentos de planificación de cada taller son locales y no se versionan (ver .git/info/exclude).
 - No inventar resultados: las tablas de los documentos deben venir de ejecuciones reales guardadas en `outputs/`.
