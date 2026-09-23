@@ -5,7 +5,11 @@ description = "Taller 1: atención al cliente con IA generativa para EcoMarket"
 requires-python = ">=3.12"
 dependencies = [
     "genai-common",
+    "typer>=0.12",
 ]
+
+[project.scripts]
+taller01 = "taller01.cli:app"
 
 [tool.uv.sources]
 genai-common = { workspace = true }
