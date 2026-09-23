@@ -3,13 +3,18 @@ name = "genai-talleres"
 version = "0.1.0"
 description = "Monorepo de talleres del curso de IA Generativa"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "genai-common",
+]
 
 [tool.uv]
 package = false
 
 [tool.uv.workspace]
 members = ["packages/*", "taller-*"]
+
+[tool.uv.sources]
+genai-common = { workspace = true }
 
 [dependency-groups]
 dev = ["pytest>=8", "ruff>=0.6"]
@@ -21,3 +26,9 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["genai_common"]
+
+[tool.pytest.ini_options]
+testpaths = ["packages"]

@@ -1,0 +1,43 @@
+# Única fuente de verdad de los IDs de modelo.
+# Los IDs cambian rápido: si una llamada falla con 404, actualiza SOLO este archivo.
+
+default = "gemini"
+
+[providers.gemini]
+base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
+api_key_env = "GEMINI_API_KEY"
+model = "gemini-3.5-flash-lite"
+models = { liviano = "gemini-3.5-flash-lite", router = "gemini-3.1-flash-lite", robusto = "gemini-3.1-pro-preview" }
+status = "implementado"
+# Verificado el 2026-09-23 contra la API:
+#  - gemini-3.8-flash existe, pero su cuota del tier gratuito es de 20 peticiones por DÍA y es un
+#    modelo con razonamiento: con max_tokens bajo consume todo el presupuesto pensando y devuelve
+#    texto vacío. Sigue siendo el modelo recomendado para producción en la Fase 1 (tier de pago).
+#  - gemini-3.5-flash-lite responde en menos de 1 s, no gasta tokens en razonamiento y tiene una
+#    cuota gratuita suficiente: es el que ejecuta la evidencia de la Fase 3.
+notas = "Tier gratuito. El modelo de la Fase 1 (gemini-3.8-flash) está limitado a 20 req/día en el tier gratuito; la evidencia se ejecuta con flash-lite. El modelo 'robusto' (pro) es de pago."
+
+[providers.ollama]
+base_url = "http://localhost:11434/v1"
+api_key_env = ""
+model = "qwen2.5:7b"
+status = "por_implementar"
+notas = "Ollama local. No requiere key (se envía 'ollama' como placeholder). Perfil definido, no probado."
+
+[providers.anthropic]
+base_url = "https://api.anthropic.com/v1/"
+api_key_env = "ANTHROPIC_API_KEY"
+model = "claude-sonnet-5"
+models = { liviano = "claude-sonnet-5", router = "claude-haiku-4-5-20251001", robusto = "claude-opus-5-5" }
+status = "implementado"
+# claude-sonnet-5 rechaza `temperature` ("deprecated for this model"), así que se omite.
+# El determinismo se mantiene con las instrucciones del prompt, no con el parámetro.
+omit_params = ["temperature"]
+notas = "Capa de compatibilidad OpenAI de Anthropic. DE PAGO: se usa como segundo proveedor en la comparación de la Fase 3."
+
+[providers.fake]
+base_url = ""
+api_key_env = ""
+model = "fake-determinista"
+status = "tests"
+notas = "Proveedor determinístico en memoria. Los tests y la CI nunca llaman a una API real."

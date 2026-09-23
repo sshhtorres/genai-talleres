@@ -1,0 +1,22 @@
+[project]
+name = "genai-common"
+version = "0.1.0"
+description = "Librería compartida para los talleres"
+requires-python = ">=3.12"
+dependencies = [
+    "openai>=1.50",
+    "python-dotenv>=1.0",
+    "tenacity>=9.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+# Para talleres futuros que necesiten RAG real (embeddings / base vectorial).
+rag = ["numpy>=2.0"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/genai_common"]
