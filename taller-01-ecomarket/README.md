@@ -1,5 +1,11 @@
 # Taller 1 — EcoMarket: atención al cliente con IA generativa
 
+## Entregables y rúbrica
+
+| Criterio de la rúbrica | Dónde está |
+|---|---|
+| **1. Selección y justificación del modelo** (2 pts) | [`docs/fase-1-seleccion-modelo.md`](docs/fase-1-seleccion-modelo.md) |
+
 ## El caso
 
 EcoMarket es una tienda en línea de productos sostenibles que recibe **miles de consultas diarias**

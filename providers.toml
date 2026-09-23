@@ -10,12 +10,12 @@ model = "gemini-3.5-flash-lite"
 models = { liviano = "gemini-3.5-flash-lite", router = "gemini-3.1-flash-lite", robusto = "gemini-3.1-pro-preview" }
 status = "implementado"
 # Verificado el 2026-09-23 contra la API:
-#  - gemini-3.8-flash existe, pero su cuota del tier gratuito es de 20 peticiones por DÍA y es un
-#    modelo con razonamiento: con max_tokens bajo consume todo el presupuesto pensando y devuelve
-#    texto vacío. Sigue siendo el modelo recomendado para producción en la Fase 1 (tier de pago).
-#  - gemini-3.5-flash-lite responde en menos de 1 s, no gasta tokens en razonamiento y tiene una
-#    cuota gratuita suficiente: es el que ejecuta la evidencia de la Fase 3.
-notas = "Tier gratuito. El modelo de la Fase 1 (gemini-3.8-flash) está limitado a 20 req/día en el tier gratuito; la evidencia se ejecuta con flash-lite. El modelo 'robusto' (pro) es de pago."
+#  - gemini-3.8-flash se descartó como motor del 80%: su tier gratuito permite 20 peticiones por DÍA
+#    y, por ser un modelo con razonamiento, con max_tokens bajo consume todo el presupuesto pensando
+#    y devuelve texto vacío. Para redactar sobre un contexto ya recuperado ese razonamiento no aporta.
+#  - gemini-3.5-flash-lite responde en menos de 1 s, no gasta tokens en razonamiento y tiene cuota
+#    gratuita suficiente: es el modelo recomendado en la Fase 1 y el que ejecuta su evidencia.
+notas = "Tier gratuito. Motor del 80% repetitivo: gemini-3.5-flash-lite. El modelo 'robusto' (pro) es de pago."
 
 [providers.ollama]
 base_url = "http://localhost:11434/v1"

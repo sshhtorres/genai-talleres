@@ -174,3 +174,113 @@ Lo importante es que la decisión no es irreversible: la capa de abstracción de
 otra familia de modelos— si crecen el volumen o las exigencias de privacidad, y **evolucionar hacia C**
 cuando existan datos curados. Elegir A no cierra ninguna puerta; empezar por B o C sí retrasa el
 aprendizaje varios meses.
+
+## 6. Costo, escalabilidad e integración
+
+### 6.1 Costo
+
+**Supuestos de carga:** 5.000 consultas/día, es decir 150.000/mes, repartidas 80/20 en 120.000
+repetitivas y 30.000 complejas. El router procesa las 150.000 con ~600 tokens de entrada y 50 de
+salida; una consulta repetitiva consume ~3.000 de entrada (prompt de sistema más contexto
+recuperado) y 300 de salida; un caso complejo, ~4.000 de entrada y 500 de salida.
+
+**Precios de lista por millón de tokens (entrada / salida), consultados el 2026-09-23** en
+[Gemini](https://ai.google.dev/gemini-api/docs/pricing) y
+[Claude](https://platform.claude.com/docs/en/about-claude/models/overview):
+
+| Modelo | Entrada | Salida |
+|---|---:|---:|
+| `gemini-3.1-flash-lite` | US$0,25 | US$1,50 |
+| `gemini-3.5-flash-lite` | US$0,30 | US$2,50 |
+| `gemini-3.8-flash` | US$0,75 | US$3,75 |
+| `gemini-3.1-pro-preview` | US$2,00 | US$12,00 |
+| `claude-haiku-4-5` | US$1,00 | US$5,00 |
+| `claude-sonnet-5` | US$2,00 | US$10,00 |
+| `claude-opus-5-5` | US$4,00 | US$20,00 |
+
+Aplicando esos precios a los supuestos de carga:
+
+| Escenario | Router | 80% repetitivo | 20% complejo (copiloto) | **Total/mes** |
+|---|---:|---:|---:|---:|
+| **Recomendado** — Flash-Lite 3.1 / Flash-Lite 3.5 / Pro | US$34 | US$198 | US$420 | **US$652** |
+| Con Flash como motor — Flash-Lite 3.1 / Flash 3.8 / Pro | US$34 | US$405 | US$420 | **US$859** |
+| Con Flash, al precio vigente desde enero de 2027 | US$34 | US$810 | US$420 | **US$1.264** |
+| Claude — Haiku 4.5 / Sonnet 5 / Opus 5.5 | US$128 | US$1.080 | US$780 | **US$1.988** |
+| Claude económico — Haiku 4.5 / Haiku 4.5 / Sonnet 5 | US$128 | US$540 | US$390 | **US$1.058** |
+
+Estas cifras son un **orden de magnitud para comparar escenarios, no un presupuesto**: suponen
+precios de lista, sin descuentos por volumen ni por procesamiento por lotes. Lo relevante para la
+decisión son tres lecturas:
+
+- El escenario recomendado cuesta **menos de la mitad** que el más caro, y la diferencia la explica
+  casi por completo la elección del motor del 80%: es el componente que se multiplica por 120.000.
+- Incluso el escenario más caro cuesta menos que un agente adicional de tiempo completo, y atiende
+  150.000 consultas al mes.
+- El *prompt caching* —el prompt de sistema y la política se repiten idénticos en cada consulta—
+  reduciría de forma importante el costo de entrada, que es el componente dominante.
+
+### 6.2 Escalabilidad
+
+La escalabilidad de la alternativa A es elástica y no requiere inversión: en un pico de temporada el
+proveedor absorbe la carga y el costo crece de forma proporcional al uso, no en escalones. Los
+límites reales son los *rate limits* del proveedor, que se gestionan con colas, reintentos con
+backoff exponencial y degradación controlada (si el modelo liviano no responde, la conversación pasa
+a la fila de agentes humanos en lugar de fallar). El código de la Fase 3 ya implementa los reintentos
+con backoff por esta razón.
+
+El componente que **no** escala solo es el equipo humano: si la tasa de escalamiento se mantiene en
+el 20%, atender el doble de consultas exige el doble de agentes para ese segmento. Por eso la métrica
+de tasa de escalamiento es una métrica de negocio y no solo técnica.
+
+### 6.3 Integración
+
+Toda la comunicación con los modelos pasa por **un único cliente compatible con la API de OpenAI**,
+configurado con un perfil por proveedor: URL base, variable de la clave y modelos por rol. Cambiar de
+Gemini a Anthropic o a un modelo local es cambiar un valor de configuración, sin tocar la
+lógica de negocio.
+Esta decisión tiene un costo: el código común no puede usar parámetros exclusivos de un proveedor.
+La restricción es sobre el código, no sobre el sistema, porque las particularidades se declaran en
+configuración; en la Fase 3 hizo falta, por ejemplo, para que `claude-sonnet-5` no reciba el
+parámetro `temperature`, que ese modelo rechaza. El beneficio compensa de sobra: reduce la
+dependencia del proveedor, que es uno de los riesgos identificados en la Fase 2.
+
+Hacia los sistemas de EcoMarket, la integración es la habitual: la API de pedidos se expone como
+herramienta (*function calling*) y el catálogo y las políticas se indexan en una base vectorial. El
+gateway omnicanal normaliza chat, correo y redes en un mismo formato de mensaje, de modo que hay un
+solo motor para los tres canales.
+
+## 7. Hoja de ruta
+
+| Etapa | Alcance | Criterio para pasar a la siguiente |
+|---|---|---|
+| **1. Piloto (4–6 semanas)** | Un canal (chat web) y dos intenciones (estado de pedido y devoluciones), con human-in-the-loop en el 100% de los casos al inicio | Tasa de alucinación por debajo del umbral acordado en la auditoría por muestreo; CSAT igual o mejor que la línea base |
+| **2. Producción acotada** | Respuesta automática sin revisión previa en las intenciones validadas; el resto sigue escalando a un humano | Tasa de resolución en el primer contacto estable; sin incidentes de privacidad |
+| **3. Omnicanal** | Correo y redes sociales sobre el mismo motor; copiloto para agentes en el 20% complejo | Volumen atendido y tiempos sostenidos en los tres canales |
+| **4. Optimización** | Evaluar un SLM afinado para el router o para el 80% repetitivo; *prompt caching*; posible migración a open-source autoalojado | Decisión basada en costo por conversación y en exigencias de privacidad |
+
+Cada etapa mantiene la misma arquitectura; lo que cambia es cuánto se automatiza y con qué modelo se
+ejecuta cada rol.
+
+## 8. Conclusión
+
+Para EcoMarket, la recomendación es una **arquitectura híbrida con modelos de propósito general de
+frontera, RAG y tool calling, sin fine-tuning en la versión 1**, usando `gemini-3.5-flash-lite` para
+el 80% repetitivo y un modelo robusto como copiloto del agente humano en el 20% complejo.
+
+La justificación se apoya en cuatro factores conectados con el caso:
+
+- **Arquitectura**: el problema dominante no es de generación sino de acceso a datos que cambian a
+  diario, y eso lo resuelven RAG y las herramientas, no un modelo más grande ni un modelo afinado.
+- **Costo**: el diseño de dos tamaños con un router deja el gasto en unos US$650 mensuales para
+  150.000 consultas, por debajo del costo de un agente adicional.
+- **Escalabilidad**: la capacidad es elástica y no exige inversión en infraestructura, lo que encaja
+  con una empresa en crecimiento rápido y con picos estacionales.
+- **Integración**: un solo cliente compatible con la API de OpenAI, con los IDs de modelo en
+  configuración, permite cambiar de proveedor sin reescribir la aplicación y reduce el riesgo de
+  quedar atrapado en un vendedor.
+
+La elección es además **reversible por diseño**, que es quizá su mejor propiedad: el mismo código
+corre sin cambios contra otra familia de modelos, como se comprueba en la Fase 3 ejecutando las
+mismas cadenas contra Gemini y contra Claude. Migrar a un modelo open-source autoalojado usaría esa
+misma capa de abstracción —solo cambia el perfil del proveedor—, aunque probarlo queda fuera del
+alcance de este taller.
