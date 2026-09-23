@@ -15,7 +15,21 @@ from . import data
 Check = tuple[str, bool, str]
 
 DISCULPAS = ("lament", "disculp", "sentimos", "perdón", "perdon")
+APROBACIONES = ("aprobada", "aprobado", "procederemos con el reembolso", "reembolso aprobado")
+REPOSICION = ("reposición", "reposicion", "reembolso", "cambio", "reemplaz")
 ESCALAMIENTO = ("agente", "asesor", "persona", "humano", "equipo de soporte")
+PETICIONES = (
+    "indíqueme",
+    "indiqueme",
+    "indicarme",
+    "comparta",
+    "compartirme",
+    "necesitamos",
+    "necesito",
+    "por favor",
+    "facilíteme",
+    "proporcione",
+)
 
 _FECHA_ISO = re.compile(r"\b20\d{2}-\d{2}-\d{2}\b")
 
@@ -130,6 +144,79 @@ def validar_pedido(
 
     if tracking_consultado and tracking_consultado.upper() not in trackings:
         checks.append(("tracking_coincide", False, "respondió por un pedido distinto"))
+
+    return checks
+
+
+def validar_devolucion(
+    respuesta: str,
+    regla: data.ReglaDevolucion,
+    decision_modelo: dict[str, Any] | None,
+) -> list[Check]:
+    """Chequeos del ejercicio 2."""
+    texto = (respuesta or "").lower()
+    checks: list[Check] = []
+
+    checks.append(
+        (
+            "json_de_decision_parseable",
+            decision_modelo is not None,
+            "ok" if decision_modelo is not None else "el modelo no devolvió un JSON válido",
+        )
+    )
+
+    if decision_modelo is not None:
+        coincide = str(decision_modelo.get("elegible", "")).lower() == regla.elegible
+        checks.append(
+            (
+                "decision_coincide_con_la_regla",
+                coincide,
+                "ok"
+                if coincide
+                else (
+                    f"el modelo dijo '{decision_modelo.get('elegible')}' y la regla en código "
+                    f"dice '{regla.elegible}' ({regla.regla_aplicada})"
+                ),
+            )
+        )
+
+    if regla.elegible == "no":
+        aprobaciones = [p for p in APROBACIONES if p in texto]
+        checks.append(
+            (
+                "no_aprueba_lo_no_elegible",
+                not aprobaciones,
+                f"usa lenguaje de aprobación: {aprobaciones}" if aprobaciones else "ok",
+            )
+        )
+        alternativa = any(
+            p in texto for p in ("cupón", "cupon", "cambio", "descuento", *ESCALAMIENTO)
+        )
+        checks.append(
+            (
+                "ofrece_alternativa",
+                alternativa,
+                "ok" if alternativa else "no ofrece cambio, cupón ni agente humano",
+            )
+        )
+
+    if regla.regla_aplicada == "excepcion_producto_defectuoso":
+        menciona = any(p in texto for p in REPOSICION)
+        checks.append(
+            (
+                "aplica_excepcion_por_dano",
+                menciona,
+                "ok" if menciona else "no ofrece reposición ni reembolso",
+            )
+        )
+
+    if regla.datos_faltantes:
+        # Pedir un dato puede ser una pregunta ("¿me comparte…?") o una petición cortés
+        # ("por favor indíqueme…"); ambas formas son correctas.
+        pide = "?" in (respuesta or "") or any(p in texto for p in PETICIONES)
+        checks.append(
+            ("pide_los_datos_faltantes", pide, "ok" if pide else "no pide los datos que faltan")
+        )
 
     return checks
 

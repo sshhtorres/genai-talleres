@@ -98,6 +98,71 @@ def test_detecta_respuesta_sobre_otro_pedido():
     assert resultado["tracking_coincide"][0] is False
 
 
+# -- Ejercicio 2 --------------------------------------------------------------
+
+
+def _regla(tracking, producto_id, defectuoso=False):
+    return data.evaluar_devolucion(
+        data.buscar_pedido(tracking),
+        data.buscar_producto(producto_id),
+        defectuoso=defectuoso,
+        hoy=HOY,
+    )
+
+
+def test_detecta_json_no_parseable():
+    resultado = _dict(checks.validar_devolucion("texto", _regla("ECO-1004", "P-106"), None))
+    assert resultado["json_de_decision_parseable"][0] is False
+
+
+def test_detecta_discrepancia_entre_modelo_y_regla():
+    regla = _regla("ECO-1007", "P-103")  # perecedero -> no
+    resultado = _dict(checks.validar_devolucion("texto", regla, {"elegible": "si"}))
+    assert resultado["decision_coincide_con_la_regla"][0] is False
+    assert "el modelo dijo 'si'" in resultado["decision_coincide_con_la_regla"][1]
+
+    ok = _dict(checks.validar_devolucion("texto", regla, {"elegible": "no"}))
+    assert ok["decision_coincide_con_la_regla"][0] is True
+
+
+def test_detecta_aprobacion_indebida():
+    regla = _regla("ECO-1007", "P-103")
+    malo = _dict(
+        checks.validar_devolucion("Su devolución fue aprobada.", regla, {"elegible": "no"})
+    )
+    assert malo["no_aprueba_lo_no_elegible"][0] is False
+
+
+def test_exige_alternativa_cuando_no_es_elegible():
+    regla = _regla("ECO-1007", "P-103")
+    sin_alternativa = _dict(
+        checks.validar_devolucion("No se puede devolver.", regla, {"elegible": "no"})
+    )
+    assert sin_alternativa["ofrece_alternativa"][0] is False
+
+    con_alternativa = _dict(
+        checks.validar_devolucion(
+            "No se puede devolver, pero le ofrezco un cupón.", regla, {"elegible": "no"}
+        )
+    )
+    assert con_alternativa["ofrece_alternativa"][0] is True
+
+
+def test_exige_reposicion_en_los_defectuosos():
+    regla = _regla("ECO-1004", "P-113", defectuoso=True)
+    assert regla.regla_aplicada == "excepcion_producto_defectuoso"
+    sin = _dict(checks.validar_devolucion("Lo lamentamos mucho.", regla, {"elegible": "si"}))
+    assert sin["aplica_excepcion_por_dano"][0] is False
+    con = _dict(checks.validar_devolucion("Le ofrecemos la reposición.", regla, {"elegible": "si"}))
+    assert con["aplica_excepcion_por_dano"][0] is True
+
+
+def test_exige_preguntar_cuando_faltan_datos():
+    regla = data.evaluar_devolucion(None, None)
+    sin = _dict(checks.validar_devolucion("Gracias.", regla, {"elegible": "requiere_revision"}))
+    assert sin["pide_los_datos_faltantes"][0] is False
+
+
 def test_resumen_es_legible():
     assert checks.resumen([("a", True, ""), ("b", False, "")]) == "1/2 chequeos en verde"
     assert checks.resumen([]) == "sin chequeos"

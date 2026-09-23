@@ -11,11 +11,15 @@ VALORES = {
     "tracking_number": "ECO-1001",
     "pedidos": "[]",
     "mensaje": "hola",
+    "producto": "{}",
+    "politica": "texto",
+    "pedido": "{}",
+    "decision": "{}",
 }
 
 
 def _plantillas():
-    for archivo in ("ej1_pedido",):
+    for archivo in ("ej1_pedido", "ej2_devolucion"):
         prompts = chains.load_prompt_file(archivo)
         for seccion in ("basico", "mejorado"):
             for clave, valor in prompts[seccion].items():
@@ -24,7 +28,7 @@ def _plantillas():
 
 
 def test_hay_plantillas_en_ambos_archivos():
-    assert len(list(_plantillas())) >= 3
+    assert len(list(_plantillas())) >= 6
 
 
 @pytest.mark.parametrize(("nombre", "plantilla"), list(_plantillas()))
@@ -52,9 +56,16 @@ def test_el_prompt_mejorado_aplica_las_tecnicas_declaradas():
     assert len(mejorado["ejemplos"]) >= 2  # few-shot
 
 
+def test_el_prompt_de_devolucion_pide_json_con_las_claves_necesarias():
+    decision = chains.load_prompt_file("ej2_devolucion")["mejorado"]["decision"]
+    for clave in ("elegible", "motivo", "regla_aplicada", "datos_faltantes"):
+        assert clave in decision
+    assert "<politica>" in decision and "<producto>" in decision
+
+
 def test_los_ejemplos_few_shot_no_usan_trackings_reales():
     """Los ejemplos no deben poder confundirse con datos del catálogo real."""
-    for archivo in ("ej1_pedido",):
+    for archivo in ("ej1_pedido", "ej2_devolucion"):
         for ejemplo in chains.load_prompt_file(archivo)["mejorado"]["ejemplos"]:
             texto = json.dumps(ejemplo, ensure_ascii=False)
             for tracking in data.extraer_trackings(texto):

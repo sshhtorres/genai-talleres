@@ -1,4 +1,4 @@
-"""Cadena de prompts del ejercicio 1.
+"""Cadenas de prompts de los ejercicios 1 y 2.
 
 Cada cadena expone los pasos intermedios en un ResultadoCadena para que el notebook y los
 reportes puedan mostrar "la cadena en código", que es lo que evalúa el taller.
@@ -8,7 +8,9 @@ No se usa ningún framework: los eslabones se ven a mano.
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass, field
+from datetime import date
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -18,6 +20,18 @@ from genai_common import LLMClient, load_prompts, render
 from . import checks, data
 
 PROMPTS_DIR = Path(__file__).resolve().parents[2] / "prompts"
+
+# Señales de que el cliente reporta un producto defectuoso (activa la excepción de la política).
+_SENALES_DEFECTO = re.compile(
+    r"\b(roto|rota|da[ñn]ad[oa]s?|defectuos[oa]s?|vencid[oa]s?|incomplet[oa]s?|"
+    r"quebrad[oa]s?|golpead[oa]s?|mal estado|no funciona|averiad[oa]s?)\b",
+    re.IGNORECASE,
+)
+_SENALES_MOLESTIA = re.compile(
+    r"\b(furios[oa]|molest[oa]|indignad[oa]|cansad[oa]|harto|harta|inaceptable|"
+    r"es la segunda vez|ya estoy)\b",
+    re.IGNORECASE,
+)
 
 
 @lru_cache(maxsize=4)
@@ -210,3 +224,134 @@ def _trackings_de(extraido: dict[str, Any] | None, mensaje: str) -> list[str]:
     en_mensaje = data.extraer_trackings(mensaje)
     validos = [t for t in candidatos if t in en_mensaje]
     return validos or en_mensaje
+
+
+# -- Ejercicio 2: devolución --------------------------------------------------
+
+
+def gestionar_devolucion(
+    mensaje: str,
+    client: LLMClient,
+    tracking: str | None = None,
+    producto_id: str | None = None,
+    variante: str = "mejorado",
+    hoy: date | None = None,
+) -> ResultadoCadena:
+    """Gestiona una solicitud de devolución.
+
+    variante="basico"   -> una llamada con el prompt del enunciado, sin política ni datos.
+    variante="mejorado" -> decisión JSON -> verificación en código -> redacción -> validación.
+    """
+    prompts = load_prompt_file("ej2_devolucion")
+    metadatos: dict[str, Any] = {}
+
+    if variante == "basico":
+        contenido = render(prompts["basico"]["user"], producto=_producto_mencionado(mensaje))
+        respuesta = client.chat([{"role": "user", "content": contenido}], temperature=0.2)
+        _acumular(metadatos, respuesta)
+        regla = _regla_de(mensaje, tracking, producto_id, hoy)
+        return ResultadoCadena(
+            ejercicio="devolucion",
+            variante="basico",
+            mensaje=mensaje,
+            respuesta=respuesta.text,
+            pasos={"1_unica_llamada": "prompt del enunciado, sin política ni datos del pedido"},
+            checks=checks.validar_devolucion(respuesta.text, regla, None),
+            metadatos=metadatos,
+            llamadas=1,
+        )
+
+    pedido = data.buscar_pedido(tracking)
+    producto = data.buscar_producto(producto_id) or data.buscar_producto_por_nombre(mensaje)
+    defectuoso = bool(_SENALES_DEFECTO.search(mensaje))
+    regla = data.evaluar_devolucion(pedido, producto, defectuoso=defectuoso, hoy=hoy)
+
+    politica = data.load_politica()
+    contexto_pedido = json.dumps(pedido, ensure_ascii=False, indent=2) if pedido else "null"
+    contexto_producto = json.dumps(producto, ensure_ascii=False, indent=2) if producto else "null"
+
+    # Paso 1: decisión estructurada del modelo.
+    decision = client.chat_json(
+        [
+            {"role": "system", "content": prompts["mejorado"]["system"]},
+            {
+                "role": "user",
+                "content": render(
+                    prompts["mejorado"]["decision"],
+                    politica=politica,
+                    pedido=contexto_pedido,
+                    producto=contexto_producto,
+                    mensaje=mensaje,
+                ),
+            },
+        ],
+        required_keys=("elegible",),
+    )
+    _acumular(metadatos, decision)
+
+    # Paso 2: la regla calculada en código manda sobre la decisión del modelo.
+    discrepancia = (
+        decision.data is None or str(decision.data.get("elegible", "")).lower() != regla.elegible
+    )
+    pasos: dict[str, Any] = {
+        "1_decision_modelo": decision.data or {"crudo": decision.text},
+        "2_regla_en_codigo": regla.as_dict(),
+        "2b_discrepancia": (
+            "sí: se impone la regla en código" if discrepancia else "no: coinciden"
+        ),
+        "señal_de_defecto_detectada": defectuoso,
+        "señal_de_molestia_detectada": bool(_SENALES_MOLESTIA.search(mensaje)),
+    }
+
+    # Paso 3: redacción a partir de la decisión ya verificada.
+    mensajes = [
+        {"role": "system", "content": prompts["mejorado"]["system"]},
+        *_ejemplos_como_mensajes(prompts["mejorado"]["ejemplos"]),
+        {
+            "role": "user",
+            "content": render(
+                prompts["mejorado"]["respuesta"],
+                politica=politica,
+                pedido=contexto_pedido,
+                producto=contexto_producto,
+                decision=json.dumps(regla.as_dict(), ensure_ascii=False, indent=2),
+                mensaje=mensaje,
+            ),
+        },
+    ]
+    final = client.chat(mensajes, temperature=0.3, max_tokens=600)
+    _acumular(metadatos, final)
+    pasos["3_respuesta"] = "generada por el modelo a partir de la decisión verificada"
+
+    # Paso 4: validación.
+    validaciones = checks.validar_devolucion(final.text, regla, decision.data)
+    pasos["4_validacion"] = checks.resumen(validaciones)
+
+    return ResultadoCadena(
+        ejercicio="devolucion",
+        variante=variante,
+        mensaje=mensaje,
+        respuesta=final.text,
+        pasos=pasos,
+        checks=validaciones,
+        metadatos=metadatos,
+        llamadas=2,
+    )
+
+
+def _regla_de(
+    mensaje: str, tracking: str | None, producto_id: str | None, hoy: date | None
+) -> data.ReglaDevolucion:
+    """Regla de referencia, usada también para auditar la variante básica."""
+    return data.evaluar_devolucion(
+        data.buscar_pedido(tracking),
+        data.buscar_producto(producto_id) or data.buscar_producto_por_nombre(mensaje),
+        defectuoso=bool(_SENALES_DEFECTO.search(mensaje)),
+        hoy=hoy,
+    )
+
+
+def _producto_mencionado(mensaje: str) -> str:
+    """Nombre del producto para el prompt básico; si no se reconoce, se usa el mensaje."""
+    producto = data.buscar_producto_por_nombre(mensaje)
+    return producto["nombre"] if producto else "el producto que recibí"

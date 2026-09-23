@@ -57,6 +57,67 @@ def fake_pedidos():
     return FakeLLMClient(default=responder)
 
 
+@pytest.fixture
+def fake_devoluciones():
+    """Cliente falso que decide según la regla real y luego redacta."""
+
+    def responder(prompt: str) -> str:
+        if "Devuelve SOLO un objeto JSON" in prompt and '"elegible"' in prompt:
+            return json.dumps(_decidir(prompt), ensure_ascii=False)
+        return _redactar(prompt)
+
+    return FakeLLMClient(default=responder)
+
+
+def _decision_del_prompt(prompt: str) -> dict:
+    """Lee la decisión verificada que el prompt de redacción le pasa al modelo."""
+    inicio = prompt.find("<decision_verificada>")
+    if inicio == -1:
+        return {}
+    bloque = prompt[inicio : prompt.find("</decision_verificada>")]
+    abre, cierra = bloque.find("{"), bloque.rfind("}")
+    return json.loads(bloque[abre : cierra + 1]) if abre != -1 else {}
+
+
+def _decidir(prompt: str) -> dict:
+    """Reconstruye la decisión a partir del pedido y el producto embebidos en el prompt."""
+    from taller01 import chains, data
+
+    pedido = _json_de_seccion(prompt, "pedido")
+    producto = _json_de_seccion(prompt, "producto")
+    consulta = _texto_de_seccion(prompt, "consulta")
+    regla = data.evaluar_devolucion(
+        pedido,
+        producto,
+        defectuoso=bool(chains._SENALES_DEFECTO.search(consulta)),
+    )
+    return regla.as_dict()
+
+
+def _redactar(prompt: str) -> str:
+    decision = _decision_del_prompt(prompt)
+    elegible = decision.get("elegible")
+    regla = decision.get("regla_aplicada", "")
+    if elegible == "si" and regla == "excepcion_producto_defectuoso":
+        return (
+            "Lamento mucho que su producto llegara así. Aplica la excepción por daño: "
+            "puede elegir la reposición del producto o el reembolso del valor pagado."
+        )
+    if elegible == "si":
+        return (
+            "Su devolución procede. Empaque el producto sin uso con su empaque original, "
+            "use la guía prepagada que le enviamos y recibirá el reembolso en 5 a 10 días hábiles."
+        )
+    if elegible == "no":
+        return (
+            f"Lamento no poder ayudarle esta vez. Motivo: {decision.get('motivo', '')} "
+            "Como alternativa puedo ofrecerle un cupón de descuento o pasar su caso a un agente "
+            "humano. ¿Qué prefiere?"
+        )
+    faltantes = ", ".join(decision.get("datos_faltantes") or [])
+    return f"Con gusto le ayudo. ¿Me comparte estos datos: {faltantes or 'su número de pedido'}?"
+
+
 def _json_de_seccion(prompt: str, etiqueta: str):
     bloque = _texto_de_seccion(prompt, etiqueta)
     if not bloque or bloque.strip() == "null":
