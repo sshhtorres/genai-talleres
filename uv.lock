@@ -514,6 +514,7 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "genai-common" },
+    { name = "taller01-ecomarket" },
 ]
 
 [package.dev-dependencies]
@@ -527,7 +528,10 @@ notebooks = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "genai-common", editable = "packages/genai_common" }]
+requires-dist = [
+    { name = "genai-common", editable = "packages/genai_common" },
+    { name = "taller01-ecomarket", editable = "taller-01-ecomarket" },
+]
 
 [package.metadata.requires-dev]
 dev = [

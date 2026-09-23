@@ -5,6 +5,7 @@ description = "Monorepo de talleres del curso de IA Generativa"
 requires-python = ">=3.12"
 dependencies = [
     "genai-common",
+    "taller01-ecomarket",
 ]
 
 [tool.uv]
@@ -15,6 +16,7 @@ members = ["packages/*", "taller-*"]
 
 [tool.uv.sources]
 genai-common = { workspace = true }
+taller01-ecomarket = { workspace = true }
 
 [dependency-groups]
 dev = ["pytest>=8", "ruff>=0.6"]
@@ -28,7 +30,7 @@ target-version = "py312"
 select = ["E", "F", "I", "UP", "B"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["genai_common"]
+known-first-party = ["genai_common", "taller01"]
 
 [tool.pytest.ini_options]
-testpaths = ["packages"]
+testpaths = ["packages", "taller-01-ecomarket"]
