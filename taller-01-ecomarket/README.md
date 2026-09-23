@@ -6,6 +6,7 @@
 |---|---|
 | **1. Selección y justificación del modelo** (2 pts) | [`docs/fase-1-seleccion-modelo.md`](docs/fase-1-seleccion-modelo.md) |
 | **2. Fortalezas, limitaciones y riesgos éticos** (2 pts) | [`docs/fase-2-evaluacion-riesgos.md`](docs/fase-2-evaluacion-riesgos.md) |
+| **3. Ingeniería de prompts** (1 pt) | [`notebooks/fase3_demo.ipynb`](notebooks/fase3_demo.ipynb), [`docs/fase-3-prompts.md`](docs/fase-3-prompts.md), [`prompts/`](prompts/), [`src/taller01/`](src/taller01/), [`outputs/`](outputs/) |
 
 ## El caso
 
@@ -17,20 +18,38 @@ El tiempo de respuesta llega a **24 horas** y el equipo está desbordado.
 El taller pide tres cosas: seleccionar y justificar un modelo, analizar sus fortalezas, limitaciones
 y riesgos éticos, y diseñar prompts efectivos para dos tareas concretas.
 
-## Los datos
+## Cómo ejecutar
 
-EcoMarket es una empresa ficticia, así que [`data/`](data/) contiene un dataset sintético que hace el
-papel de sus sistemas: el asistente no recuerda el estado de un pedido, lo consulta.
+```bash
+uv sync --all-groups                 # desde la raíz del repositorio
+cp .env.example .env                 # y completa GEMINI_API_KEY (y ANTHROPIC_API_KEY)
+uv run taller01 proveedores          # verifica qué claves están configuradas
 
-| Archivo | Qué es |
+uv run taller01 pedido "Hola, ¿dónde está mi pedido ECO-1005?"
+uv run taller01 devolucion "El café no me gustó, ¿lo puedo devolver?" --tracking ECO-1007
+uv run taller01 evaluar --proveedor gemini --variante ambas
+```
+
+Opciones útiles:
+
+| Opción | Para qué |
 |---|---|
-| [`data/pedidos.json`](data/pedidos.json) | 12 pedidos que cubren los 8 estados posibles |
-| [`data/catalogo.json`](data/catalogo.json) | 15 productos en 8 categorías, retornables y no retornables |
-| [`data/politica_devoluciones.md`](data/politica_devoluciones.md) | La política que aplica el asistente |
-| [`data/casos_prueba.yaml`](data/casos_prueba.yaml) | 25 casos de prueba con su comportamiento esperado |
+| `--variante basico\|mejorado` | Compara el prompt del enunciado contra el prompt con técnicas |
+| `--contexto completo\|registro` | Envía todo el documento de pedidos o solo el registro encontrado |
+| `--proveedor gemini\|anthropic\|fake` | Cambia de modelo sin tocar el código |
+| `--pausa N` / `--limite N` | Respeta los límites de tasa del tier gratuito |
 
-El criterio con el que se construyó cada archivo, y qué cubre, está en
-[`data/README.md`](data/README.md).
+Sin claves de API también se puede revisar el trabajo: los tests corren con un proveedor falso
+(`uv run pytest`) y los resultados de las ejecuciones reales están versionados en [`outputs/`](outputs/).
 
-Todos los datos son **sintéticos y sin información personal**: los pedidos solo llevan ciudad de
-destino, no nombres, direcciones ni teléfonos.
+## Qué hay en cada carpeta
+
+| Carpeta | Contenido |
+|---|---|
+| [`docs/`](docs/) | Los entregables de las tres fases |
+| [`data/`](data/) | Datos sintéticos: 12 pedidos, 15 productos, política de devoluciones y casos de prueba. Cómo se generaron, en [`data/README.md`](data/README.md) |
+| [`prompts/`](prompts/) | Prompts en TOML, con las técnicas aplicadas comentadas en el propio archivo |
+| [`src/taller01/`](src/taller01/) | `data.py` (búsqueda y reglas), `chains.py` (cadenas), `checks.py` (validaciones), `cli.py` |
+| [`notebooks/`](notebooks/) | Demostración ejecutada de la Fase 3, lado a lado |
+| [`outputs/`](outputs/) | Evidencia de las ejecuciones reales (no se edita a mano) |
+| [`tests/`](tests/) | Pruebas sin red, con el proveedor falso |
