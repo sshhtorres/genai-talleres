@@ -1,0 +1,21 @@
+{
+  "moneda": "COP",
+  "nota": "Catálogo sintético de EcoMarket. Ningún dato es real.",
+  "productos": [
+    {"id": "P-101", "nombre": "Cepillo de dientes de bambú (pack x4)", "categoria": "higiene_personal", "precio": 32000, "retornable": true, "nota_retorno": "Solo si el empaque está sellado."},
+    {"id": "P-102", "nombre": "Desodorante natural en barra", "categoria": "higiene_personal", "precio": 28000, "retornable": true, "nota_retorno": "Solo si está sellado; abierto no es retornable por higiene."},
+    {"id": "P-103", "nombre": "Café orgánico en grano 500 g", "categoria": "alimentos_perecederos", "precio": 45000, "retornable": false, "nota_retorno": "Perecedero: no retornable salvo defecto o daño."},
+    {"id": "P-104", "nombre": "Frutos secos mixtos 300 g", "categoria": "alimentos_perecederos", "precio": 27000, "retornable": false, "nota_retorno": "Perecedero: no retornable salvo defecto o daño."},
+    {"id": "P-105", "nombre": "Detergente concentrado a granel 1 L", "categoria": "granel", "precio": 39000, "retornable": false, "nota_retorno": "Venta a granel: no retornable salvo defecto o daño."},
+    {"id": "P-106", "nombre": "Botella térmica de acero inoxidable 750 ml", "categoria": "cocina", "precio": 89000, "retornable": true, "nota_retorno": "30 días desde la entrega, sin uso y con empaque original."},
+    {"id": "P-107", "nombre": "Set de 3 bolsas reutilizables de algodón", "categoria": "textil", "precio": 34000, "retornable": true, "nota_retorno": "30 días desde la entrega."},
+    {"id": "P-108", "nombre": "Vaso de vidrio con tapa de bambú 500 ml", "categoria": "cocina", "precio": 52000, "retornable": true, "nota_retorno": "30 días desde la entrega."},
+    {"id": "P-109", "nombre": "Jabón de castilla 250 ml", "categoria": "higiene_personal", "precio": 24000, "retornable": true, "nota_retorno": "Solo si está sellado."},
+    {"id": "P-110", "nombre": "Compostera doméstica 20 L", "categoria": "hogar", "precio": 210000, "retornable": true, "nota_retorno": "30 días desde la entrega, sin uso."},
+    {"id": "P-111", "nombre": "Cargador solar portátil 10.000 mAh", "categoria": "hogar", "precio": 175000, "retornable": true, "nota_retorno": "30 días; garantía legal de 1 año por defectos."},
+    {"id": "P-112", "nombre": "Tarjeta de regalo digital EcoMarket", "categoria": "tarjeta_regalo", "precio": 100000, "retornable": false, "nota_retorno": "Las tarjetas de regalo no admiten devolución ni reembolso."},
+    {"id": "P-113", "nombre": "Camiseta de algodón orgánico personalizada", "categoria": "personalizado", "precio": 78000, "retornable": false, "nota_retorno": "Producto personalizado: no retornable salvo defecto o daño."},
+    {"id": "P-114", "nombre": "Cubiertos de bambú de viaje", "categoria": "cocina", "precio": 29000, "retornable": true, "nota_retorno": "30 días desde la entrega."},
+    {"id": "P-115", "nombre": "Esponjas vegetales de lufa (pack x3)", "categoria": "hogar", "precio": 18000, "retornable": true, "nota_retorno": "Solo si el empaque está sellado."}
+  ]
+}

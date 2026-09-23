@@ -1,0 +1,201 @@
+{
+  "fecha_referencia": "2026-09-23",
+  "nota": "Pedidos sintéticos de EcoMarket. Privacidad por diseño: sin nombres, direcciones ni teléfonos; solo la ciudad de destino.",
+  "estados_validos": [
+    "en_preparacion",
+    "en_transito",
+    "en_reparto",
+    "entregado",
+    "retrasado",
+    "devuelto",
+    "cancelado",
+    "extraviado"
+  ],
+  "pedidos": [
+    {
+      "tracking_number": "ECO-1001",
+      "fecha_compra": "2026-09-19",
+      "productos": [
+        {"id": "P-106", "nombre": "Botella térmica de acero inoxidable 750 ml", "categoria": "cocina", "cantidad": 1},
+        {"id": "P-114", "nombre": "Cubiertos de bambú de viaje", "categoria": "cocina", "cantidad": 2}
+      ],
+      "estado": "en_transito",
+      "transportadora": "EcoEnvíos",
+      "fecha_estimada_entrega": "2026-09-25",
+      "fecha_entrega_real": null,
+      "motivo_retraso": null,
+      "ciudad_destino": "Cali",
+      "link_rastreo": "https://ecomarket.example/rastreo/ECO-1001",
+      "observacion": null
+    },
+    {
+      "tracking_number": "ECO-1002",
+      "fecha_compra": "2026-09-17",
+      "productos": [
+        {"id": "P-110", "nombre": "Compostera doméstica 20 L", "categoria": "hogar", "cantidad": 1}
+      ],
+      "estado": "en_transito",
+      "transportadora": "Andina Cargo",
+      "fecha_estimada_entrega": "2026-09-26",
+      "fecha_entrega_real": null,
+      "motivo_retraso": null,
+      "ciudad_destino": "Medellín",
+      "link_rastreo": "https://ecomarket.example/rastreo/ECO-1002",
+      "observacion": "Envío voluminoso; la transportadora confirma la franja horaria un día antes."
+    },
+    {
+      "tracking_number": "ECO-1003",
+      "fecha_compra": "2026-09-18",
+      "productos": [
+        {"id": "P-107", "nombre": "Set de 3 bolsas reutilizables de algodón", "categoria": "textil", "cantidad": 1}
+      ],
+      "estado": "en_reparto",
+      "transportadora": "EcoEnvíos",
+      "fecha_estimada_entrega": "2026-09-23",
+      "fecha_entrega_real": null,
+      "motivo_retraso": null,
+      "ciudad_destino": "Bogotá",
+      "link_rastreo": "https://ecomarket.example/rastreo/ECO-1003",
+      "observacion": "Salió a reparto hoy en la mañana."
+    },
+    {
+      "tracking_number": "ECO-1004",
+      "fecha_compra": "2026-09-12",
+      "productos": [
+        {"id": "P-106", "nombre": "Botella térmica de acero inoxidable 750 ml", "categoria": "cocina", "cantidad": 1},
+        {"id": "P-113", "nombre": "Camiseta de algodón orgánico personalizada", "categoria": "personalizado", "cantidad": 1}
+      ],
+      "estado": "entregado",
+      "transportadora": "EcoEnvíos",
+      "fecha_estimada_entrega": "2026-09-17",
+      "fecha_entrega_real": "2026-09-18",
+      "motivo_retraso": null,
+      "ciudad_destino": "Barranquilla",
+      "link_rastreo": "https://ecomarket.example/rastreo/ECO-1004",
+      "observacion": "El cliente reportó por chat que la camiseta personalizada (P-113) llegó con una costura rota."
+    },
+    {
+      "tracking_number": "ECO-1005",
+      "fecha_compra": "2026-09-10",
+      "productos": [
+        {"id": "P-108", "nombre": "Vaso de vidrio con tapa de bambú 500 ml", "categoria": "cocina", "cantidad": 2}
+      ],
+      "estado": "retrasado",
+      "transportadora": "Andina Cargo",
+      "fecha_estimada_entrega": "2026-09-26",
+      "fecha_entrega_real": null,
+      "motivo_retraso": "Cierre de la vía por derrumbe en el tramo Popayán–Pasto.",
+      "ciudad_destino": "Pasto",
+      "link_rastreo": "https://ecomarket.example/rastreo/ECO-1005",
+      "observacion": "Fecha estimada original: 2026-09-19. Reprogramada para 2026-09-26."
+    },
+    {
+      "tracking_number": "ECO-1006",
+      "fecha_compra": "2026-09-08",
+      "productos": [
+        {"id": "P-111", "nombre": "Cargador solar portátil 10.000 mAh", "categoria": "hogar", "cantidad": 1}
+      ],
+      "estado": "retrasado",
+      "transportadora": "EcoEnvíos",
+      "fecha_estimada_entrega": "2026-09-24",
+      "fecha_entrega_real": null,
+      "motivo_retraso": "Avería mecánica del vehículo de reparto; la carga fue reasignada a otra ruta.",
+      "ciudad_destino": "Bucaramanga",
+      "link_rastreo": "https://ecomarket.example/rastreo/ECO-1006",
+      "observacion": "Fecha estimada original: 2026-09-16. Reprogramada para 2026-09-24."
+    },
+    {
+      "tracking_number": "ECO-1007",
+      "fecha_compra": "2026-09-15",
+      "productos": [
+        {"id": "P-103", "nombre": "Café orgánico en grano 500 g", "categoria": "alimentos_perecederos", "cantidad": 2},
+        {"id": "P-104", "nombre": "Frutos secos mixtos 300 g", "categoria": "alimentos_perecederos", "cantidad": 1}
+      ],
+      "estado": "entregado",
+      "transportadora": "EcoEnvíos",
+      "fecha_estimada_entrega": "2026-09-19",
+      "fecha_entrega_real": "2026-09-20",
+      "motivo_retraso": null,
+      "ciudad_destino": "Cali",
+      "link_rastreo": "https://ecomarket.example/rastreo/ECO-1007",
+      "observacion": null
+    },
+    {
+      "tracking_number": "ECO-1008",
+      "fecha_compra": "2026-07-28",
+      "productos": [
+        {"id": "P-107", "nombre": "Set de 3 bolsas reutilizables de algodón", "categoria": "textil", "cantidad": 3},
+        {"id": "P-105", "nombre": "Detergente concentrado a granel 1 L", "categoria": "granel", "cantidad": 1}
+      ],
+      "estado": "entregado",
+      "transportadora": "Andina Cargo",
+      "fecha_estimada_entrega": "2026-08-04",
+      "fecha_entrega_real": "2026-08-05",
+      "motivo_retraso": null,
+      "ciudad_destino": "Medellín",
+      "link_rastreo": "https://ecomarket.example/rastreo/ECO-1008",
+      "observacion": "Entregado hace más de 30 días: fuera del plazo de devolución."
+    },
+    {
+      "tracking_number": "ECO-1009",
+      "fecha_compra": "2026-09-22",
+      "productos": [
+        {"id": "P-115", "nombre": "Esponjas vegetales de lufa (pack x3)", "categoria": "hogar", "cantidad": 2},
+        {"id": "P-109", "nombre": "Jabón de castilla 250 ml", "categoria": "higiene_personal", "cantidad": 1}
+      ],
+      "estado": "en_preparacion",
+      "transportadora": "Por asignar",
+      "fecha_estimada_entrega": "2026-09-29",
+      "fecha_entrega_real": null,
+      "motivo_retraso": null,
+      "ciudad_destino": "Manizales",
+      "link_rastreo": "https://ecomarket.example/rastreo/ECO-1009",
+      "observacion": "En alistamiento en el centro de distribución."
+    },
+    {
+      "tracking_number": "ECO-1010",
+      "fecha_compra": "2026-09-14",
+      "productos": [
+        {"id": "P-112", "nombre": "Tarjeta de regalo digital EcoMarket", "categoria": "tarjeta_regalo", "cantidad": 1}
+      ],
+      "estado": "cancelado",
+      "transportadora": "No aplica",
+      "fecha_estimada_entrega": null,
+      "fecha_entrega_real": null,
+      "motivo_retraso": null,
+      "ciudad_destino": "Cartagena",
+      "link_rastreo": "https://ecomarket.example/rastreo/ECO-1010",
+      "observacion": "Cancelado a solicitud del cliente el 2026-09-15. Reembolso procesado el 2026-09-17."
+    },
+    {
+      "tracking_number": "ECO-1011",
+      "fecha_compra": "2026-09-02",
+      "productos": [
+        {"id": "P-113", "nombre": "Camiseta de algodón orgánico personalizada", "categoria": "personalizado", "cantidad": 1}
+      ],
+      "estado": "extraviado",
+      "transportadora": "Andina Cargo",
+      "fecha_estimada_entrega": "2026-09-09",
+      "fecha_entrega_real": null,
+      "motivo_retraso": "Paquete sin movimientos desde el 2026-09-05; en investigación con la transportadora.",
+      "ciudad_destino": "Pereira",
+      "link_rastreo": "https://ecomarket.example/rastreo/ECO-1011",
+      "observacion": "Caso abierto con la transportadora. Requiere seguimiento de un agente humano."
+    },
+    {
+      "tracking_number": "ECO-1012",
+      "fecha_compra": "2026-08-20",
+      "productos": [
+        {"id": "P-102", "nombre": "Desodorante natural en barra", "categoria": "higiene_personal", "cantidad": 2}
+      ],
+      "estado": "devuelto",
+      "transportadora": "EcoEnvíos",
+      "fecha_estimada_entrega": "2026-08-26",
+      "fecha_entrega_real": "2026-08-25",
+      "motivo_retraso": null,
+      "ciudad_destino": "Cali",
+      "link_rastreo": "https://ecomarket.example/rastreo/ECO-1012",
+      "observacion": "Devolución aceptada el 2026-09-01 (producto sellado). Reembolso emitido el 2026-09-04."
+    }
+  ]
+}
