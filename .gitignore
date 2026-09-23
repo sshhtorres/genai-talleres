@@ -1,0 +1,19 @@
+# Secretos
+.env
+.env.local
+
+# Entornos y caches de Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Salidas temporales (las salidas definitivas de outputs/ SÍ se versionan como evidencia)
+**/outputs/tmp/
+
+# Sistema operativo / editores
+.DS_Store
