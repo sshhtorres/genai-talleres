@@ -34,3 +34,5 @@ known-first-party = ["genai_common", "taller01"]
 
 [tool.pytest.ini_options]
 testpaths = ["packages", "taller-01-ecomarket"]
+# importlib permite que dos paquetes tengan un test_prompts.py cada uno.
+addopts = "--import-mode=importlib"
