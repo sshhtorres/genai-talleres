@@ -5,6 +5,7 @@
 | Criterio de la rúbrica | Dónde está |
 |---|---|
 | **1. Selección y justificación del modelo** (2 pts) | [`docs/fase-1-seleccion-modelo.md`](docs/fase-1-seleccion-modelo.md) |
+| **2. Fortalezas, limitaciones y riesgos éticos** (2 pts) | [`docs/fase-2-evaluacion-riesgos.md`](docs/fase-2-evaluacion-riesgos.md) |
 
 ## El caso
 
