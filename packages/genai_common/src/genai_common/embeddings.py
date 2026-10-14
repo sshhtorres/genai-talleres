@@ -187,9 +187,12 @@ def _normalizar_vector(vector: list[float]) -> list[float]:
 
 
 def _ajustar_dimension(vector: list[float], dimensions: int) -> list[float]:
-    """Trunca (MRL) y renormaliza si el servidor devolvió más dimensiones de las pedidas."""
-    if len(vector) <= dimensions:
-        return list(vector)
+    """Trunca (MRL) si llegó más largo de lo pedido y SIEMPRE normaliza a norma 1.
+
+    gemini-embedding-001 devuelve vectores sin normalizar en cualquier dimensión distinta de 3072
+    (verificado: norma ≈ 0,59 a 768). La distancia coseno no cambia el ranking, pero cualquier
+    producto interno, distancia L2 o umbral sobre el producto punto quedaría mal calibrado.
+    """
     return _normalizar_vector(list(vector[:dimensions]))
 
 
@@ -205,8 +208,9 @@ class AsymmetricEmbeddings(_Embeddings):  # type: ignore[misc,valid-type]
     - Gemini: `task_type` distinto en cada llamada (`document_kwargs` / `query_kwargs`).
     - EmbeddingGemma vía Ollama: prefijos de texto (`task: search result | query: …`), porque
       Ollama no los añade por su cuenta.
-    En ambos casos, si el vector llega más largo que la dimensión del perfil, se trunca y se
-    renormaliza (Matryoshka), para que nunca entre a la tabla un vector de otra forma.
+    En ambos casos el vector sale con la dimensión del perfil (se trunca si llega más largo, como
+    permite Matryoshka) y normalizado a norma 1, para que nunca entre a la tabla un vector de otra
+    forma ni con otra escala.
     """
 
     def __init__(
@@ -236,6 +240,13 @@ class AsymmetricEmbeddings(_Embeddings):  # type: ignore[misc,valid-type]
 
 
 _PALABRA = re.compile(r"\w+")
+# Palabras vacías frecuentes (sin tildes): sin quitarlas dominan la bolsa de palabras.
+_VACIAS = frozenset(
+    "que los las del con por para una uno unos unas como mas pero sus este esta estos estas ese "
+    "esa eso hay ser son fue han muy sin sobre entre cuando donde cual cuales quien hasta desde "
+    "tambien puedo puede pueden tengo tiene hago the and for with you your are can how what does "
+    "from this that have will not".split()
+)
 
 
 class LexicalHashEmbeddings(_Embeddings):  # type: ignore[misc,valid-type]
@@ -256,7 +267,7 @@ class LexicalHashEmbeddings(_Embeddings):  # type: ignore[misc,valid-type]
         plano = unicodedata.normalize("NFKD", texto.lower())
         plano = "".join(c for c in plano if not unicodedata.combining(c))
         for palabra in _PALABRA.findall(plano):
-            if len(palabra) < 3:
+            if len(palabra) < 3 or palabra in _VACIAS:
                 continue
             digest = hashlib.blake2b(palabra.encode("utf-8"), digest_size=8).digest()
             indice = int.from_bytes(digest[:4], "big") % self.dimensions

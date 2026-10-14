@@ -138,3 +138,15 @@ def test_cache_guarda_documentos_en_disco(tmp_path):
     emb.embed_documents(["uno", "dos"])  # segunda vez: sale de la caché
     assert len(base.documentos) == 1
     assert (tmp_path / perfil.cache_namespace).is_dir()
+
+
+def test_normaliza_aunque_llegue_con_la_dimension_pedida():
+    """gemini-embedding-001 a 768 llega con norma ≈ 0,59: hay que normalizar a mano."""
+
+    class _SinNormalizar(_Registrador):
+        def embed_query(self, text, **kwargs):
+            return [0.3] * 4
+
+    vector = AsymmetricEmbeddings(_SinNormalizar(), dimensions=4).embed_query("x")
+    assert len(vector) == 4
+    assert math.isclose(math.sqrt(sum(v * v for v in vector)), 1.0)

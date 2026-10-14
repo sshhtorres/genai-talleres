@@ -24,8 +24,16 @@ base_url = "http://localhost:11434/v1"
 api_key_env = ""
 # El modelo efectivo lo fija el nivel de hardware ([niveles.*], LOCAL_TIER); este es el de cpu-16gb.
 model = "gemma4:e4b"
-# Pasa a "implementado" solo tras una prueba manual real contra Ollama (Taller 2, H1).
-status = "por_implementar"
+# Probado el 2026-10-14 en local (Ollama 0.40.4, WSL2 ARM64, solo CPU): /v1 responde.
+status = "implementado"
+# Gemma 4 piensa por defecto (`ollama show` → thinking default true). Sin desactivarlo, una
+# respuesta de una frase tardó 36-89 s y, con max_tokens=200, salió vacía: todo se fue en pensar.
+# `reasoning_effort` es un parámetro estándar de OpenAI y Ollama lo respeta en /v1 (4-7 s, ~30
+# tokens); `"think": false` en cambio se ignora por /v1. Responder sobre un contexto ya
+# recuperado no necesita razonamiento.
+params = { reasoning_effort = "none" }
+# Red de seguridad si algún día se quita `reasoning_effort` (mismo patrón que anthropic).
+max_tokens_min = 2000
 notas = "Ollama local por su endpoint compatible con OpenAI (/v1). No requiere key: se envía 'ollama' como valor ficticio."
 
 [providers.anthropic]
@@ -40,10 +48,12 @@ status = "implementado"
 # también rechaza `top_p` y `top_k` con un error 400. Las corridas del Taller 1 usaron
 # claude-haiku-4-5-20251001 en este rol.
 omit_params = ["temperature", "top_p", "top_k"]
-# Haiku 5.5 piensa de forma adaptativa por defecto y esos tokens cuentan dentro de max_tokens: con
-# un max_tokens pequeño puede cortarse antes de escribir texto (respuesta vacía). La capa
-# compatible con OpenAI ignora `reasoning_effort`, así que el esfuerzo no se puede bajar desde
-# aquí; en su lugar, las cadenas LangChain del Taller 2 nunca piden menos de este valor.
+# Haiku 5.5 piensa de forma adaptativa por defecto y, según su documentación, esos tokens cuentan
+# dentro de max_tokens: con un valor pequeño podría cortarse antes de escribir texto. En la prueba
+# local del 2026-10-14 no se reprodujo (max_tokens=50 respondió una palabra), pero la clasificación
+# cambió frente a max_tokens=4000. Se mantiene el mínimo por precaución en las cadenas del Taller 2.
+# Por la capa compatible: `reasoning_effort` se ignora, `thinking` adaptativo da 400 y
+# `output_config.effort` se acepta solo vía `extra_body` (sin ahorro medible en una muestra).
 max_tokens_min = 4000
 notas = "Capa de compatibilidad OpenAI de Anthropic. DE PAGO: se usa como segundo proveedor en la comparación de la Fase 3."
 
@@ -84,6 +94,8 @@ notas = "Local vía Ollama (ollama pull embeddinggemma:300m). Configuraciones hi
 [embeddings.bge_m3]
 backend = "ollama"
 model = "bge-m3"
+# Siempre 1024: bge-m3 no está entrenado con MRL. Ollama acepta `dimensions` menores sin avisar y
+# trunca igual, pero el vector truncado pierde calidad.
 dimensions = 1024
 base_url = "http://localhost:11434"
 status = "implementado"
@@ -110,6 +122,8 @@ llm = "gemini"
 descripcion = "Embeddings locales (Ollama) + LLM en la nube elegido con RAG_LLM."
 embeddings = "embeddinggemma"
 llm_opciones = ["gemini", "anthropic"]
+# Con anthropic se genera con el modelo del rol router (Claude Haiku 5.5), no con el de por defecto.
+rol_llm = { anthropic = "router" }
 
 [configuraciones.local]
 descripcion = "Todo en Ollama; el modelo de chat lo fija el nivel de hardware (LOCAL_TIER)."

@@ -157,6 +157,9 @@ class LLMClient:
         for parametro in self.profile.extra.get("omit_params", []):
             argumentos.pop(parametro, None)
         argumentos.update(self.profile.extra.get("params", {}))
+        # Parámetros propios del proveedor: el SDK de OpenAI solo los acepta dentro de extra_body.
+        if self.profile.extra.get("extra_body"):
+            argumentos["extra_body"] = dict(self.profile.extra["extra_body"])
         return self._client.chat.completions.create(**argumentos)
 
 

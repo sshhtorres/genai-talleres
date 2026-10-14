@@ -6,7 +6,7 @@ Repositorio de talleres del curso IA Generativa. Entrega individual, en español
 - Gestor: uv workspace. Comandos: `uv sync --all-groups`, `uv run pytest`, `uv run ruff check .`.
 - LLMs: solo a través de `genai_common.LLMClient`; los IDs de modelo viven solo en `providers.toml`.
   Proveedor por defecto: gemini (tier gratuito). Alternativa ejecutada: anthropic (de pago).
-  Ollama: perfil definido, por implementar.
+  Ollama: implementado (probado en local; Gemma 4 con `reasoning_effort = "none"`).
 - Idioma: docs, prompts y mensajes en español; identificadores de código en inglés.
 - Tests sin red (proveedor `fake`). Nunca commitear `.env` ni keys. Datos siempre sintéticos y sin PII.
 - Cada taller: `docs/` (fases en Markdown), `data/`, `prompts/` (TOML), `src/`, `notebooks/`, `outputs/` (evidencia), `tests/`.

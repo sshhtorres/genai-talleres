@@ -22,8 +22,9 @@ class ConfiguracionRAG:
     nombre: str
     embeddings: EmbeddingProfile
     llm: ProviderProfile
-    llm_model: str | None = None  # None = el modelo por defecto o por rol del perfil
+    llm_model: str | None = None  # None = el modelo por defecto del perfil
     nivel: str | None = None
+    nivel_por_defecto: bool = False  # True si LOCAL_TIER no estaba definido
     descripcion: str = ""
 
     @property
@@ -87,7 +88,12 @@ def resolver_configuracion(
     perfil_llm = get_profile(nombre_llm, raiz)
 
     llm_model: str | None = None
+    rol = dict(datos.get("rol_llm", {})).get(perfil_llm.name)
+    if rol:
+        llm_model = perfil_llm.model_for(rol)
+
     nivel_elegido: str | None = None
+    nivel_explicito = bool(nivel or os.getenv("LOCAL_TIER"))
     if datos.get("usa_niveles"):
         nivel_elegido = nivel or os.getenv("LOCAL_TIER") or datos.get("nivel_por_defecto", "")
         if nivel_elegido not in niveles:
@@ -104,6 +110,7 @@ def resolver_configuracion(
         llm=perfil_llm,
         llm_model=llm_model,
         nivel=nivel_elegido,
+        nivel_por_defecto=bool(nivel_elegido) and not nivel_explicito,
         descripcion=datos.get("descripcion", ""),
     )
 

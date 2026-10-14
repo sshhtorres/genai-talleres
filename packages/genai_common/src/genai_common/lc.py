@@ -55,11 +55,23 @@ def chat_model_from_profile(
         "stream_usage": True,
     }
     # Mismo contrato que LLMClient: cada proveedor declara qué parámetros rechaza y cuáles añade.
+    # `params` son parámetros estándar de la API de OpenAI; `extra_body`, los propios del proveedor
+    # (p. ej. `output_config` de Anthropic), que el SDK de OpenAI rechaza como argumento directo.
     for parametro in perfil.extra.get("omit_params", []):
         argumentos.pop(parametro, None)
-    extra = dict(perfil.extra.get("params", {}))
+    # ChatOpenAI tiene campos propios para algunos parámetros estándar (p. ej. reasoning_effort):
+    # esos van como argumento; el resto, en model_kwargs.
+    extra: dict[str, Any] = {}
+    for clave, valor in perfil.extra.get("params", {}).items():
+        if clave in ChatOpenAI.model_fields:
+            argumentos[clave] = valor
+        else:
+            extra[clave] = valor
     if extra:
         argumentos["model_kwargs"] = extra
+    cuerpo_extra = dict(perfil.extra.get("extra_body", {}))
+    if cuerpo_extra:
+        argumentos["extra_body"] = cuerpo_extra
     return ChatOpenAI(**argumentos)
 
 
