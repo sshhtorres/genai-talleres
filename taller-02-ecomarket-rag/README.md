@@ -19,7 +19,7 @@ pedidos se siguen consultando por código y la decisión de una devolución sigu
 |---|---|---|
 | H0 | Versiones y APIs verificadas ([`docs/versiones.md`](docs/versiones.md)) | Hecho en la nube; pendiente lo que requiere Ollama y claves |
 | H1 | Infraestructura y configuración (`docker compose`, perfiles, `taller02 proveedores`) | Hecho |
-| H2 | Base de conocimiento sintética y set de evaluación | Pendiente |
+| H2 | Base de conocimiento sintética y set de evaluación ([`data/`](data/README.md)) | Hecho |
 | H3 | Carga, chunking e indexación | Pendiente |
 | H4 | Recuperación y cadena RAG | Pendiente |
 | H5 | Router e integración con el Taller 1 | Pendiente |
