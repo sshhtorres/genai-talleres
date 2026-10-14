@@ -22,7 +22,7 @@ pedidos se siguen consultando por código y la decisión de una devolución sigu
 | H2 | Base de conocimiento sintética y set de evaluación ([`data/`](data/README.md)) | Hecho |
 | H3 | Carga, chunking e indexación (`taller02 indexar`) | Hecho con embeddings `fake`; pendiente la indexación real |
 | H4 | Recuperación y cadena RAG (`taller02 preguntar`) | Hecho con LLM `fake`; pendiente con modelos reales |
-| H5 | Router e integración con el Taller 1 | Pendiente |
+| H5 | Router e integración con el Taller 1 (`taller02 atender`) | Hecho con modelos `fake`; pendiente con modelos reales |
 | H6 | Script de clase, original y modernizado | Pendiente |
 | H7 | Evaluación y experimentos | Pendiente |
 | H8 | Documentos de las fases y notebook | Pendiente |
@@ -65,6 +65,25 @@ similitud, la decisión de abstención, la respuesta con sus citas y los chequeo
 Sin Docker ni claves: `RAG_CONFIG=pruebas uv run taller02 preguntar "…" --backend memoria` indexa en
 memoria con embeddings léxicos falsos y responde con un modelo falso que copia la primera frase del
 mejor fragmento.
+
+## Atender: el asistente completo
+
+```bash
+uv run taller02 atender "¿Dónde está mi pedido ECO-1005?"                 # pedido (sin router)
+uv run taller02 atender "Mi pedido ECO-1004 llegó, ¿cómo devuelvo la botella?"   # devolución
+uv run taller02 atender "¿A cuántas cuotas puedo pagar una compra de 700.000?"   # crédito
+uv run taller02 atender "¿Qué hago con los frascos de vidrio vacíos?"     # consulta general
+```
+
+`atender` es el punto de entrada único y muestra la ruta elegida:
+
+| Ruta | Quién responde | Cómo se decide |
+|---|---|---|
+| `estado_pedido` | Cadena del Taller 1, solo con el registro del pedido | Hay un `ECO-xxxx` en el mensaje: regla en código, sin LLM |
+| `devolucion` | Cadena del Taller 1 con la política **recuperada** (`area=devoluciones`); la decisión sale de `evaluar_devolucion()` | Tracking + palabras de devolución (sin LLM), o el router |
+| `credito` | Cadena RAG con las reglas de crédito y las de "no decidir": no aprueba, no calcula cuotas, no recomienda endeudarse | Router (modelo del rol `router`) |
+| `consulta_general` | Cadena RAG sobre toda la base | Router |
+| `fuera_de_alcance` | Respuesta desde código | Router, o una etiqueta no válida |
 
 ## Configuraciones de ejecución
 

@@ -22,11 +22,13 @@ from collections.abc import Callable
 from typing import Any
 
 from langchain_core.language_models.chat_models import BaseChatModel
-from langchain_core.messages import AIMessage, BaseMessage
+from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
+from langchain_core.output_parsers import StrOutputParser
 from langchain_core.outputs import ChatGeneration, ChatResult
 from pydantic import Field
 
 from .config import ConfigError, ProviderProfile, get_profile
+from .llm import _extraer_json
 
 # Cada integración nombra distinto los mismos conceptos. Esta tabla es lo único que el código sabe
 # de cada una; los valores concretos (modelos, parámetros) viven en providers.toml.
@@ -104,6 +106,38 @@ def chat_model_from_profile(
         argumentos.pop(parametro, None)
     argumentos.update(nativo.get("params", {}))
     return _clase(integracion)(**argumentos)
+
+
+def invoke_json(
+    llm: BaseChatModel,
+    mensajes: list[BaseMessage],
+    required_keys: tuple[str, ...] = (),
+) -> tuple[dict[str, Any] | None, list[str], list[AIMessage]]:
+    """Como `LLMClient.chat_json()` pero con un modelo de LangChain: exige un objeto JSON con
+    `required_keys` y, si no llega, reintenta una vez pidiendo la corrección.
+
+    Devuelve (datos o None, textos crudos de cada intento, mensajes del modelo).
+    """
+    respuesta = llm.invoke(mensajes)
+    texto = StrOutputParser().invoke(respuesta)
+    intentos, respuestas = [texto], [respuesta]
+    datos = _extraer_json(texto, required_keys)
+    if datos is None:
+        correccion = [
+            *mensajes,
+            AIMessage(texto),
+            HumanMessage(
+                "Tu respuesta no fue un objeto JSON válido con las claves "
+                f"{list(required_keys) or 'requeridas'}. Responde de nuevo con SOLO el objeto "
+                "JSON, sin texto adicional ni bloques de código."
+            ),
+        ]
+        respuesta = llm.invoke(correccion)
+        texto = StrOutputParser().invoke(respuesta)
+        intentos.append(texto)
+        respuestas.append(respuesta)
+        datos = _extraer_json(texto, required_keys)
+    return datos, intentos, respuestas
 
 
 Rule = tuple[str, str]  # (patrón regex sobre el prompt, respuesta)

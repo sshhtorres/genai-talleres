@@ -14,7 +14,7 @@ from genai_common.configuraciones import (
 )
 from genai_common.embeddings import list_embedding_profiles
 
-from . import chunking, componentes, indexing, servicios
+from . import atencion, chunking, componentes, indexing, servicios
 from .chains import VARIANTES, responder
 from .config import OUTPUTS_DIR
 from .store import BACKENDS, crear_almacen
@@ -237,6 +237,44 @@ def preguntar(
     llm = _salir_si_error(componentes.armar_llm, proveedor)
     resultado = responder(mensaje, partes.almacen, llm, variante=variante, k=k, umbral=umbral)
     _mostrar_rag(resultado, mostrar_contexto)
+
+
+@app.command()
+def atender(
+    mensaje: Annotated[str, typer.Argument(help="Mensaje del cliente")],
+    variante: Annotated[str, typer.Option("--variante", help=" | ".join(VARIANTES))] = "mejorado",
+    k: Annotated[int | None, typer.Option("--k", help="Chunks a recuperar")] = None,
+    proveedor: Annotated[
+        str | None, typer.Option("--proveedor", help="gemini | anthropic | ollama | fake")
+    ] = None,
+    embeddings: EmbeddingsOpt = None,
+    backend: BackendOpt = "pgvector",
+) -> None:
+    """Punto de entrada único: router → pedido, devolución, crédito, consulta o fuera de alcance."""
+    partes = _salir_si_error(componentes.armar_almacen, embeddings, backend=backend)
+    llm = _salir_si_error(componentes.armar_llm, proveedor)
+    llm_router = _salir_si_error(componentes.armar_llm, proveedor, model_role="router")
+    cliente_t1 = _salir_si_error(componentes.armar_cliente_t1, proveedor)
+    r = atencion.atender(
+        mensaje, partes.almacen, llm, cliente_t1, llm_router, variante=variante, k=k
+    )
+    c = r.clasificacion
+    origen = {"tracking": "regla en código, sin LLM", "llm": "LLM", "respaldo": "respaldo"}
+    _titulo(f"Ruta: {r.ruta} ({origen[c.origen]})")
+    if c.trackings:
+        typer.echo(f"  trackings: {', '.join(c.trackings)}")
+    if r.fuentes:
+        typer.echo("  fuentes recuperadas:")
+        for fuente in r.fuentes:
+            typer.echo(f"    · {fuente}")
+    typer.secho("\nRespuesta", fg=typer.colors.GREEN, bold=True)
+    typer.echo(r.respuesta)
+    if r.checks:
+        _titulo("Chequeos automáticos")
+        for nombre, ok, detalle in r.checks:
+            color = typer.colors.GREEN if ok else typer.colors.RED
+            typer.secho(f"  {_marca(ok)} {nombre}: {detalle}", fg=color)
+    typer.secho(f"\n[{r.llamadas} llamada(s) en total]", fg=typer.colors.BRIGHT_BLACK)
 
 
 def _mostrar_rag(resultado, mostrar_contexto: bool) -> None:

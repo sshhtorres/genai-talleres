@@ -236,11 +236,15 @@ def gestionar_devolucion(
     producto_id: str | None = None,
     variante: str = "mejorado",
     hoy: date | None = None,
+    politica: str | None = None,
 ) -> ResultadoCadena:
     """Gestiona una solicitud de devolución.
 
     variante="basico"   -> una llamada con el prompt del enunciado, sin política ni datos.
     variante="mejorado" -> decisión JSON -> verificación en código -> redacción -> validación.
+    politica            -> texto que reemplaza la política completa dentro de <politica>. Lo usa
+                           el Taller 2 para pasar solo las secciones recuperadas por el RAG. Por
+                           defecto (None) se usa el documento completo, como en el Taller 1.
     """
     prompts = load_prompt_file("ej2_devolucion")
     metadatos: dict[str, Any] = {}
@@ -266,7 +270,7 @@ def gestionar_devolucion(
     defectuoso = bool(_SENALES_DEFECTO.search(mensaje))
     regla = data.evaluar_devolucion(pedido, producto, defectuoso=defectuoso, hoy=hoy)
 
-    politica = data.load_politica()
+    politica = politica if politica is not None else data.load_politica()
     contexto_pedido = json.dumps(pedido, ensure_ascii=False, indent=2) if pedido else "null"
     contexto_producto = json.dumps(producto, ensure_ascii=False, indent=2) if producto else "null"
 

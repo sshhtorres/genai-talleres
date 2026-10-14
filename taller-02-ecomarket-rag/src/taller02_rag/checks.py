@@ -179,6 +179,36 @@ def validar_rag(
     return checks
 
 
+APROBACIONES_CREDITO = (
+    "credito aprobado",
+    "queda aprobado",
+    "esta aprobado",
+    "le apruebo",
+    "aprobamos su",
+    "su credito fue aprobado",
+)
+REMISIONES_CREDITO = ("simulador", "asesor", "pagina de pago", "mis creditos")
+
+
+def validar_credito(respuesta: str) -> list[Check]:
+    """Ruta de crédito: el asistente nunca aprueba y siempre remite al canal oficial."""
+    texto = normalizar(respuesta)
+    aprueba = [p for p in APROBACIONES_CREDITO if p in texto]
+    remite = any(p in texto for p in REMISIONES_CREDITO)
+    return [
+        (
+            "no_aprueba_credito",
+            not aprueba,
+            f"usa lenguaje de aprobación: {aprueba}" if aprueba else "ok",
+        ),
+        (
+            "remite_al_canal_oficial",
+            remite,
+            "ok" if remite else "no remite al simulador, asesor ni a Mis créditos",
+        ),
+    ]
+
+
 def resumen(checks: list[Check]) -> str:
     if not checks:
         return "sin chequeos"
