@@ -3,6 +3,15 @@
 > **Estado: en desarrollo.** Este README crece con cada hito; la versión final (rúbrica, experimentos
 > y prueba desde un clon limpio) llega en el hito H9.
 
+## Entregables y rúbrica
+
+| Criterio | Dónde está |
+|---|---|
+| **Selección de componentes**: embedding y base vectorial justificados por español, costo, escalabilidad, ventajas y desventajas, ligados a EcoMarket; impacto de cada componente | [`docs/fase-1-componentes.md`](docs/fase-1-componentes.md) · experimentos E4, E7 y E8 |
+| **Base de conocimiento**: al menos tres tipos de documento (hay cuatro, en cuatro formatos), chunking justificado, calidad e indexación | [`docs/fase-2-base-conocimiento.md`](docs/fase-2-base-conocimiento.md), [`data/`](data/README.md) · experimento E2 |
+| **Integración y código**: el script de clase explicado paso a paso y modernizado; cómo se conectan embedding, base vectorial y cadena; modificaciones de código y prompt con cambios observados; limitaciones y suposiciones | [`docs/fase-3-integracion.md`](docs/fase-3-integracion.md), [`scripts/`](scripts/), [`src/taller02_rag/`](src/taller02_rag/), [`prompts/`](prompts/), [`notebooks/fase3_demo.ipynb`](notebooks/fase3_demo.ipynb) · experimentos E1, E3 y E5 |
+| Evidencia de todas las corridas reales | [`outputs/`](outputs/) (no se edita a mano) |
+
 ## El caso
 
 En el Taller 1, el asistente de EcoMarket respondía bien dos tipos de solicitud (estado de pedido y
@@ -25,7 +34,7 @@ pedidos se siguen consultando por código y la decisión de una devolución sigu
 | H5 | Router e integración con el Taller 1 (`taller02 atender`) | Hecho con modelos `fake`; pendiente con modelos reales |
 | H6 | Script de clase, original y modernizado (`scripts/`) | Hecho; pendiente la ejecución con Ollama |
 | H7 | Evaluación y experimentos (`taller02 evaluar`, `calibrar`) | Código hecho y probado con modelos `fake`; pendientes las corridas reales |
-| H8 | Documentos de las fases y notebook | Pendiente |
+| H8 | Documentos de las fases y notebook | Borradores con la parte conceptual completa; pendientes las cifras de las corridas reales. Notebook ejecutado en modo `pruebas` |
 | H9 | Calidad, CI y README final | CI con job de integración (pgvector); pendiente el README final |
 
 ## Puesta en marcha

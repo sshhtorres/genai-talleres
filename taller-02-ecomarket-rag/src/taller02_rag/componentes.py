@@ -111,6 +111,8 @@ _PALABRAS_RUTA = (
             "envío",
             "envio",
             "pago",
+            "pagar",
+            "entrega",
             "cupón",
             "cupon",
             "factura",

@@ -11,16 +11,20 @@ común (`genai_common`) para comunicación con los modelos de lenguaje via APIs.
 
 | # | Taller | Caso | Estado | Carpeta |
 |---|---|---|---|---|
-| 1 | Selección de modelo e ingeniería de prompts | EcoMarket · atención al cliente | En desarrollo | [`taller-01-ecomarket/`](taller-01-ecomarket/) |
+| 1 | Selección de modelo e ingeniería de prompts | EcoMarket · atención al cliente | Terminado | [`taller-01-ecomarket/`](taller-01-ecomarket/) |
+| 2 | Generación aumentada por recuperación (RAG) | EcoMarket · base de conocimiento, router e integración con el Taller 1 | En desarrollo | [`taller-02-ecomarket-rag/`](taller-02-ecomarket-rag/) |
 
 ## Estructura
 
 ```
 .
 ├── providers.toml          # única fuente de verdad de los IDs de modelo
-├── packages/genai_common/  # cliente de LLM, prompts, registro de ejecuciones, proveedor fake
+├── packages/genai_common/  # cliente de LLM, modelos de LangChain (chat y embeddings), prompts,
+│                           # configuraciones RAG, registro de ejecuciones, proveedores falsos
 ├── taller-01-ecomarket/    # taller 1
-└── .github/workflows/      # CI: ruff + pytest sin claves
+├── taller-02-ecomarket-rag/ # taller 2
+├── docker-compose.yml      # Postgres + pgvector (Taller 2), puerto 5433
+└── .github/workflows/      # CI: ruff + pytest sin claves, y pruebas de integración con pgvector
 ```
 
 ## Puesta en marcha

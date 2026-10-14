@@ -4,7 +4,9 @@ Repositorio de talleres del curso IA Generativa. Entrega individual, en español
 
 - Estructura: `packages/genai_common` (librería compartida) + `taller-NN-<slug>/` (uno por taller), en la raíz del repo.
 - Gestor: uv workspace. Comandos: `uv sync --all-groups`, `uv run pytest`, `uv run ruff check .`.
-- LLMs: solo a través de `genai_common.LLMClient`; los IDs de modelo viven solo en `providers.toml`.
+- LLMs: solo a través de `genai_common` (`LLMClient` en el Taller 1; `lc.chat_model_from_profile` y
+  `embeddings.build_embeddings`, integraciones nativas de LangChain, desde el Taller 2); los IDs de
+  modelo viven solo en `providers.toml`.
   Proveedor por defecto: gemini (tier gratuito). Alternativa ejecutada: anthropic (de pago).
   Ollama: implementado (probado en local; Gemma 4 con `reasoning_effort = "none"`).
 - Idioma: docs, prompts y mensajes en español; identificadores de código en inglés.
