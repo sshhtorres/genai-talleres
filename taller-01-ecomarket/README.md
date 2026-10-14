@@ -39,6 +39,12 @@ Opciones útiles:
 | `--proveedor gemini\|anthropic\|fake` | Cambia de modelo sin tocar el código |
 | `--pausa N` / `--limite N` | Respeta los límites de tasa del tier gratuito |
 
+> **Nota sobre los modelos.** Las corridas guardadas en `outputs/` se hicieron el 2026-09-23 con los
+> modelos que entonces tenía `providers.toml`. Desde el Taller 2, el rol `router` del perfil
+> `anthropic` usa `claude-haiku-5-5` (antes `claude-haiku-4-5-20251001`) y el perfil `ollama` apunta
+> a `gemma4:e4b`. Ninguno de los dos cambios afecta a las cadenas del Taller 1, que no usan esos
+> roles; las corridas no se regeneraron.
+
 Sin claves de API también se puede revisar el trabajo: los tests corren con un proveedor falso
 (`uv run pytest`) y los resultados de las ejecuciones reales están versionados en [`outputs/`](outputs/).
 

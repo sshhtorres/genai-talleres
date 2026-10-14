@@ -6,6 +6,7 @@ requires-python = ">=3.12"
 dependencies = [
     "genai-common",
     "taller01-ecomarket",
+    "taller02-rag",
 ]
 
 [tool.uv]
@@ -17,6 +18,7 @@ members = ["packages/*", "taller-*"]
 [tool.uv.sources]
 genai-common = { workspace = true }
 taller01-ecomarket = { workspace = true }
+taller02-rag = { workspace = true }
 
 [dependency-groups]
 dev = ["pytest>=8", "ruff>=0.6"]
@@ -30,9 +32,10 @@ target-version = "py312"
 select = ["E", "F", "I", "UP", "B"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["genai_common", "taller01"]
+known-first-party = ["genai_common", "taller01", "taller02_rag"]
 
 [tool.pytest.ini_options]
-testpaths = ["packages", "taller-01-ecomarket"]
+# Los globs incluyen cada taller nuevo sin tener que registrarlo aquí.
+testpaths = ["packages", "taller-*"]
 # importlib permite que dos paquetes tengan un test_prompts.py cada uno.
 addopts = "--import-mode=importlib"

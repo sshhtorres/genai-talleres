@@ -1,0 +1,137 @@
+"""Interfaz de línea de comandos del Taller 2."""
+
+from __future__ import annotations
+
+from typing import Annotated
+
+import typer
+
+from genai_common import ConfigError, list_profiles
+from genai_common.configuraciones import (
+    listar_niveles,
+    recomendar_nivel,
+    resolver_configuracion,
+)
+from genai_common.embeddings import list_embedding_profiles
+
+from . import servicios
+
+app = typer.Typer(
+    add_completion=False,
+    help="Taller 2 · EcoMarket: RAG para la atención al cliente.",
+    no_args_is_help=True,
+)
+
+
+def _ollama_url() -> str:
+    """URL nativa de Ollama, tomada del primer perfil de embeddings que lo usa."""
+    for perfil in list_embedding_profiles():
+        if perfil.backend == "ollama" and perfil.base_url:
+            return perfil.base_url
+    return "http://localhost:11434"
+
+
+@app.callback()
+def main() -> None:
+    """Taller 2 · EcoMarket: RAG para la atención al cliente."""
+
+
+def _titulo(texto: str) -> None:
+    typer.secho(f"\n{texto}", fg=typer.colors.BLUE, bold=True)
+
+
+def _marca(ok: bool) -> str:
+    return "✓" if ok else "✗"
+
+
+@app.command()
+def proveedores(
+    recomendar: Annotated[
+        bool, typer.Option("--recomendar", help="Sugiere un LOCAL_TIER según la RAM del equipo")
+    ] = False,
+) -> None:
+    """Configuración activa, perfiles de LLM y de embeddings, y estado de Postgres y Ollama."""
+    _titulo("Configuración RAG activa (RAG_CONFIG)")
+    config = None
+    try:
+        config = resolver_configuracion()
+    except ConfigError as exc:
+        typer.secho(f"  ✗ {exc}", fg=typer.colors.RED)
+    if config:
+        typer.echo(f"  {config.nombre}: {config.descripcion}")
+        typer.echo(
+            f"  · embeddings: {config.embeddings.name} ({config.embeddings.model}, "
+            f"{config.embeddings.dimensions} dim)"
+        )
+        modelo = config.llm_model or config.llm.model
+        nivel = f", nivel {config.nivel}" if config.nivel else ""
+        typer.echo(f"  · LLM: {config.llm.name} ({modelo}{nivel})")
+        typer.echo(f"  · tabla de la base vectorial: {config.tabla}")
+
+    _titulo("Perfiles de LLM (providers.toml)")
+    for perfil in list_profiles():
+        clave = (
+            "no requiere"
+            if not perfil.requires_key
+            else f"{perfil.api_key_env} {_marca(perfil.key_configured)}"
+        )
+        typer.echo(f"  {perfil.name:<12} {perfil.status:<16} {clave:<22} {perfil.model}")
+
+    _titulo("Perfiles de embeddings (providers.toml)")
+    for perfil in list_embedding_profiles():
+        clave = (
+            "no requiere"
+            if not perfil.api_key_env
+            else f"{perfil.api_key_env} {_marca(perfil.key_configured)}"
+        )
+        typer.echo(
+            f"  {perfil.name:<15} {perfil.backend:<7} {clave:<22} "
+            f"{perfil.model} → {perfil.table_name}"
+        )
+
+    _titulo("Servicios")
+    pg = servicios.estado_postgres()
+    color = typer.colors.GREEN if pg.ok else typer.colors.YELLOW
+    typer.secho(f"  {_marca(pg.ok)} Postgres: {pg.detalle}", fg=color)
+    if pg.extra:
+        typer.echo(f"      tablas: {', '.join(pg.extra)}")
+
+    ollama = servicios.estado_ollama(_ollama_url())
+    color = typer.colors.GREEN if ollama.ok else typer.colors.YELLOW
+    typer.secho(f"  {_marca(ollama.ok)} Ollama: {ollama.detalle}", fg=color)
+    if ollama.ok and config:
+        necesarios = []
+        if config.embeddings.backend == "ollama":
+            necesarios.append(config.embeddings.model)
+        if config.llm.name == "ollama":
+            necesarios.append(config.llm_model or config.llm.model)
+        for modelo in necesarios:
+            ok = servicios.modelo_descargado(modelo, ollama.extra)
+            pista = "" if ok else f" → ollama pull {modelo}"
+            typer.echo(f"      {_marca(ok)} {modelo}{pista}")
+
+    if recomendar:
+        _recomendar()
+
+
+def _recomendar() -> None:
+    import psutil
+
+    ram_gb = psutil.virtual_memory().total / 1024**3
+    _titulo("Nivel de hardware sugerido para la configuración local")
+    nivel = recomendar_nivel(ram_gb)
+    typer.echo(f"  RAM detectada: {ram_gb:.1f} GB")
+    if nivel:
+        modelo = listar_niveles()[nivel]["llm_model"]
+        typer.echo(f"  Sugerencia: LOCAL_TIER={nivel} (LLM {modelo})")
+    else:
+        typer.echo("  Ningún nivel de CPU cabe en esta RAM: usa la configuración nube o hibrida.")
+    typer.secho(
+        "  La GPU no se detecta: si tienes una, elige gpu-12gb o gpu-24gb a mano.\n"
+        "  Este comando no modifica tu .env.",
+        fg=typer.colors.BRIGHT_BLACK,
+    )
+
+
+if __name__ == "__main__":
+    app()

@@ -1,0 +1,21 @@
+# Parámetros del RAG del Taller 2. Ningún valor de estos se escribe a mano en el código.
+# Los IDs de modelo y las dimensiones NO van aquí: viven en providers.toml.
+
+[chunking]
+# Recursivo: ~800 caracteres ≈ 200 tokens en español; solapamiento del 15%.
+chunk_size = 800
+chunk_overlap = 120
+separadores = ["\n## ", "\n### ", "\n\n", "\n", ". ", " ", ""]
+# Líneas base del experimento E2 (tamaño fijo, sin respetar la estructura).
+fijas = { fija300 = 300, fija1000 = 1000 }
+
+[recuperacion]
+k = 4
+# Umbral de abstención sobre la similitud coseno del mejor chunk, en [0, 1].
+# 0.0 = desactivado. Se calibra con `taller02 calibrar` (H7); no se adivina.
+umbral = 0.0
+
+[indexacion]
+# Textos por lote y pausa entre lotes, para respetar los límites del nivel gratuito.
+lote = 50
+pausa_s = 1.0
