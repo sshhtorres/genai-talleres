@@ -1,0 +1,26 @@
+# Infraestructura compartida de los talleres. Hoy: Postgres + pgvector para el RAG del Taller 2.
+#   docker compose up -d        # levanta la base (puerto 5433 del host)
+#   docker compose ps           # debe mostrar "healthy"
+#   docker compose down -v      # la borra junto con sus datos
+services:
+  pgvector:
+    image: pgvector/pgvector:0.8.7-pg17   # etiqueta verificada en Docker Hub el 2026-10-14
+    container_name: genai-pgvector
+    environment:
+      POSTGRES_USER: ${PG_USER:-ecomarket}
+      POSTGRES_PASSWORD: ${PG_PASSWORD:-ecomarket}
+      POSTGRES_DB: ${PG_DB:-ecomarket_kb}
+    ports:
+      # 5433 en el host para no chocar con un Postgres local en 5432.
+      - "${PG_PORT:-5433}:5432"
+    volumes:
+      - pgvector-data:/var/lib/postgresql/data
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgvector-data:

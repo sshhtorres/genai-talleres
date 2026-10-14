@@ -12,6 +12,9 @@ __pycache__/
 # Notebooks
 .ipynb_checkpoints/
 
+# Caché de embeddings (Taller 2): se regenera; reindexar sin cambios no gasta cuota
+.cache/
+
 # Salidas temporales (las salidas definitivas de outputs/ SÍ se versionan como evidencia)
 **/outputs/tmp/
 
