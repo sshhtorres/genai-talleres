@@ -1,8 +1,17 @@
 """Modelos de chat de LangChain construidos desde los perfiles de providers.toml.
 
-Es el equivalente de `LLMClient.from_profile` para las cadenas LCEL del Taller 2: mismas reglas
-(perfiles `por_implementar` bloqueados, `omit_params` y `params` por proveedor, claves con errores
-accionables), pero devolviendo un `BaseChatModel` que se puede encadenar con `|`.
+Es el equivalente de `LLMClient.from_profile` para las cadenas LCEL del Taller 2, pero con la
+**integración nativa de LangChain para cada proveedor** (`ChatGoogleGenerativeAI`, `ChatAnthropic`,
+`ChatOllama`), no con el endpoint compatible con OpenAI que usa el Taller 1. LangChain es la capa
+agnóstica: las cadenas solo ven un `BaseChatModel`, y qué clase se instancia lo decide la sección
+`[providers.<nombre>.langchain]` de providers.toml.
+
+Por qué nativo y no compatible: la verificación local mostró que, por la capa compatible de
+Anthropic, el pensamiento adaptativo de Haiku 5.5 da 400 y `reasoning_effort` se ignora; con
+`ChatAnthropic` ambos se controlan. Lo mismo con el razonamiento de Gemma 4 en `ChatOllama`.
+
+Se mantienen las reglas del Taller 1: perfiles `por_implementar` bloqueados, `omit_params`,
+`params` por proveedor, `max_tokens_min` y claves con errores accionables.
 Requiere el extra `langchain` de genai-common.
 """
 
@@ -19,6 +28,33 @@ from pydantic import Field
 
 from .config import ConfigError, ProviderProfile, get_profile
 
+# Cada integración nombra distinto los mismos conceptos. Esta tabla es lo único que el código sabe
+# de cada una; los valores concretos (modelos, parámetros) viven en providers.toml.
+_INTEGRACIONES: dict[str, dict[str, str]] = {
+    "google_genai": {"max_tokens": "max_output_tokens", "api_key": "google_api_key"},
+    "anthropic": {"max_tokens": "max_tokens", "api_key": "api_key"},
+    "ollama": {"max_tokens": "num_predict", "api_key": ""},
+}
+
+
+def _clase(integracion: str) -> type[BaseChatModel]:
+    if integracion == "google_genai":
+        from langchain_google_genai import ChatGoogleGenerativeAI
+
+        return ChatGoogleGenerativeAI
+    if integracion == "anthropic":
+        from langchain_anthropic import ChatAnthropic
+
+        return ChatAnthropic
+    if integracion == "ollama":
+        from langchain_ollama import ChatOllama
+
+        return ChatOllama
+    raise ConfigError(
+        f"Integración de LangChain desconocida: '{integracion}'. "
+        f"Disponibles: {', '.join(_INTEGRACIONES)}."
+    )
+
 
 def chat_model_from_profile(
     name: str | None = None,
@@ -28,7 +64,7 @@ def chat_model_from_profile(
     max_tokens: int = 800,
     profile: ProviderProfile | None = None,
 ) -> BaseChatModel:
-    """`ChatOpenAI` apuntando al endpoint compatible con OpenAI del proveedor.
+    """Modelo de chat nativo de LangChain para un perfil de providers.toml.
 
     `model` tiene prioridad sobre `model_role`; si no se da ninguno, se usa el modelo por defecto
     del perfil. Con el perfil `fake` devuelve un `FakeChatModel` (sin red).
@@ -41,38 +77,33 @@ def chat_model_from_profile(
             f"El proveedor '{perfil.name}' está marcado como 'por_implementar' en providers.toml "
             "y no ha sido probado. Pruébalo manualmente y cambia su estado a 'implementado'."
         )
-
-    from langchain_openai import ChatOpenAI
+    nativo = dict(perfil.extra.get("langchain", {}))
+    integracion = nativo.get("integracion", "")
+    if integracion not in _INTEGRACIONES:
+        raise ConfigError(
+            f"El proveedor '{perfil.name}' no declara su integración de LangChain: añade "
+            f"[providers.{perfil.name}.langchain] con integracion = "
+            f"{' | '.join(repr(i) for i in _INTEGRACIONES)} en providers.toml."
+        )
+    nombres = _INTEGRACIONES[integracion]
 
     argumentos: dict[str, Any] = {
         "model": model or perfil.model_for(model_role),
-        "base_url": perfil.base_url or None,
-        "api_key": perfil.api_key(),
         "temperature": temperature,
-        # Modelos que razonan gastan parte de max_tokens pensando: el perfil fija un mínimo.
-        "max_tokens": max(max_tokens, int(perfil.extra.get("max_tokens_min", 0))),
-        "max_retries": 6,
-        "stream_usage": True,
+        # Los modelos que razonan gastan parte de max_tokens pensando: el perfil fija un mínimo.
+        nombres["max_tokens"]: max(max_tokens, int(perfil.extra.get("max_tokens_min", 0))),
     }
+    if nombres["api_key"]:
+        argumentos[nombres["api_key"]] = perfil.api_key()
+    if nativo.get("base_url"):
+        argumentos["base_url"] = nativo["base_url"]
+    if integracion != "ollama":
+        argumentos["max_retries"] = 6
     # Mismo contrato que LLMClient: cada proveedor declara qué parámetros rechaza y cuáles añade.
-    # `params` son parámetros estándar de la API de OpenAI; `extra_body`, los propios del proveedor
-    # (p. ej. `output_config` de Anthropic), que el SDK de OpenAI rechaza como argumento directo.
     for parametro in perfil.extra.get("omit_params", []):
         argumentos.pop(parametro, None)
-    # ChatOpenAI tiene campos propios para algunos parámetros estándar (p. ej. reasoning_effort):
-    # esos van como argumento; el resto, en model_kwargs.
-    extra: dict[str, Any] = {}
-    for clave, valor in perfil.extra.get("params", {}).items():
-        if clave in ChatOpenAI.model_fields:
-            argumentos[clave] = valor
-        else:
-            extra[clave] = valor
-    if extra:
-        argumentos["model_kwargs"] = extra
-    cuerpo_extra = dict(perfil.extra.get("extra_body", {}))
-    if cuerpo_extra:
-        argumentos["extra_body"] = cuerpo_extra
-    return ChatOpenAI(**argumentos)
+    argumentos.update(nativo.get("params", {}))
+    return _clase(integracion)(**argumentos)
 
 
 Rule = tuple[str, str]  # (patrón regex sobre el prompt, respuesta)

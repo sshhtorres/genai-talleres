@@ -19,6 +19,11 @@ status = "implementado"
 #    gratuita suficiente: es el modelo recomendado en la Fase 1 y el que ejecuta su evidencia.
 notas = "Tier gratuito. Motor del 80% repetitivo: gemini-3.5-flash-lite. El modelo 'robusto' (pro) es de pago."
 
+# Taller 2: integración nativa de LangChain (genai_common.lc). El Taller 1 sigue usando base_url,
+# el endpoint compatible con OpenAI, a través de LLMClient.
+[providers.gemini.langchain]
+integracion = "google_genai"
+
 [providers.ollama]
 base_url = "http://localhost:11434/v1"
 api_key_env = ""
@@ -35,6 +40,12 @@ params = { reasoning_effort = "none" }
 # Red de seguridad si algún día se quita `reasoning_effort` (mismo patrón que anthropic).
 max_tokens_min = 2000
 notas = "Ollama local por su endpoint compatible con OpenAI (/v1). No requiere key: se envía 'ollama' como valor ficticio."
+
+[providers.ollama.langchain]
+integracion = "ollama"
+base_url = "http://localhost:11434"   # API nativa de Ollama, sin /v1
+# Equivalente nativo de reasoning_effort = "none": ChatOllama envía think=false.
+params = { reasoning = false }
 
 [providers.anthropic]
 base_url = "https://api.anthropic.com/v1/"
@@ -56,6 +67,11 @@ omit_params = ["temperature", "top_p", "top_k"]
 # `output_config.effort` se acepta solo vía `extra_body` (sin ahorro medible en una muestra).
 max_tokens_min = 4000
 notas = "Capa de compatibilidad OpenAI de Anthropic. DE PAGO: se usa como segundo proveedor en la comparación de la Fase 3."
+
+[providers.anthropic.langchain]
+integracion = "anthropic"
+# ChatAnthropic sí controla el pensamiento adaptativo y el esfuerzo (por la capa compatible, no).
+# No se fija `reasoning_effort` hasta medirlo: queda el valor por defecto del modelo (medium).
 
 [providers.fake]
 base_url = ""

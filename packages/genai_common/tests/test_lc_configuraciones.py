@@ -36,21 +36,33 @@ def test_por_implementar_esta_bloqueado():
         chat_model_from_profile(profile=perfil)
 
 
+def test_perfil_sin_integracion_nativa_es_accionable():
+    perfil = ProviderProfile(name="x", base_url="http://x/v1", api_key_env="", model="m")
+    with pytest.raises(ConfigError, match=r"\[providers\.x\.langchain\]"):
+        chat_model_from_profile(profile=perfil)
+
+
 def test_falta_de_key_es_accionable(monkeypatch):
     monkeypatch.delenv("CLAVE_CHAT_INEXISTENTE", raising=False)
     perfil = ProviderProfile(
-        name="x", base_url="http://x/v1", api_key_env="CLAVE_CHAT_INEXISTENTE", model="m"
+        name="x",
+        base_url="",
+        api_key_env="CLAVE_CHAT_INEXISTENTE",
+        model="m",
+        extra={"langchain": {"integracion": "anthropic"}},
     )
     with pytest.raises(ConfigError, match="CLAVE_CHAT_INEXISTENTE"):
         chat_model_from_profile(profile=perfil)
 
 
-def test_omite_parametros_y_usa_modelo_por_rol(monkeypatch):
+def test_anthropic_es_chatanthropic_sin_parametros_de_muestreo(monkeypatch):
+    from langchain_anthropic import ChatAnthropic
+
     monkeypatch.setenv("ANTHROPIC_API_KEY", "clave-de-prueba")
     modelo = chat_model_from_profile("anthropic", model_role="router")
-    assert modelo.model_name == "claude-haiku-5-5"
-    assert modelo.temperature is None  # omit_params la quita
-    assert "top_p" not in modelo.model_kwargs
+    assert isinstance(modelo, ChatAnthropic)
+    assert modelo.model == "claude-haiku-5-5"
+    assert modelo.temperature is None and modelo.top_p is None and modelo.top_k is None
 
 
 def test_respeta_max_tokens_minimo_del_perfil(monkeypatch):
@@ -60,11 +72,27 @@ def test_respeta_max_tokens_minimo_del_perfil(monkeypatch):
     assert modelo.max_tokens >= 4000
 
 
-def test_gemini_conserva_temperature(monkeypatch):
+def test_gemini_es_chatgooglegenerativeai(monkeypatch):
+    from langchain_google_genai import ChatGoogleGenerativeAI
+
     monkeypatch.setenv("GEMINI_API_KEY", "clave-de-prueba")
-    modelo = chat_model_from_profile("gemini", temperature=0.1)
+    modelo = chat_model_from_profile("gemini", temperature=0.1, max_tokens=300)
+    assert isinstance(modelo, ChatGoogleGenerativeAI)
     assert modelo.temperature == 0.1
-    assert modelo.model_name == get_profile("gemini").model
+    assert modelo.max_output_tokens == 300
+    assert modelo.model.endswith(get_profile("gemini").model)
+
+
+def test_ollama_es_chatollama_sin_razonamiento():
+    """Gemma 4 piensa por defecto: sin desactivarlo tardó 36-89 s y con max_tokens bajo
+    respondió vacío. ChatOllama lo desactiva con reasoning=False (think=false en la API nativa)."""
+    from langchain_ollama import ChatOllama
+
+    modelo = chat_model_from_profile("ollama", model="gemma4:e4b", max_tokens=200)
+    assert isinstance(modelo, ChatOllama)
+    assert modelo.reasoning is False
+    assert modelo.base_url == "http://localhost:11434"  # API nativa, sin /v1
+    assert modelo.num_predict >= 2000
 
 
 # -- configuraciones -------------------------------------------------------------
@@ -142,21 +170,6 @@ def test_recomendar_nivel_por_ram(ram, esperado):
     assert recomendar_nivel(ram) == esperado
 
 
-def test_extra_body_va_en_extra_body_y_no_como_argumento(monkeypatch):
-    """`output_config` no es un parámetro de OpenAI: como argumento directo el SDK da TypeError."""
-    monkeypatch.setenv("CLAVE_X", "k")
-    perfil = ProviderProfile(
-        name="x",
-        base_url="http://x/v1",
-        api_key_env="CLAVE_X",
-        model="m",
-        extra={"extra_body": {"output_config": {"effort": "low"}}},
-    )
-    modelo = chat_model_from_profile(profile=perfil)
-    assert modelo.extra_body == {"output_config": {"effort": "low"}}
-    assert "output_config" not in modelo.model_kwargs
-
-
 def test_llmclient_envia_extra_body(monkeypatch):
     from genai_common import LLMClient
 
@@ -180,10 +193,3 @@ def test_llmclient_envia_extra_body(monkeypatch):
         cliente.chat([{"role": "user", "content": "hola"}])
     assert recibidos["extra_body"] == {"output_config": {"effort": "low"}}
     assert "output_config" not in recibidos
-
-
-def test_ollama_desactiva_el_razonamiento_de_gemma():
-    """Sin reasoning_effort=none, gemma4 tardó 36-89 s y con max_tokens bajo respondió vacío."""
-    modelo = chat_model_from_profile("ollama", model="gemma4:e4b", max_tokens=200)
-    assert modelo.reasoning_effort == "none"
-    assert modelo.max_tokens >= 2000

@@ -23,14 +23,25 @@ APIs cambian entre versiones menores; `langchain-postgres` sigue en 0.0.x.
 | `langchain-classic` | 1.0.8 | `CacheBackedEmbeddings` + `LocalFileStore` (en LangChain 1.x ya no están en `langchain`) y `RetrievalQA` del script de clase | [PyPI](https://pypi.org/project/langchain-classic/) |
 | `langchain-text-splitters` | 1.1.3 | `RecursiveCharacterTextSplitter`, `MarkdownHeaderTextSplitter` | [PyPI](https://pypi.org/project/langchain-text-splitters/) |
 | `langchain-postgres` | 0.0.19 | `PGEngine` + `PGVectorStore` (no la clase `PGVector`, obsoleta) | [PyPI](https://pypi.org/project/langchain-postgres/), [docs](https://docs.langchain.com/oss/python/integrations/vectorstores/pgvectorstore) |
-| `langchain-google-genai` | 4.4.2 | `GoogleGenerativeAIEmbeddings` | [PyPI](https://pypi.org/project/langchain-google-genai/) |
-| `langchain-openai` | 1.7.2 | `ChatOpenAI` con `base_url` (Gemini, Anthropic y Ollama por su endpoint compatible) | [PyPI](https://pypi.org/project/langchain-openai/) |
-| `langchain-ollama` | 1.1.0 | `OllamaEmbeddings` | [PyPI](https://pypi.org/project/langchain-ollama/) |
+| `langchain-google-genai` | 4.4.2 | `GoogleGenerativeAIEmbeddings` y `ChatGoogleGenerativeAI` | [PyPI](https://pypi.org/project/langchain-google-genai/) |
+| `langchain-anthropic` | 1.7.6 | `ChatAnthropic`: Claude Haiku 5.5 con su integración nativa (controla el pensamiento adaptativo y el esfuerzo, que la capa compatible con OpenAI no permite) | [PyPI](https://pypi.org/project/langchain-anthropic/) |
+| `langchain-ollama` | 1.1.0 | `OllamaEmbeddings` y `ChatOllama` (`reasoning=False` desactiva el pensamiento de Gemma 4) | [PyPI](https://pypi.org/project/langchain-ollama/) |
 | `langchain-chroma` | 1.1.0 | Solo el script de clase modernizado. **No es dependencia del taller**: se usa con `uv run --with`, porque arrastra `chromadb` completo (con `onnxruntime` y `kubernetes`) | [PyPI](https://pypi.org/project/langchain-chroma/) |
 | `psycopg[binary]` | ≥ 3.2 | Driver de Postgres de `langchain-postgres` y comprobaciones | [PyPI](https://pypi.org/project/psycopg/) |
 | `pypdf` | ≥ 6.0 | Lectura del PDF de términos | [PyPI](https://pypi.org/project/pypdf/) |
 | `reportlab` | ≥ 4.0 | Regenerar el PDF de términos. Tampoco es dependencia: `uv run --with "reportlab>=4.0"` | [PyPI](https://pypi.org/project/reportlab/) |
 | `psutil` | ≥ 7.0 | RAM del equipo para `taller02 proveedores --recomendar` | [PyPI](https://pypi.org/project/psutil/) |
+
+**Integraciones nativas de LangChain para el chat (Taller 2).** Las cadenas LCEL construyen el
+modelo de chat con la integración nativa de cada proveedor (`genai_common.lc`), elegida por la
+sección `[providers.<nombre>.langchain]` de providers.toml. `langchain-openai` dejó de ser
+dependencia. El Taller 1 no cambia: `LLMClient` sigue usando el endpoint compatible con OpenAI
+(`base_url`), y así sus corridas guardadas siguen siendo reproducibles. Motivo del cambio, medido en
+la verificación local: por la capa compatible de Anthropic, `thinking` adaptativo da 400 y
+`reasoning_effort` se ignora; `ChatAnthropic` expone `thinking`, `output_config` y `reasoning_effort`.
+
+⚠ Pendiente en local: una llamada real con cada integración nativa (`taller02 preguntar` con
+`--proveedor gemini`, `anthropic` y `ollama`), porque la sesión en la nube no tiene claves ni Ollama.
 
 Comprobaciones hechas sobre el código instalado (no sobre la documentación):
 

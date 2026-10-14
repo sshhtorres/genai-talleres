@@ -127,3 +127,24 @@ def test_no_menciona_pedidos_ajenos():
 def test_debe_contener_admite_alternativas():
     assert checks.contiene("La mantiene caliente 12 h.", ["12 horas|12 h"], [])[0][1]
     assert not checks.contiene("La mantiene caliente.", ["12 horas|12 h"], [])[0][1]
+
+
+def test_respuesta_con_bloques_de_pensamiento_se_lee_como_texto(almacen_memoria):
+    """ChatAnthropic devuelve los bloques de pensamiento de Haiku 5.5 junto al texto."""
+    from langchain_core.messages import AIMessage
+
+    class _ConPensamiento(FakeChatModel):
+        def _generate(self, messages, stop=None, run_manager=None, **kwargs):
+            resultado = super()._generate(messages, stop, run_manager, **kwargs)
+            texto = resultado.generations[0].message.content
+            resultado.generations[0].message = AIMessage(
+                content=[
+                    {"type": "thinking", "thinking": "", "signature": "x"},
+                    {"type": "text", "text": texto},
+                ]
+            )
+            return resultado
+
+    llm = _ConPensamiento(default=respuesta_extractiva)
+    resultado = chains.responder("¿Cuánto cuesta el envío?", almacen_memoria, llm, umbral=0.0)
+    assert resultado.respuesta.endswith("]") and "thinking" not in resultado.respuesta
