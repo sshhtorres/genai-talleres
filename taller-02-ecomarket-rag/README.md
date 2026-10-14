@@ -17,11 +17,11 @@ pedidos se siguen consultando por código y la decisión de una devolución sigu
 
 | Hito | Contenido | Estado |
 |---|---|---|
-| H0 | Versiones y APIs verificadas ([`docs/versiones.md`](docs/versiones.md)) | Hecho en la nube; pendiente lo que requiere Ollama y claves |
+| H0 | Versiones y APIs verificadas ([`docs/versiones.md`](docs/versiones.md)) | Hecho (en la nube y en local); pendientes los límites del nivel gratuito de Gemini |
 | H1 | Infraestructura y configuración (`docker compose`, perfiles, `taller02 proveedores`) | Hecho |
 | H2 | Base de conocimiento sintética y set de evaluación ([`data/`](data/README.md)) | Hecho |
-| H3 | Carga, chunking e indexación | Pendiente |
-| H4 | Recuperación y cadena RAG | Pendiente |
+| H3 | Carga, chunking e indexación (`taller02 indexar`) | Hecho con embeddings `fake`; pendiente la indexación real |
+| H4 | Recuperación y cadena RAG (`taller02 preguntar`) | Hecho con LLM `fake`; pendiente con modelos reales |
 | H5 | Router e integración con el Taller 1 | Pendiente |
 | H6 | Script de clase, original y modernizado | Pendiente |
 | H7 | Evaluación y experimentos | Pendiente |
@@ -43,6 +43,28 @@ uv run taller02 proveedores --recomendar
 `taller02 proveedores` muestra la configuración activa, los perfiles de LLM y de embeddings, la tabla
 de la base vectorial que se usará y si Postgres y Ollama responden. Con `--recomendar` sugiere un
 nivel de hardware según la RAM; no modifica el `.env`.
+
+## Indexar y preguntar
+
+```bash
+uv run taller02 indexar                          # embeddings de RAG_CONFIG, estrategia por_tipo
+uv run taller02 indexar --embeddings embeddinggemma
+uv run taller02 indexar --estrategia fija300     # línea base del experimento E2 (otra tabla)
+uv run taller02 preguntar "¿Qué hago con los frascos de vidrio vacíos?" --mostrar-contexto
+uv run taller02 preguntar "¿Cuánto cuesta el envío?" --variante basico --k 2
+```
+
+`indexar` es idempotente: el id de cada chunk es un hash de su contenido, así que repetirlo sin
+cambios no vuelve a calcular embeddings, y si un documento cambió, sus chunks viejos se borran. Al
+terminar ejecuta una consulta de humo por tipo de documento y guarda la evidencia en
+`outputs/indexacion_<fecha>_<perfil>.md`.
+
+`preguntar` ejecuta solo la cadena RAG (sin router) y muestra los chunks recuperados con su
+similitud, la decisión de abstención, la respuesta con sus citas y los chequeos automáticos.
+
+Sin Docker ni claves: `RAG_CONFIG=pruebas uv run taller02 preguntar "…" --backend memoria` indexa en
+memoria con embeddings léxicos falsos y responde con un modelo falso que copia la primera frase del
+mejor fragmento.
 
 ## Configuraciones de ejecución
 
@@ -68,6 +90,11 @@ taller):
 | `gpu-12gb` | GPU con ~12 GB | `gemma4:12b` |
 | `gpu-24gb` | GPU con 24 GB | `gemma4:26b` |
 
+Medido en un equipo solo CPU (ARM64, WSL2): `gemma4:e4b` ocupa ≈ 7,1 GiB de RAM residente y
+`embeddinggemma` ≈ 0,7 GiB, más Postgres. Cabe holgado en `cpu-16gb`; con unos 11 GiB visibles, la
+sugerencia `cpu-8gb` es la correcta. Gemma 4 piensa por defecto: el perfil `ollama` lo desactiva con
+`reasoning_effort = "none"` (sin eso, una respuesta corta tardó entre 36 y 89 s).
+
 Existe además la configuración `pruebas` (embeddings y LLM falsos, sin red), que usan los tests y la CI.
 
 Todos los IDs de modelo, dimensiones y niveles viven en [`providers.toml`](../providers.toml); los
@@ -76,6 +103,7 @@ parámetros del RAG (tamaño de chunk, *k*, umbral), en [`parametros.toml`](para
 ## Pruebas
 
 ```bash
-uv run pytest            # sin red ni servicios externos
+uv run pytest                  # sin red ni servicios externos
+uv run pytest -m integration   # contra el Postgres de docker compose, con embeddings falsos
 uv run ruff check . && uv run ruff format --check .
 ```

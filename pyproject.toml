@@ -38,4 +38,6 @@ known-first-party = ["genai_common", "taller01", "taller02_rag"]
 # Los globs incluyen cada taller nuevo sin tener que registrarlo aquí.
 testpaths = ["packages", "taller-*"]
 # importlib permite que dos paquetes tengan un test_prompts.py cada uno.
-addopts = "--import-mode=importlib"
+# Las pruebas de integración (Postgres real) se excluyen por defecto: `uv run pytest -m integration`.
+addopts = "--import-mode=importlib -m 'not integration'"
+markers = ["integration: necesita servicios reales (Postgres + pgvector); no usa red ni claves"]

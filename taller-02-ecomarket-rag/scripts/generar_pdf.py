@@ -5,8 +5,10 @@ página repetidos en cada hoja (con el número de página), como los PDF reales:
 limpieza del cargador tiene ruido que quitar, y se puede mostrar qué pasa si no se quita.
 
 Uso (desde la raíz del repositorio):
-    uv sync --all-groups --all-extras --all-packages    # instala reportlab (extra "scripts")
-    uv run python taller-02-ecomarket-rag/scripts/generar_pdf.py
+    uv run --with "reportlab>=4.0" python taller-02-ecomarket-rag/scripts/generar_pdf.py
+
+`reportlab` no es dependencia del taller: solo hace falta para regenerar el PDF, así que `uv run
+--with` lo instala en un entorno temporal para esa ejecución y no entra en uv.lock.
 
 El PDF se genera en modo invariante (sin fecha de creación ni identificadores aleatorios): volver a
 generarlo sin cambiar la fuente produce exactamente el mismo archivo.

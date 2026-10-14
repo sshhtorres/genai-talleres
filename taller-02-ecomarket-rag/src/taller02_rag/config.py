@@ -50,21 +50,29 @@ class PostgresConfig:
         )
 
 
+# Los mismos valores por defecto que docker-compose.yml: con la base del compose basta un .env sin
+# variables PG_* (por ejemplo, el del Taller 1).
+PG_POR_DEFECTO = {
+    "PG_HOST": "localhost",
+    "PG_PORT": "5433",
+    "PG_USER": "ecomarket",
+    "PG_PASSWORD": "ecomarket",
+    "PG_DB": "ecomarket_kb",
+}
+
+
 def postgres_config() -> PostgresConfig:
-    """Lee PG_* del entorno o del .env, con un error accionable si falta alguna."""
+    """Lee PG_* del entorno o del .env; si faltan, usa los valores de docker-compose.yml."""
     load_env()
-    faltan = [
-        v for v in ("PG_HOST", "PG_PORT", "PG_USER", "PG_PASSWORD", "PG_DB") if not os.getenv(v)
-    ]
-    if faltan:
-        raise ConfigError(
-            f"Faltan variables de Postgres: {', '.join(faltan)}. Copia el bloque 'base vectorial' "
-            "de .env.example a tu .env y levanta la base con `docker compose up -d`."
-        )
+    valor = {clave: os.getenv(clave) or defecto for clave, defecto in PG_POR_DEFECTO.items()}
+    try:
+        puerto = int(valor["PG_PORT"])
+    except ValueError as exc:
+        raise ConfigError(f"PG_PORT debe ser un número; vale '{valor['PG_PORT']}'.") from exc
     return PostgresConfig(
-        host=os.environ["PG_HOST"],
-        port=int(os.environ["PG_PORT"]),
-        user=os.environ["PG_USER"],
-        password=os.environ["PG_PASSWORD"],
-        db=os.environ["PG_DB"],
+        host=valor["PG_HOST"],
+        port=puerto,
+        user=valor["PG_USER"],
+        password=valor["PG_PASSWORD"],
+        db=valor["PG_DB"],
     )

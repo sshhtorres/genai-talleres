@@ -11,9 +11,15 @@ fijas = { fija300 = 300, fija1000 = 1000 }
 
 [recuperacion]
 k = 4
-# Umbral de abstención sobre la similitud coseno del mejor chunk, en [0, 1].
+# Umbral de abstención sobre la similitud coseno del mejor chunk, en [0, 1], UNO POR PERFIL DE
+# EMBEDDINGS: cada modelo tiene su propia escala de similitudes (y los prefijos de embeddinggemma la
+# desplazan: 0,68 → 0,50 en la prueba local), así que un umbral no sirve para otro modelo.
 # 0.0 = desactivado. Se calibra con `taller02 calibrar` (H7); no se adivina.
-umbral = 0.0
+[recuperacion.umbral]
+gemini = 0.0
+embeddinggemma = 0.0
+bge_m3 = 0.0
+fake = 0.0
 
 [indexacion]
 # Textos por lote y pausa entre lotes, para respetar los límites del nivel gratuito.

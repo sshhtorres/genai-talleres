@@ -15,12 +15,6 @@ dependencies = [
     "httpx>=0.27",
 ]
 
-[project.optional-dependencies]
-# Solo para scripts/: el PDF de términos y el script de clase modernizado.
-scripts = [
-    "reportlab>=4.0",
-    "langchain-chroma==1.1.0",
-]
 
 [project.scripts]
 taller02 = "taller02_rag.cli:app"
