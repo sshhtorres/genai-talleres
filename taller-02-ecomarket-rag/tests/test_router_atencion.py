@@ -92,7 +92,11 @@ def test_casos_de_pedido_del_t1_dan_lo_mismo_por_atender(almacen_memoria, client
         r = atencion.atender(caso["mensaje"], almacen_memoria, FakeChatModel(), cliente_t1)
         assert r.ruta == "estado_pedido", caso["id"]
         assert r.respuesta == directo.respuesta, caso["id"]
-        assert [c[:2] for c in r.checks] == [c[:2] for c in directo.checks], caso["id"]
+        # Los mismos chequeos del T1, más respuesta_completa al final.
+        assert [c[:2] for c in r.checks[: len(directo.checks)]] == [
+            c[:2] for c in directo.checks
+        ], caso["id"]
+        assert r.checks[-1][0] == "respuesta_completa"
 
 
 def test_devolucion_usa_la_politica_recuperada_y_la_regla_del_t1(almacen_memoria, cliente_t1):
@@ -174,3 +178,77 @@ def test_consulta_general_cita_fuentes(almacen_memoria, cliente_t1):
     )
     assert r.ruta == "consulta_general"
     assert r.checks and r.checks[0][:2] == ("cita_una_fuente", True)
+
+
+def test_respuesta_cortada_del_t1_se_detecta(almacen_memoria):
+    """Haiku 5.5 cortó una devolución en «Para tramitarla: 1.» y los chequeos quedaron en verde."""
+
+    class _Cortado(FakeLLMClient):
+        def chat(self, messages, temperature=0.2, max_tokens=800):
+            respuesta = super().chat(messages, temperature, max_tokens)
+            respuesta.finish_reason = "length"
+            return respuesta
+
+    r = atencion.atender(
+        "Mi pedido ECO-1004 llegó, ¿cómo devuelvo la botella térmica?",
+        almacen_memoria,
+        FakeChatModel(),
+        _Cortado(default=_respuesta_falsa_t1),
+    )
+    assert ("respuesta_completa", False) == r.checks[-1][:2]
+
+
+def test_respuesta_cortada_del_rag_se_detecta(almacen_memoria, cliente_t1):
+    class _Cortado(FakeChatModel):
+        def _generate(self, messages, stop=None, run_manager=None, **kwargs):
+            resultado = super()._generate(messages, stop, run_manager, **kwargs)
+            resultado.generations[0].message.response_metadata["stop_reason"] = "max_tokens"
+            return resultado
+
+    r = atencion.atender(
+        "¿Cuánto cuesta el envío?",
+        almacen_memoria,
+        _Cortado(default=respuesta_falsa),
+        cliente_t1,
+        FakeChatModel(default=respuesta_falsa),
+    )
+    assert ("respuesta_completa", False) in [c[:2] for c in r.checks]
+
+
+def test_rescate_rag_si_el_router_descarta_algo_que_la_base_tiene(
+    almacen_memoria, cliente_t1, monkeypatch
+):
+    """gemma4:e4b clasificó '¿Qué hago con los frascos de vidrio vacíos?' como fuera de alcance."""
+    monkeypatch.setattr(atencion, "umbral_de", lambda perfil: 0.2)
+    r = atencion.atender(
+        "¿Qué hago con los envases de vidrio vacíos?",
+        almacen_memoria,
+        FakeChatModel(default=respuesta_falsa),
+        cliente_t1,
+        FakeChatModel(default='{"intencion": "fuera_de_alcance"}'),
+    )
+    assert r.ruta == "consulta_general" and r.clasificacion.origen == "rescate_rag"
+
+
+def test_sin_umbral_calibrado_no_hay_rescate(almacen_memoria, cliente_t1, monkeypatch):
+    monkeypatch.setattr(atencion, "umbral_de", lambda perfil: 0.0)
+    r = atencion.atender(
+        "¿Qué hago con los envases de vidrio vacíos?",
+        almacen_memoria,
+        FakeChatModel(),
+        cliente_t1,
+        FakeChatModel(default='{"intencion": "fuera_de_alcance"}'),
+    )
+    assert r.ruta == "fuera_de_alcance"
+
+
+def test_fuera_de_alcance_real_no_se_rescata(almacen_memoria, cliente_t1, monkeypatch):
+    monkeypatch.setattr(atencion, "umbral_de", lambda perfil: 0.9)
+    r = atencion.atender(
+        "¿Quién ganó el partido de anoche?",
+        almacen_memoria,
+        FakeChatModel(),
+        cliente_t1,
+        FakeChatModel(default='{"intencion": "fuera_de_alcance"}'),
+    )
+    assert r.ruta == "fuera_de_alcance"

@@ -3,6 +3,8 @@
 Excluida por defecto. Para correrla: `docker compose up -d` y `uv run pytest -m integration`.
 """
 
+import os
+
 import pytest
 
 from genai_common.embeddings import build_embeddings, get_embedding_profile
@@ -14,7 +16,11 @@ pytestmark = pytest.mark.integration
 
 @pytest.fixture(scope="module")
 def almacen_pg():
-    if not servicios.estado_postgres().ok:
+    estado = servicios.estado_postgres()
+    if not estado.ok:
+        # En la CI la base debe estar: un skip pasaría en verde sin haber probado nada.
+        if os.getenv("TALLER02_EXIGIR_PG"):
+            pytest.fail(f"Postgres no responde en la CI: {estado.detalle}")
         pytest.skip("Postgres no responde: levántalo con `docker compose up -d`")
     perfil = get_embedding_profile("fake")
     almacen = crear_almacen(

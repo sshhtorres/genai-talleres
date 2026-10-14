@@ -44,7 +44,7 @@ def cargar_prompts() -> dict[str, Any]:
 @dataclass
 class Clasificacion:
     intencion: str
-    origen: str  # "tracking" | "llm" | "respaldo"
+    origen: str  # "tracking" | "llm" | "respaldo" | "rescate_rag" (ver atencion.py)
     trackings: list[str] = field(default_factory=list)
     llamadas: int = 0
     intentos: list[str] = field(default_factory=list)

@@ -102,7 +102,7 @@ def chat_model_from_profile(
     if integracion != "ollama":
         argumentos["max_retries"] = 6
     # Mismo contrato que LLMClient: cada proveedor declara qué parámetros rechaza y cuáles añade.
-    for parametro in perfil.extra.get("omit_params", []):
+    for parametro in [*perfil.extra.get("omit_params", []), *nativo.get("omit_params", [])]:
         argumentos.pop(parametro, None)
     argumentos.update(nativo.get("params", {}))
     return _clase(integracion)(**argumentos)

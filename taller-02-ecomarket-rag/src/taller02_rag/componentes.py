@@ -58,7 +58,8 @@ def armar_almacen(
         embeddings, perfil, backend=backend, estrategia=estrategia, sufijo=sufijo
     )
     if backend == "memoria":
-        indexing.indexar(almacen, indexing.preparar_chunks(estrategia), pausa_s=0)
+        chunks = indexing.preparar_chunks(estrategia, enriquecer_ingles=sufijo == "enriq")
+        indexing.indexar(almacen, chunks, pausa_s=0)
     return Componentes(config, perfil, embeddings, almacen)
 
 

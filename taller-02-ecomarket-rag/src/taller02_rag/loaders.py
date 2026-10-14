@@ -145,10 +145,12 @@ def serializar_producto(fila: dict[str, str]) -> str:
     return "\n".join(lineas)
 
 
-def cargar_catalogo() -> list[Document]:
+def cargar_catalogo(enriquecer_ingles: bool = False) -> list[Document]:
+    """Una ficha por producto. Con `enriquecer_ingles`, a las fichas en inglés se les antepone el
+    resumen en español guardado en data/kb/.enriquecido/ (experimento E7)."""
     return [
         Document(
-            page_content=serializar_producto(fila),
+            page_content=_texto_ficha(fila, enriquecer_ingles),
             metadata={
                 "doc_id": kb.DOC_CATALOGO,
                 "tipo": TIPO_PRODUCTO,
@@ -159,10 +161,28 @@ def cargar_catalogo() -> list[Document]:
                 "categoria": fila["categoria"],
                 "retornable": fila["retornable"] == "true",
                 "seccion": f"Catálogo{kb.SEPARADOR_RUTA}{fila['sku']} · {fila['nombre']}",
+                "enriquecido": enriquecer_ingles and fila["idioma"] == "en",
             },
         )
         for fila in kb.catalogo()
     ]
+
+
+def _texto_ficha(fila: dict[str, str], enriquecer_ingles: bool) -> str:
+    texto = serializar_producto(fila)
+    if not enriquecer_ingles or fila["idioma"] != "en":
+        return texto
+    from genai_common import ConfigError
+
+    from .enriquecimiento import leer_resumen
+
+    resumen = leer_resumen(fila["sku"])
+    if resumen is None:
+        raise ConfigError(
+            f"Falta el resumen en español de {fila['sku']}: genera los resúmenes con "
+            "`taller02 enriquecer` antes de indexar con --enriquecer-ingles."
+        )
+    return f"Resumen en español: {resumen}\n\n{texto}"
 
 
 # -- PDF ------------------------------------------------------------------------
@@ -227,6 +247,11 @@ def cargar_terminos(ruta: Path | None = None, limpiar: bool = True) -> list[Docu
     ]
 
 
-def cargar_todo() -> list[Document]:
+def cargar_todo(enriquecer_ingles: bool = False) -> list[Document]:
     """Los cuatro tipos de documento de la base de conocimiento."""
-    return [*cargar_politicas(), *cargar_credito(), *cargar_catalogo(), *cargar_terminos()]
+    return [
+        *cargar_politicas(),
+        *cargar_credito(),
+        *cargar_catalogo(enriquecer_ingles),
+        *cargar_terminos(),
+    ]

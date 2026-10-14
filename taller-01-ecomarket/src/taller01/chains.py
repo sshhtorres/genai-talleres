@@ -84,6 +84,7 @@ def _acumular(destino: dict[str, Any], respuesta: Any) -> None:
     for clave in ("tokens_entrada", "tokens_salida"):
         if meta[clave] is not None:
             destino[clave] = (destino.get(clave) or 0) + meta[clave]
+    destino["finish_reason"] = meta.get("finish_reason")
 
 
 # -- Ejercicio 1: estado de pedido --------------------------------------------

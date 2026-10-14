@@ -209,6 +209,23 @@ def validar_credito(respuesta: str) -> list[Check]:
     ]
 
 
+_CORTES = {"length", "max_tokens"}
+
+
+def respuesta_completa(finish_reason: str | None) -> Check:
+    """Falla si el modelo se detuvo por el límite de tokens: la respuesta quedó cortada.
+
+    Cada integración lo nombra distinto (OpenAI y Gemini: finish_reason; Anthropic: stop_reason;
+    Ollama: done_reason); `chains.metadatos_de` y LLMClient lo normalizan en `finish_reason`.
+    """
+    cortada = str(finish_reason or "").lower() in _CORTES
+    return (
+        "respuesta_completa",
+        not cortada,
+        f"se cortó por el límite de tokens ({finish_reason})" if cortada else "ok",
+    )
+
+
 def resumen(checks: list[Check]) -> str:
     if not checks:
         return "sin chequeos"

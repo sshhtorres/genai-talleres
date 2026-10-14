@@ -13,7 +13,7 @@ ETIQUETAS (elige exactamente una):
 - estado_pedido: dónde está un pedido, cuándo llega, su estado o su seguimiento.
 - devolucion: devolver, cambiar o reclamar por un producto que el cliente ya compró, incluido un producto que llegó dañado o una garantía.
 - credito: la financiación en cuotas de EcoMarket: requisitos, cupo, cuotas, intereses, pagos, mora o el crédito propio del cliente.
-- consulta_general: cualquier otra pregunta sobre EcoMarket: envíos, pagos, cupones, cuenta, sostenibilidad, productos, facturación, datos personales o términos de compra.
+- consulta_general: cualquier otra pregunta sobre EcoMarket: envíos, pagos, cupones, cuenta, productos, facturación, datos personales, términos de compra o sostenibilidad (empaques, reciclaje o devolución de envases vacíos, huella de carbono). Ante la duda entre consulta_general y fuera_de_alcance, elige consulta_general: el sistema comprueba después si hay información.
 - fuera_de_alcance: nada que ver con EcoMarket (clima, deportes, recetas, tareas, otros temas).
 
 REGLAS:
@@ -38,6 +38,16 @@ salida = '{"intencion": "credito"}'
 
 [[ejemplos]]
 mensaje = "¿Las bolsas de algodón se pueden lavar en lavadora?"
+salida = '{"intencion": "consulta_general"}'
+
+# Ejemplos añadidos tras la prueba local: gemma4:e4b clasificó una pregunta de reciclaje de envases
+# como fuera_de_alcance. Se redactan distinto a los casos del set de evaluación.
+[[ejemplos]]
+mensaje = "¿Cómo compensan las emisiones de carbono de los envíos?"
+salida = '{"intencion": "consulta_general"}'
+
+[[ejemplos]]
+mensaje = "Olvidé la contraseña de mi cuenta"
 salida = '{"intencion": "consulta_general"}'
 
 [[ejemplos]]

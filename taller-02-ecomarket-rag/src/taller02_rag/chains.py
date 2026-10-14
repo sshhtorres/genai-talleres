@@ -172,8 +172,13 @@ def responder(
     umbral: float | None = None,
     reglas_extra: str = "",
     es_credito: bool = False,
+    medir_ttft: bool = False,
 ) -> ResultadoRAG:
-    """Recupera, decide si hay evidencia, genera (solo si la hay) y valida."""
+    """Recupera, decide si hay evidencia, genera (solo si la hay) y valida.
+
+    Con `medir_ttft=True` la respuesta se pide en *streaming* para medir por separado el tiempo
+    hasta el primer token (lectura del prompt) y la latencia total (experimento E8).
+    """
     recuperacion = recuperar(almacen, pregunta, k=k, filtro=filtro, umbral=umbral)
 
     if not recuperacion.hay_evidencia:
@@ -197,7 +202,11 @@ def responder(
     }
     mensajes = construir_mensajes(**entrada)
     inicio = time.perf_counter()
-    mensaje_ia = cadena_generacion(llm).invoke(entrada)
+    ttft: float | None = None
+    if medir_ttft:
+        mensaje_ia, ttft = _en_streaming(llm, mensajes, inicio)
+    else:
+        mensaje_ia = cadena_generacion(llm).invoke(entrada)
     latencia = time.perf_counter() - inicio
     respuesta = StrOutputParser().invoke(mensaje_ia).strip()
 
@@ -209,15 +218,29 @@ def responder(
         recuperacion=recuperacion,
         prompt=mensajes_como_texto(mensajes),
         llamadas=1,
-        metadatos=metadatos_de(mensaje_ia, llm, latencia),
+        metadatos=metadatos_de(mensaje_ia, llm, latencia, ttft),
     )
     resultado.checks = checks.validar_rag(
         respuesta, pregunta, recuperacion.fuentes, contexto, False, es_credito=es_credito
     )
+    resultado.checks.append(checks.respuesta_completa(resultado.metadatos.get("finish_reason")))
     return resultado
 
 
-def metadatos_de(mensaje: AIMessage, llm: BaseChatModel, latencia_s: float) -> dict[str, Any]:
+def _en_streaming(llm: BaseChatModel, mensajes: list[BaseMessage], inicio: float):
+    """Consume el stream sumando los fragmentos; devuelve el mensaje completo y el TTFT."""
+    total = None
+    ttft = None
+    for fragmento in llm.stream(mensajes):
+        if ttft is None and StrOutputParser().invoke(fragmento):
+            ttft = time.perf_counter() - inicio
+        total = fragmento if total is None else total + fragmento
+    return total or AIMessage(""), ttft
+
+
+def metadatos_de(
+    mensaje: AIMessage, llm: BaseChatModel, latencia_s: float, ttft_s: float | None = None
+) -> dict[str, Any]:
     """Proveedor, modelo, latencia y tokens, con las mismas claves que los reportes del T1."""
     uso = getattr(mensaje, "usage_metadata", None) or {}
     modelo = (
@@ -225,9 +248,14 @@ def metadatos_de(mensaje: AIMessage, llm: BaseChatModel, latencia_s: float) -> d
         or getattr(llm, "model_name", None)
         or getattr(llm, "model", "?")
     )
+    meta = mensaje.response_metadata
     return {
         "modelo": modelo,
+        "finish_reason": meta.get("finish_reason")
+        or meta.get("stop_reason")
+        or meta.get("done_reason"),
         "latencia_s": round(latencia_s, 3),
+        "ttft_s": round(ttft_s, 3) if ttft_s is not None else None,
         "tokens_entrada": uso.get("input_tokens"),
         "tokens_salida": uso.get("output_tokens"),
     }

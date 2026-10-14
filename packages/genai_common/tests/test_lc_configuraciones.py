@@ -78,7 +78,7 @@ def test_gemini_es_chatgooglegenerativeai(monkeypatch):
     monkeypatch.setenv("GEMINI_API_KEY", "clave-de-prueba")
     modelo = chat_model_from_profile("gemini", temperature=0.1, max_tokens=300)
     assert isinstance(modelo, ChatGoogleGenerativeAI)
-    assert modelo.temperature == 0.1
+    assert modelo.temperature is None  # flash-lite ignora temperature: se omite y no hay aviso
     assert modelo.max_output_tokens == 300
     assert modelo.model.endswith(get_profile("gemini").model)
 
@@ -193,3 +193,28 @@ def test_llmclient_envia_extra_body(monkeypatch):
         cliente.chat([{"role": "user", "content": "hola"}])
     assert recibidos["extra_body"] == {"output_config": {"effort": "low"}}
     assert "output_config" not in recibidos
+
+
+def test_llmclient_aplica_max_tokens_min(monkeypatch):
+    """Las cadenas del Taller 1 piden max_tokens=600; con Haiku 5.5 la respuesta salía cortada."""
+    from genai_common import LLMClient
+
+    monkeypatch.setenv("CLAVE_X", "k")
+    perfil = ProviderProfile(
+        name="x",
+        base_url="http://x/v1",
+        api_key_env="CLAVE_X",
+        model="m",
+        extra={"max_tokens_min": 4000},
+    )
+    cliente = LLMClient(perfil, "m")
+    recibidos = {}
+
+    def falso_create(**kwargs):
+        recibidos.update(kwargs)
+        raise RuntimeError("sin red")
+
+    monkeypatch.setattr(cliente._client.chat.completions, "create", falso_create)
+    with pytest.raises(RuntimeError):
+        cliente.chat([{"role": "user", "content": "hola"}], max_tokens=600)
+    assert recibidos["max_tokens"] == 4000

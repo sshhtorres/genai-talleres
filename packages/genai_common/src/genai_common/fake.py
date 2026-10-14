@@ -51,6 +51,7 @@ class FakeLLMClient(LLMClient):
             latency_s=0.0,
             prompt_tokens=len(texto_prompt.split()),
             completion_tokens=len(salida.split()),
+            finish_reason="stop",
         )
 
     def chat_json(

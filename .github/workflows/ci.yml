@@ -26,3 +26,48 @@ jobs:
 
       - name: Tests (proveedor fake, sin API keys)
         run: uv run pytest -q
+
+  integracion:
+    # Pruebas de integración del Taller 2 contra un Postgres + pgvector real, con embeddings falsos:
+    # sin claves de API ni Ollama. Se excluyen del job anterior con el marcador `integration`.
+    runs-on: ubuntu-latest
+    services:
+      pgvector:
+        image: pgvector/pgvector:0.8.7-pg17
+        env:
+          POSTGRES_USER: ecomarket
+          POSTGRES_PASSWORD: ecomarket
+          POSTGRES_DB: ecomarket_kb
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U ecomarket -d ecomarket_kb"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    env:
+      PG_HOST: localhost
+      PG_PORT: "5433"
+      PG_USER: ecomarket
+      PG_PASSWORD: ecomarket
+      PG_DB: ecomarket_kb
+      TALLER02_EXIGIR_PG: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Sincronizar dependencias
+        run: uv sync --all-groups
+
+      - name: Extensión vector
+        run: |
+          sudo apt-get install -y -q postgresql-client
+          PGPASSWORD=ecomarket psql -h localhost -p 5433 -U ecomarket -d ecomarket_kb \
+            -c "CREATE EXTENSION IF NOT EXISTS vector;"
+
+      - name: Pruebas de integración (pgvector + embeddings falsos)
+        run: uv run pytest -q -m integration

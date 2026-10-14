@@ -14,7 +14,16 @@ from genai_common.configuraciones import (
 )
 from genai_common.embeddings import list_embedding_profiles
 
-from . import atencion, chunking, componentes, indexing, servicios
+from . import (
+    atencion,
+    chunking,
+    componentes,
+    enriquecimiento,
+    evaluation,
+    experimentos,
+    indexing,
+    servicios,
+)
 from .chains import VARIANTES, responder
 from .config import OUTPUTS_DIR
 from .store import BACKENDS, crear_almacen
@@ -163,6 +172,13 @@ def indexar(
         str, typer.Option("--estrategia", help="por_tipo | fija300 | fija1000")
     ] = chunking.ESTRATEGIA_POR_DEFECTO,
     reset: Annotated[bool, typer.Option("--reset", help="Borra y recrea la tabla")] = False,
+    enriquecer_ingles: Annotated[
+        bool,
+        typer.Option(
+            "--enriquecer-ingles",
+            help="E7: antepone el resumen en español a las fichas en inglés (tabla …_enriq)",
+        ),
+    ] = False,
     backend: BackendOpt = "pgvector",
     pausa: Annotated[
         float | None, typer.Option("--pausa", help="Segundos entre lotes (nivel gratuito)")
@@ -178,9 +194,15 @@ def indexar(
     """Carga, divide, embebe e indexa la base de conocimiento (idempotente)."""
     perfil = _salir_si_error(componentes.perfil_embeddings, embeddings)
     emb = _salir_si_error(componentes.armar_embeddings, perfil)
-    chunks = indexing.preparar_chunks(estrategia)
+    chunks = _salir_si_error(indexing.preparar_chunks, estrategia, enriquecer_ingles)
     almacen = _salir_si_error(
-        crear_almacen, emb, perfil, backend=backend, estrategia=estrategia, reset=reset
+        crear_almacen,
+        emb,
+        perfil,
+        backend=backend,
+        estrategia=estrategia,
+        sufijo="enriq" if enriquecer_ingles else "",
+        reset=reset,
     )
     typer.secho(
         f"Indexando {len(chunks)} chunks ({estrategia}) con {perfil.name} "
@@ -259,7 +281,12 @@ def atender(
         mensaje, partes.almacen, llm, cliente_t1, llm_router, variante=variante, k=k
     )
     c = r.clasificacion
-    origen = {"tracking": "regla en código, sin LLM", "llm": "LLM", "respaldo": "respaldo"}
+    origen = {
+        "tracking": "regla en código, sin LLM",
+        "llm": "LLM",
+        "respaldo": "respaldo",
+        "rescate_rag": "el router dijo fuera de alcance, pero la base tiene evidencia",
+    }
     _titulo(f"Ruta: {r.ruta} ({origen[c.origen]})")
     if c.trackings:
         typer.echo(f"  trackings: {', '.join(c.trackings)}")
@@ -275,6 +302,121 @@ def atender(
             color = typer.colors.GREEN if ok else typer.colors.RED
             typer.secho(f"  {_marca(ok)} {nombre}: {detalle}", fg=color)
     typer.secho(f"\n[{r.llamadas} llamada(s) en total]", fg=typer.colors.BRIGHT_BLACK)
+
+
+@app.command()
+def calibrar(
+    embeddings: EmbeddingsOpt = None,
+    backend: BackendOpt = "pgvector",
+    guardar: Annotated[
+        bool, typer.Option("--guardar/--no-guardar", help="Escribe el umbral en parametros.toml")
+    ] = True,
+) -> None:
+    """Calibra el umbral de abstención del perfil de embeddings con el set de evaluación."""
+    perfil = _salir_si_error(componentes.perfil_embeddings, embeddings)
+    almacen = _salir_si_error(experimentos.almacen_listo, perfil.name, backend)
+    grupos = evaluation.mejores_scores(almacen)
+    cal = evaluation.calibrar_umbral(perfil.name, grupos)
+    hist = evaluation.histograma(cal)
+    _titulo(f"Mejores scores ({perfil.name}) · D=dentro F=fuera T=translingüe")
+    for linea in hist:
+        typer.echo(f"  {linea}")
+    typer.echo(
+        f"\n  Umbral propuesto: {cal.umbral} · exactitud {cal.exactitud} · "
+        f"translingües que se abstendrían: {cal.abstenciones_translingues}"
+    )
+    if cal.nota:
+        typer.secho(f"  {cal.nota}", fg=typer.colors.YELLOW)
+    detalle = [
+        f"| {grupo} | {caso} | {score:.4f} |"
+        for grupo, filas in grupos.items()
+        for caso, score in filas
+    ]
+    _, md = evaluation.escribir_reporte(
+        "calibracion",
+        f"Calibración del umbral de abstención — {perfil.name}",
+        [
+            (
+                "Resultado",
+                [
+                    f"- **Umbral propuesto:** {cal.umbral}",
+                    f"- **Exactitud abstenerse/responder:** {cal.exactitud}",
+                    f"- **Translingües que se abstendrían:** {cal.abstenciones_translingues}",
+                    *([f"- {cal.nota}"] if cal.nota else []),
+                ],
+            ),
+            ("Histograma (D=dentro, F=fuera, T=translingüe)", ["```text", *hist, "```"]),
+            ("Mejor score por caso", ["| Grupo | Caso | Score |", "|---|---|---:|", *detalle]),
+        ],
+        {"calibracion": cal, "grupos": grupos},
+        OUTPUTS_DIR,
+        sufijo=perfil.name,
+    )
+    if guardar:
+        evaluation.guardar_umbral(perfil.name, cal.umbral)
+        typer.echo(
+            f"  Guardado en parametros.toml: [recuperacion.umbral] {perfil.name} = {cal.umbral}"
+        )
+    typer.echo(f"  Evidencia: {md}")
+
+
+@app.command()
+def evaluar(
+    experimento: Annotated[
+        str, typer.Option("--experimento", help=" | ".join(experimentos.EXPERIMENTOS))
+    ],
+    proveedor: Annotated[
+        str | None, typer.Option("--proveedor", help="gemini | anthropic | ollama | fake")
+    ] = None,
+    embeddings: EmbeddingsOpt = None,
+    backend: BackendOpt = "pgvector",
+    pausa: Annotated[
+        float, typer.Option("--pausa", help="Segundos entre llamadas al LLM (nivel gratuito)")
+    ] = 4.0,
+    limite: Annotated[int | None, typer.Option("--limite", help="Máximo de casos")] = None,
+    perfiles: Annotated[
+        str, typer.Option("--perfiles", help="E4: perfiles de embeddings separados por comas")
+    ] = ",".join(experimentos.PERFILES_E4),
+    configuraciones: Annotated[
+        str,
+        typer.Option(
+            "--configuraciones", help="E8: p. ej. nube,hibrida:gemini,hibrida:anthropic,local"
+        ),
+    ] = ",".join(experimentos.CONFIGURACIONES_E8),
+) -> None:
+    """Corre un experimento y guarda su evidencia en outputs/."""
+    opciones = experimentos.Opciones(
+        perfiles=tuple(p.strip() for p in perfiles.split(",") if p.strip()),
+        configuraciones=tuple(c.strip() for c in configuraciones.split(",") if c.strip()),
+        embeddings=embeddings,
+        proveedor=proveedor,
+        backend=backend,
+        pausa_s=pausa,
+        limite=limite,
+        progreso=lambda texto: typer.echo(f"  {texto}"),
+    )
+    try:
+        reportes = experimentos.correr(experimento.upper(), opciones)
+    except (ConfigError, ValueError) as exc:
+        typer.secho(f"\n✗ {exc}\n", fg=typer.colors.RED)
+        raise typer.Exit(code=2) from exc
+    typer.secho("\n✓ Evidencia:", fg=typer.colors.GREEN)
+    for ruta in reportes:
+        typer.echo(f"  {ruta}")
+
+
+@app.command()
+def enriquecer(
+    proveedor: Annotated[
+        str | None, typer.Option("--proveedor", help="gemini | anthropic | ollama | fake")
+    ] = None,
+    forzar: Annotated[bool, typer.Option("--forzar", help="Regenera aunque ya exista")] = False,
+) -> None:
+    """E7: genera (una vez) los resúmenes en español de las fichas en inglés."""
+    llm = _salir_si_error(componentes.armar_llm, proveedor)
+    for sku, estado in enriquecimiento.generar(llm, forzar=forzar):
+        typer.echo(f"  {sku}: {estado} → {enriquecimiento.ruta_resumen(sku)}")
+    typer.echo("\nAhora: taller02 indexar --enriquecer-ingles [--embeddings …]")
 
 
 def _mostrar_rag(resultado, mostrar_contexto: bool) -> None:

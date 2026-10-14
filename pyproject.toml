@@ -27,9 +27,15 @@ notebooks = ["jupyterlab>=4", "ipykernel>=6"]
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+# El script de clase original se conserva literal, como referencia: no se ajusta a las reglas.
+extend-exclude = ["taller-02-ecomarket-rag/scripts/rag_ejemplo_original.py"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.per-file-ignores]
+# La tabla "Qué cambió y por qué" del script modernizado es más ancha que 100 columnas.
+"taller-02-ecomarket-rag/scripts/rag_ejemplo_modernizado.py" = ["E501"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["genai_common", "taller01", "taller02_rag"]

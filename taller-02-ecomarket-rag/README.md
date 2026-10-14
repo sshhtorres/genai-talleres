@@ -23,10 +23,10 @@ pedidos se siguen consultando por código y la decisión de una devolución sigu
 | H3 | Carga, chunking e indexación (`taller02 indexar`) | Hecho con embeddings `fake`; pendiente la indexación real |
 | H4 | Recuperación y cadena RAG (`taller02 preguntar`) | Hecho con LLM `fake`; pendiente con modelos reales |
 | H5 | Router e integración con el Taller 1 (`taller02 atender`) | Hecho con modelos `fake`; pendiente con modelos reales |
-| H6 | Script de clase, original y modernizado | Pendiente |
-| H7 | Evaluación y experimentos | Pendiente |
+| H6 | Script de clase, original y modernizado (`scripts/`) | Hecho; pendiente la ejecución con Ollama |
+| H7 | Evaluación y experimentos (`taller02 evaluar`, `calibrar`) | Código hecho y probado con modelos `fake`; pendientes las corridas reales |
 | H8 | Documentos de las fases y notebook | Pendiente |
-| H9 | Calidad, CI y README final | Pendiente |
+| H9 | Calidad, CI y README final | CI con job de integración (pgvector); pendiente el README final |
 
 ## Puesta en marcha
 
@@ -85,6 +85,47 @@ uv run taller02 atender "¿Qué hago con los frascos de vidrio vacíos?"     # c
 | `consulta_general` | Cadena RAG sobre toda la base | Router |
 | `fuera_de_alcance` | Respuesta desde código | Router, o una etiqueta no válida |
 
+## Evaluación y experimentos
+
+```bash
+uv run taller02 calibrar --embeddings gemini            # umbral de abstención del perfil
+uv run taller02 evaluar --experimento E2 --embeddings gemini     # chunking (sin LLM)
+uv run taller02 evaluar --experimento E4                          # embeddings (sin LLM)
+uv run taller02 enriquecer && uv run taller02 indexar --enriquecer-ingles
+uv run taller02 evaluar --experimento E7 --embeddings gemini     # fichas en inglés (sin LLM)
+uv run taller02 evaluar --experimento E1 --pausa 4               # prompt basico vs mejorado
+uv run taller02 evaluar --experimento E3 --pausa 4               # k = 1, 4, 8
+uv run taller02 evaluar --experimento E5 --pausa 4               # sin RAG vs con RAG
+uv run taller02 evaluar --experimento E8 --limite 10             # nube, hibrida y local
+```
+
+| Exp. | Qué se modifica | LLM | Requisitos previos |
+|---|---|---|---|
+| E1 | Prompt `basico` vs `mejorado` | Sí | Base indexada con los embeddings de `RAG_CONFIG` |
+| E2 | Chunking `por_tipo` / `fija300` / `fija1000` | No | `indexar --estrategia …` para las tres |
+| E3 | *k* = 1, 4, 8 | Sí | Base indexada |
+| E4 | `gemini` / `embeddinggemma` / `bge_m3` | No | `indexar --embeddings …` para los tres (`--perfiles` elige cuáles) |
+| E5 | Asistente sin RAG vs `atender` con RAG | Sí | Base indexada |
+| E7 | Catálogo tal cual vs fichas en inglés enriquecidas | No | `enriquecer` y `indexar --enriquecer-ingles` |
+| E8 | Configuraciones con *streaming*: TTFT, latencia, tokens y costo | Sí | Bases de `gemini` y `embeddinggemma`; Ollama; `--configuraciones` elige cuáles |
+
+Las métricas de recuperación (hit@k, MRR) cuentan un acierto cuando un chunk recuperado contiene
+la `evidencia` literal del caso. `calibrar` muestra la distribución del mejor *score* dentro y
+fuera de alcance (con los translingües aparte), propone el umbral y lo guarda en
+`parametros.toml`, uno por perfil de embeddings. Todo queda en `outputs/` con el formato
+`<experimento>_<fecha>_<proveedor o perfil>.{md,jsonl|json}`.
+
+## Script de clase
+
+```bash
+uv run --with "langchain-chroma==1.1.0" python taller-02-ecomarket-rag/scripts/rag_ejemplo_modernizado.py
+```
+
+Los mismos 7 pasos del ejemplo de clase con las APIs actuales (embeddinggemma con prefijos en vez
+de `llama2`, `langchain_chroma`, LCEL en vez de `RetrievalQA`, `.invoke` en vez de `.run`, fuentes en
+la respuesta). Al final del archivo está la tabla "Qué cambió y por qué". Chroma no es dependencia
+del taller: `uv run --with` lo instala solo para esa ejecución.
+
 ## Configuraciones de ejecución
 
 Se elige con `RAG_CONFIG` en el `.env`; cambiar de configuración no requiere tocar el código. Embedding
@@ -109,10 +150,22 @@ taller):
 | `gpu-12gb` | GPU con ~12 GB | `gemma4:12b` |
 | `gpu-24gb` | GPU con 24 GB | `gemma4:26b` |
 
-Medido en un equipo solo CPU (ARM64, WSL2): `gemma4:e4b` ocupa ≈ 7,1 GiB de RAM residente y
-`embeddinggemma` ≈ 0,7 GiB, más Postgres. Cabe holgado en `cpu-16gb`; con unos 11 GiB visibles, la
-sugerencia `cpu-8gb` es la correcta. Gemma 4 piensa por defecto: el perfil `ollama` lo desactiva con
-`reasoning_effort = "none"` (sin eso, una respuesta corta tardó entre 36 y 89 s).
+Medido en un equipo solo CPU (Snapdragon X, ARM64, WSL2 con 19 GiB, 2026-10-14):
+
+| | `nube` | `hibrida` (Haiku 5.5) | `local` (`gemma4:e4b`) |
+|---|---:|---:|---:|
+| Indexar las 89 secciones | 3,3 s | 214 s (embeddinggemma en CPU) | 214 s |
+| `atender`, por pregunta | 3,6–4,5 s | 5,2–15,2 s | 20–160 s |
+
+- `gemma4:e4b` ocupa ≈ 7,1 GiB de RAM residente y `embeddinggemma` ≈ 0,7 GiB, más Postgres: cabe
+  holgado en `cpu-16gb`; con unos 11 GiB visibles, la sugerencia `cpu-8gb` es la correcta.
+- Gemma 4 piensa por defecto: el perfil `ollama` lo desactiva (`reasoning = false` en LangChain,
+  `reasoning_effort = "none"` en el Taller 1). Aun así, en CPU el cuello de botella es leer el prompt
+  (≈ 38 tokens/s) y cada ruta hace dos llamadas.
+- **`local` sirve para demostrar que todo corre sin salir de la máquina, no para uso interactivo**:
+  los experimentos con LLM se corren completos con `nube` y `hibrida`, y con `local` sobre un
+  subconjunto (`--limite`).
+- La indexación es idempotente: los 3,5 minutos de `embeddinggemma` se pagan una sola vez.
 
 Existe además la configuración `pruebas` (embeddings y LLM falsos, sin red), que usan los tests y la CI.
 

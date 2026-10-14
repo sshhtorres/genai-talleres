@@ -30,6 +30,7 @@ class LLMResponse:
     completion_tokens: int | None = None
     data: dict[str, Any] | None = None  # solo en chat_json
     raw_attempts: list[str] = field(default_factory=list)
+    finish_reason: str | None = None  # "length" = se cortó por max_tokens
 
     def as_metadata(self) -> dict[str, Any]:
         return {
@@ -38,6 +39,7 @@ class LLMResponse:
             "latencia_s": round(self.latency_s, 3),
             "tokens_entrada": self.prompt_tokens,
             "tokens_salida": self.completion_tokens,
+            "finish_reason": self.finish_reason,
         }
 
 
@@ -100,6 +102,7 @@ class LLMClient:
             latency_s=latencia,
             prompt_tokens=getattr(uso, "prompt_tokens", None),
             completion_tokens=getattr(uso, "completion_tokens", None),
+            finish_reason=getattr(respuesta.choices[0], "finish_reason", None),
         )
 
     def chat_json(
@@ -150,7 +153,9 @@ class LLMClient:
             "model": self.model,
             "messages": messages,
             "temperature": temperature,
-            "max_tokens": max_tokens,
+            # Los modelos que razonan gastan parte de max_tokens pensando: el perfil fija un mínimo.
+            # Sin esto, Haiku 5.5 cortó a la mitad una respuesta de las cadenas del Taller 1.
+            "max_tokens": max(max_tokens, int(self.profile.extra.get("max_tokens_min", 0))),
         }
         # Cada proveedor declara en providers.toml qué parámetros no acepta y cuáles añade.
         # Así el código común no conoce las particularidades de ningún proveedor.

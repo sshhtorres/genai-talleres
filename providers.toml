@@ -23,6 +23,9 @@ notas = "Tier gratuito. Motor del 80% repetitivo: gemini-3.5-flash-lite. El mode
 # el endpoint compatible con OpenAI, a través de LLMClient.
 [providers.gemini.langchain]
 integracion = "google_genai"
+# gemini-3.5-flash-lite usa valores de muestreo fijos: ChatGoogleGenerativeAI avisa en cada llamada
+# que ignora `temperature`. Se omite solo aquí; el Taller 1 (LLMClient) no cambia.
+omit_params = ["temperature"]
 
 [providers.ollama]
 base_url = "http://localhost:11434/v1"
@@ -66,6 +69,10 @@ omit_params = ["temperature", "top_p", "top_k"]
 # Por la capa compatible: `reasoning_effort` se ignora, `thinking` adaptativo da 400 y
 # `output_config.effort` se acepta solo vía `extra_body` (sin ahorro medible en una muestra).
 max_tokens_min = 4000
+# Precio por millón de tokens (prompts ≤ 100.000 tokens), verificado en la documentación de Anthropic
+# el 2026-10-14. Solo se registran los precios verificados; los demás modelos quedan sin costo
+# estimado en el experimento E8.
+precios_usd_mtok = { "claude-haiku-5-5" = { entrada = 0.10, salida = 0.50 } }
 notas = "Capa de compatibilidad OpenAI de Anthropic. DE PAGO: se usa como segundo proveedor en la comparación de la Fase 3."
 
 [providers.anthropic.langchain]

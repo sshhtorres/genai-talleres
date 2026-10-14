@@ -36,9 +36,11 @@ CONSULTAS_DE_HUMO = {
 _NAMESPACE = uuid.UUID("6f1f2b0e-2b7a-4c55-9a3e-0e5c0f3a7d21")
 
 
-def preparar_chunks(estrategia: str = chunking.ESTRATEGIA_POR_DEFECTO) -> list[Document]:
+def preparar_chunks(
+    estrategia: str = chunking.ESTRATEGIA_POR_DEFECTO, enriquecer_ingles: bool = False
+) -> list[Document]:
     """Pasos 1 a 3: carga, limpieza y división de los cuatro tipos de documento."""
-    return enriquecer(chunking.dividir(loaders.cargar_todo(), estrategia))
+    return enriquecer(chunking.dividir(loaders.cargar_todo(enriquecer_ingles), estrategia))
 
 
 def enriquecer(chunks: list[Document]) -> list[Document]:

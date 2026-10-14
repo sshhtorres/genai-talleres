@@ -23,7 +23,7 @@ from taller01 import chains as t1_chains
 
 from . import checks, router
 from .chains import ResultadoRAG, cargar_prompts, formatear_contexto, responder
-from .retrieval import recuperar
+from .retrieval import recuperar, umbral_de
 from .store import AlmacenVectorial
 
 FILTRO_DEVOLUCIONES = {"area": "devoluciones"}
@@ -59,6 +59,7 @@ def atender(
 ) -> ResultadoAtencion:
     """Clasifica el mensaje y lo atiende con la cadena de su ruta."""
     clasificacion = router.clasificar(mensaje, llm_router or llm)
+    _rescatar_si_hay_evidencia(clasificacion, mensaje, almacen)
     ruta = clasificacion.intencion
     base = {"0_router": clasificacion.resumen()}
 
@@ -109,6 +110,24 @@ def atender(
     )
 
 
+def _rescatar_si_hay_evidencia(
+    clasificacion: router.Clasificacion, mensaje: str, almacen: AlmacenVectorial
+) -> None:
+    """Red de seguridad sin LLM: si el router dijo fuera_de_alcance pero la base sí tiene un
+    fragmento por encima del umbral calibrado, el mensaje se atiende como consulta general.
+
+    Solo actúa con un umbral calibrado (> 0): con el umbral desactivado, todo superaría la prueba.
+    Cuesta un embedding de la pregunta, mucho menos que perder una respuesta que el RAG sí tenía.
+    """
+    umbral = umbral_de(almacen.perfil)
+    if clasificacion.intencion != "fuera_de_alcance" or umbral <= 0:
+        return
+    mejor = recuperar(almacen, mensaje, k=1, umbral=umbral)
+    if mejor.hay_evidencia:
+        clasificacion.intencion = "consulta_general"
+        clasificacion.origen = "rescate_rag"
+
+
 def _desde_rag(mensaje, ruta, clasificacion, r: ResultadoRAG, base, extra) -> ResultadoAtencion:
     return ResultadoAtencion(
         mensaje=mensaje,
@@ -125,12 +144,16 @@ def _desde_rag(mensaje, ruta, clasificacion, r: ResultadoRAG, base, extra) -> Re
 
 
 def _desde_t1(mensaje, ruta, clasificacion, r, base, fuentes) -> ResultadoAtencion:
+    # Los chequeos del Taller 1 no miran si la respuesta se cortó; aquí se añade al final.
+    completa = (
+        [] if r.llamadas == 0 else [checks.respuesta_completa(r.metadatos.get("finish_reason"))]
+    )
     return ResultadoAtencion(
         mensaje=mensaje,
         ruta=ruta,
         clasificacion=clasificacion,
         respuesta=r.respuesta,
-        checks=list(r.checks),
+        checks=[*r.checks, *completa],
         fuentes=fuentes,
         llamadas=clasificacion.llamadas + r.llamadas,
         pasos={**base, **r.pasos},
