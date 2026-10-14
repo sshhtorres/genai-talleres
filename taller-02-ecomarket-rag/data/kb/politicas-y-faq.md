@@ -25,6 +25,9 @@ Una devolución de un producto retornable procede cuando se cumplen las cuatro c
 3. Existe un pedido asociado con estado entregado.
 4. La solicitud se hace dentro de los 30 días calendario siguientes a la entrega.
 
+Algunos productos tienen una condición adicional que aparece en su ficha del catálogo, por ejemplo
+que el empaque esté sellado.
+
 ## Productos no retornables
 
 Por razones sanitarias, de inocuidad o de personalización, estos productos no admiten devolución por
@@ -45,6 +48,9 @@ productos no retornables. El cliente debe reportarlo dentro de los 5 días sigui
 cuando sea posible, adjuntar una foto. Un agente humano revisa cada caso antes de aprobar la
 reposición o el reembolso.
 
+Este plazo de 5 días aplica a los productos que llegan en mal estado. Las fallas que aparecen
+después, durante el uso normal del producto, se atienden por la garantía legal.
+
 ## Garantía legal
 
 Todos los productos de EcoMarket tienen la garantía legal que establece el artículo 7 de la Ley 1480
@@ -52,6 +58,11 @@ de 2011 (Estatuto del Consumidor): el producto debe funcionar y cumplir las cond
 idoneidad ofrecidas. La garantía legal no se puede limitar ni condicionar con esta política. Para los
 productos electrónicos, como el cargador solar portátil, la garantía legal es de un año contado desde
 la entrega.
+
+La garantía legal cubre las fallas que aparezcan durante su término, aunque el producto ya se haya
+usado y aunque hayan pasado el plazo de devolución o el de 5 días para reportar un producto que llegó
+dañado. El cliente la solicita por el chat o con un agente humano; EcoMarket revisa el producto y
+ofrece su reparación, su cambio por uno igual o la devolución del dinero.
 
 ## Derecho de retracto
 
@@ -112,6 +123,13 @@ Repórtelo dentro de los 5 días siguientes a la entrega y, si puede, adjunte un
 llega dañado o defectuoso da derecho a reposición o reembolso aunque sea de una categoría no
 retornable. Un agente humano revisa el caso antes de aprobarlo.
 
+### Mi cargador solar dejó de funcionar a los tres meses, ¿qué hago?
+
+Solicite la garantía legal por el chat o con un agente humano. El cargador solar tiene un año de
+garantía legal desde la entrega, que cubre las fallas que aparecen durante el uso normal aunque ya
+hayan pasado los 30 días de devolución. EcoMarket revisa el producto y ofrece su reparación, su
+cambio o la devolución del dinero.
+
 ### ¿Me devuelven el dinero o me dan un cupón?
 
 Si la devolución procede, el reembolso se hace al mismo medio de pago de la compra: de 5 a 10 días
@@ -152,9 +170,9 @@ gratis en compras desde 150.000 pesos colombianos, después de aplicar cupones d
 
 ## Transportadoras
 
-EcoMarket trabaja con dos transportadoras aliadas: EcoEnvíos, para la mayoría de ciudades, y Andina
-Cargo, para la región Andina y los municipios alejados. La transportadora de cada pedido se asigna al
-despacharlo y aparece en el correo de confirmación.
+EcoMarket trabaja con dos transportadoras aliadas, EcoEnvíos y Andina Cargo. La transportadora de cada
+pedido se asigna al despacharlo, según la ciudad de destino y la disponibilidad de cada una, y aparece
+en el correo de confirmación. Los municipios alejados o de difícil acceso los atiende Andina Cargo.
 
 ## Seguimiento del pedido
 

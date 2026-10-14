@@ -162,6 +162,13 @@ def test_catalogo_tiene_los_15_productos_del_taller_1():
         assert (fila["retornable"] == "true") == original["retornable"], fila["sku"]
 
 
+def test_catalogo_conserva_las_notas_de_retorno_del_taller_1():
+    t1_productos = {p["id"]: p for p in t1.load_catalogo()["productos"]}
+    for fila in kb.catalogo():
+        if fila["idioma"] == "es":
+            assert fila["nota_retorno"] == t1_productos[fila["sku"]]["nota_retorno"], fila["sku"]
+
+
 def test_catalogo_sin_precio_ni_stock():
     columnas = set(kb.catalogo()[0])
     assert not {"precio", "stock", "price"} & columnas
@@ -249,8 +256,10 @@ def test_casos_con_esquema_valido_e_ids_unicos():
         "debe_abstenerse",
         "idioma_respuesta",
     }
+    opcionales = {"nota", "cifras_con_respaldo"}
     for caso in casos:
         assert obligatorios <= set(caso), caso["id"]
+        assert set(caso) <= obligatorios | opcionales, set(caso) - obligatorios - opcionales
         assert caso["tipo"] in TIPOS, caso["id"]
         assert caso["intencion_esperada"] in INTENCIONES, caso["id"]
         assert caso["idioma_respuesta"] in {"es", "en"}, caso["id"]
