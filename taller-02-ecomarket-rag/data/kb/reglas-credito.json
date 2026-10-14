@@ -1,0 +1,152 @@
+{
+  "titulo": "Reglas de la financiación de compras en cuotas de EcoMarket",
+  "version": "1.0",
+  "vigente_desde": "2026-10-01",
+  "nota": "Documento sintético creado para el Taller 2 del curso de IA Generativa. EcoMarket es una empresa ficticia. Las reglas son generales: no contienen datos de ningún cliente ni tasas reales. Las leyes se citan solo como marco.",
+  "reglas": [
+    {
+      "id": "CR-01",
+      "tema": "Requisitos para solicitar la financiación",
+      "regla": "Pueden solicitar la financiación en cuotas las personas mayores de 18 años con cédula de ciudadanía colombiana vigente y una cuenta de EcoMarket con correo verificado.",
+      "condiciones": "La solicitud se hace en la página de pago, al elegir 'Pagar en cuotas'. No se aceptan solicitudes a nombre de otra persona.",
+      "ejemplo": "Un cliente de 17 años no puede solicitar la financiación, aunque tenga una cuenta verificada.",
+      "vigente_desde": "2026-10-01"
+    },
+    {
+      "id": "CR-02",
+      "tema": "Validación de identidad",
+      "regla": "Antes de aprobar la primera compra financiada, EcoMarket valida la identidad del solicitante con preguntas de seguridad y una foto del documento de identidad.",
+      "condiciones": "La validación se hace una sola vez por cuenta. Si no se supera, la financiación no está disponible y el cliente puede pagar con otro medio.",
+      "ejemplo": "Si las preguntas de seguridad no coinciden, la página de pago ofrece pagar con tarjeta o PSE.",
+      "vigente_desde": "2026-10-01"
+    },
+    {
+      "id": "CR-03",
+      "tema": "Cupo de financiación",
+      "regla": "El cupo de cada cliente lo asigna el sistema de evaluación de EcoMarket según la validación de identidad y el historial de pagos en la tienda. El cupo máximo para cualquier cliente es de 3.000.000 de pesos.",
+      "condiciones": "El cupo disponible se consulta en la sección 'Mis créditos' de la cuenta. El cupo se libera a medida que se pagan las cuotas.",
+      "ejemplo": "Un cliente nuevo puede recibir un cupo inicial menor, que aumenta con el pago puntual de sus cuotas.",
+      "vigente_desde": "2026-10-01"
+    },
+    {
+      "id": "CR-04",
+      "tema": "Quién aprueba la financiación",
+      "regla": "La aprobación de una compra financiada la decide únicamente el sistema de evaluación en la página de pago. Ni los asesores ni el asistente virtual pueden aprobar un crédito, asignar o prometer un cupo.",
+      "condiciones": "El resultado de la evaluación se muestra en la página de pago antes de confirmar la compra.",
+      "ejemplo": "Si un cliente pide por chat que le aprueben un crédito, se le explica cómo solicitarlo en la página de pago.",
+      "vigente_desde": "2026-10-01"
+    },
+    {
+      "id": "CR-05",
+      "tema": "Monto mínimo financiable",
+      "regla": "Solo se pueden financiar compras de 200.000 pesos o más, después de aplicar los cupones de descuento.",
+      "condiciones": "El costo del envío no cuenta para alcanzar el monto mínimo.",
+      "ejemplo": "Una compra de 180.000 pesos más el envío no se puede financiar.",
+      "vigente_desde": "2026-10-01"
+    },
+    {
+      "id": "CR-06",
+      "tema": "Número de cuotas según el monto",
+      "regla": "El número máximo de cuotas mensuales depende del monto financiado: de 200.000 a 499.999 pesos, hasta 3 cuotas; de 500.000 a 999.999 pesos, hasta 6 cuotas; desde 1.000.000 de pesos, hasta 12 cuotas.",
+      "condiciones": "El cliente elige el número de cuotas dentro del máximo permitido en la página de pago.",
+      "ejemplo": "Una compra de 650.000 pesos se puede pagar en 2 a 6 cuotas mensuales.",
+      "vigente_desde": "2026-10-01"
+    },
+    {
+      "id": "CR-07",
+      "tema": "Tasa de interés",
+      "regla": "La financiación cobra un interés remuneratorio que nunca supera la tasa de usura vigente certificada por la Superintendencia Financiera de Colombia. La tasa aplicable se informa en el simulador antes de confirmar la compra.",
+      "condiciones": "La tasa queda fija durante todo el plazo de la compra financiada.",
+      "ejemplo": "Dos compras financiadas en meses distintos pueden tener tasas distintas, porque cada una toma la tasa vigente al confirmarla.",
+      "vigente_desde": "2026-10-01"
+    },
+    {
+      "id": "CR-08",
+      "tema": "Simulador de cuotas",
+      "regla": "El valor de cada cuota, la tasa de interés y el costo total del crédito se consultan en el simulador de la página de pago antes de confirmar la compra. Es la única fuente oficial de esos valores.",
+      "condiciones": "El simulador no compromete al cliente: la compra solo se financia cuando la confirma.",
+      "ejemplo": "Para saber cuánto pagaría por mes, el cliente usa el simulador con el monto y el número de cuotas que quiere.",
+      "vigente_desde": "2026-10-01"
+    },
+    {
+      "id": "CR-09",
+      "tema": "Costos adicionales",
+      "regla": "La financiación de EcoMarket no cobra cuota de manejo, estudio de crédito ni seguros obligatorios.",
+      "condiciones": "El único costo del crédito es el interés remuneratorio informado en el simulador y, si hay retraso, el interés de mora.",
+      "ejemplo": "Si el cliente paga sus cuotas a tiempo, no tiene cargos distintos a los intereses informados.",
+      "vigente_desde": "2026-10-01"
+    },
+    {
+      "id": "CR-10",
+      "tema": "Pago anticipado",
+      "regla": "El cliente puede pagar por anticipado una parte o la totalidad de su compra financiada en cualquier momento, sin penalidad, como lo establece la Ley 1555 de 2012.",
+      "condiciones": "En un pago parcial anticipado, el cliente decide si el abono reduce el número de cuotas o el valor de cada cuota.",
+      "ejemplo": "Un cliente que recibe una prima puede pagar todas sus cuotas pendientes sin ningún cargo adicional.",
+      "vigente_desde": "2026-10-01"
+    },
+    {
+      "id": "CR-11",
+      "tema": "Fechas de corte y de pago",
+      "regla": "Las cuotas se facturan el día 5 de cada mes (fecha de corte) y deben pagarse a más tardar el día 20 del mismo mes.",
+      "condiciones": "La primera cuota se factura en el primer corte posterior a la entrega del pedido.",
+      "ejemplo": "Un pedido entregado el 10 de marzo factura su primera cuota el 5 de abril, con pago hasta el 20 de abril.",
+      "vigente_desde": "2026-10-01"
+    },
+    {
+      "id": "CR-12",
+      "tema": "Cómo pagar las cuotas",
+      "regla": "Las cuotas se pagan desde la sección 'Mis créditos' de la cuenta, con tarjeta débito, PSE o saldo EcoMarket.",
+      "condiciones": "No se pueden pagar cuotas con tarjeta de crédito ni con otra financiación.",
+      "ejemplo": "Un cliente con saldo EcoMarket disponible puede usarlo para pagar su cuota del mes.",
+      "vigente_desde": "2026-10-01"
+    },
+    {
+      "id": "CR-13",
+      "tema": "Mora e intereses de mora",
+      "regla": "Si una cuota no se paga a más tardar en la fecha límite, la cuenta entra en mora desde el día siguiente y se cobra interés de mora, que tampoco supera la tasa de usura vigente.",
+      "condiciones": "Mientras haya cuotas en mora, el cupo de financiación queda bloqueado para nuevas compras.",
+      "ejemplo": "Una cuota con fecha límite el día 20 que se paga el día 23 genera interés de mora por los días de retraso.",
+      "vigente_desde": "2026-10-01"
+    },
+    {
+      "id": "CR-14",
+      "tema": "Aviso previo antes de reportar a centrales de riesgo",
+      "regla": "Antes de reportar información negativa a una central de riesgo, EcoMarket envía una comunicación previa al cliente, como lo exige la Ley 1266 de 2008, para que pueda pagar o controvertir la deuda.",
+      "condiciones": "El reporte solo puede hacerse después de 20 días calendario contados desde el envío de la comunicación previa.",
+      "ejemplo": "Si el cliente paga la cuota vencida dentro de ese plazo, no se hace el reporte negativo.",
+      "vigente_desde": "2026-10-01"
+    },
+    {
+      "id": "CR-15",
+      "tema": "Devolución de una compra financiada",
+      "regla": "Si se aprueba la devolución de un producto comprado con financiación, se anulan las cuotas pendientes de ese producto, y las cuotas ya pagadas se reembolsan como saldo EcoMarket o al medio con el que se pagaron, a elección del cliente.",
+      "condiciones": "La devolución sigue la política de devoluciones: la financiación no cambia los plazos ni las categorías no retornables.",
+      "ejemplo": "Si un cliente devuelve una compostera financiada a 6 cuotas después de pagar 2, se anulan las 4 pendientes y se le reembolsan las 2 pagadas.",
+      "vigente_desde": "2026-10-01"
+    },
+    {
+      "id": "CR-16",
+      "tema": "Productos y compras no financiables",
+      "regla": "No se pueden financiar las tarjetas de regalo ni los productos a granel.",
+      "condiciones": "Si el carrito incluye productos no financiables, esos productos deben pagarse con otro medio en la misma compra.",
+      "ejemplo": "Una compra con una tarjeta de regalo y una compostera solo puede financiar la compostera.",
+      "vigente_desde": "2026-10-01"
+    },
+    {
+      "id": "CR-17",
+      "tema": "Consulta del estado del crédito de cada cliente",
+      "regla": "El saldo, las cuotas pendientes, el cupo disponible y el estado de mora de cada cliente son datos personales: solo se consultan en la sección 'Mis créditos' después de iniciar sesión, o con un asesor que verifique la identidad del cliente.",
+      "condiciones": "El asistente virtual no tiene acceso a la información de crédito de ningún cliente.",
+      "ejemplo": "Si un cliente pregunta por chat cuánto debe, se le indica que lo consulte en 'Mis créditos'.",
+      "vigente_desde": "2026-10-01"
+    },
+    {
+      "id": "CR-18",
+      "tema": "Uso responsable de la financiación",
+      "regla": "EcoMarket no hace recomendaciones sobre si un cliente debe endeudarse. Se recomienda financiar solo compras cuyas cuotas quepan en el presupuesto mensual y revisar el costo total en el simulador.",
+      "condiciones": "Para orientación personalizada, el cliente puede hablar con un asesor de financiación de EcoMarket.",
+      "ejemplo": "Si un cliente pregunta si le conviene financiar una compra, se le explica cómo revisar el costo total en el simulador y se le ofrece hablar con un asesor.",
+      "vigente_desde": "2026-10-01"
+    }
+  ]
+}
