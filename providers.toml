@@ -2,6 +2,8 @@
 # Los IDs cambian rápido: si una llamada falla con 404, actualiza SOLO este archivo.
 
 default = "gemini"
+# Configuración RAG por defecto (Taller 2) si RAG_CONFIG no está definida en el entorno.
+rag_default = "nube"
 
 [providers.gemini]
 base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
@@ -20,19 +22,29 @@ notas = "Tier gratuito. Motor del 80% repetitivo: gemini-3.5-flash-lite. El mode
 [providers.ollama]
 base_url = "http://localhost:11434/v1"
 api_key_env = ""
-model = "qwen2.5:7b"
+# El modelo efectivo lo fija el nivel de hardware ([niveles.*], LOCAL_TIER); este es el de cpu-16gb.
+model = "gemma4:e4b"
+# Pasa a "implementado" solo tras una prueba manual real contra Ollama (Taller 2, H1).
 status = "por_implementar"
-notas = "Ollama local. No requiere key (se envía 'ollama' como placeholder). Perfil definido, no probado."
+notas = "Ollama local por su endpoint compatible con OpenAI (/v1). No requiere key: se envía 'ollama' como valor ficticio."
 
 [providers.anthropic]
 base_url = "https://api.anthropic.com/v1/"
 api_key_env = "ANTHROPIC_API_KEY"
 model = "claude-sonnet-5"
-models = { liviano = "claude-sonnet-5", router = "claude-haiku-4-5-20251001", robusto = "claude-opus-5-5" }
+models = { liviano = "claude-sonnet-5", router = "claude-haiku-5-5", robusto = "claude-opus-5-5" }
 status = "implementado"
 # claude-sonnet-5 rechaza `temperature` ("deprecated for this model"), así que se omite.
 # El determinismo se mantiene con las instrucciones del prompt, no con el parámetro.
-omit_params = ["temperature"]
+# claude-haiku-5-5 (rol router desde el Taller 2, verificado en su documentación el 2026-10-14)
+# también rechaza `top_p` y `top_k` con un error 400. Las corridas del Taller 1 usaron
+# claude-haiku-4-5-20251001 en este rol.
+omit_params = ["temperature", "top_p", "top_k"]
+# Haiku 5.5 piensa de forma adaptativa por defecto y esos tokens cuentan dentro de max_tokens: con
+# un max_tokens pequeño puede cortarse antes de escribir texto (respuesta vacía). La capa
+# compatible con OpenAI ignora `reasoning_effort`, así que el esfuerzo no se puede bajar desde
+# aquí; en su lugar, las cadenas LangChain del Taller 2 nunca piden menos de este valor.
+max_tokens_min = 4000
 notas = "Capa de compatibilidad OpenAI de Anthropic. DE PAGO: se usa como segundo proveedor en la comparación de la Fase 3."
 
 [providers.fake]
@@ -41,3 +53,90 @@ api_key_env = ""
 model = "fake-determinista"
 status = "tests"
 notas = "Proveedor determinístico en memoria. Los tests y la CI nunca llaman a una API real."
+
+# =============================================================================
+# Embeddings (Taller 2). Cada perfil es un espacio vectorial distinto: su tabla en la base es
+# kb_<perfil>_<dimensiones> y NUNCA se mezclan vectores de perfiles distintos, aunque la dimensión
+# coincida (gemini y embeddinggemma son ambos de 768 e incompatibles).
+# =============================================================================
+
+[embeddings.gemini]
+backend = "google"
+model = "gemini-embedding-001"
+dimensions = 768            # MRL: 3072 truncado a 768 (el HNSW de pgvector admite hasta 2000)
+api_key_env = "GEMINI_API_KEY"
+task_type_document = "RETRIEVAL_DOCUMENT"
+task_type_query = "RETRIEVAL_QUERY"
+status = "implementado"
+notas = "Nivel gratuito de la API de Gemini. Configuración nube."
+
+[embeddings.embeddinggemma]
+backend = "ollama"
+model = "embeddinggemma:300m"
+dimensions = 768
+base_url = "http://localhost:11434"
+# Ollama no añade los prefijos de tarea: sin ellos no hay error, pero la recuperación empeora.
+query_prefix = "task: search result | query: "
+document_prefix = "title: none | text: "
+status = "implementado"
+notas = "Local vía Ollama (ollama pull embeddinggemma:300m). Configuraciones hibrida y local."
+
+[embeddings.bge_m3]
+backend = "ollama"
+model = "bge-m3"
+dimensions = 1024
+base_url = "http://localhost:11434"
+status = "implementado"
+notas = "Alternativa local (ollama pull bge-m3): 8.192 tokens de contexto. Experimento E4."
+
+[embeddings.fake]
+backend = "fake"
+model = "lexico-hash"
+dimensions = 256
+status = "tests"
+notas = "Determinista y sin red (bolsa de palabras con hash). Tests, CI y demostraciones sin claves."
+
+# =============================================================================
+# Configuraciones de ejecución del RAG (RAG_CONFIG en .env). Embedding y LLM son piezas
+# independientes: lo único que debe coincidir es el embedding de indexación y el de consulta.
+# =============================================================================
+
+[configuraciones.nube]
+descripcion = "Todo con GEMINI_API_KEY: embeddings y LLM de Gemini."
+embeddings = "gemini"
+llm = "gemini"
+
+[configuraciones.hibrida]
+descripcion = "Embeddings locales (Ollama) + LLM en la nube elegido con RAG_LLM."
+embeddings = "embeddinggemma"
+llm_opciones = ["gemini", "anthropic"]
+
+[configuraciones.local]
+descripcion = "Todo en Ollama; el modelo de chat lo fija el nivel de hardware (LOCAL_TIER)."
+embeddings = "embeddinggemma"
+llm = "ollama"
+usa_niveles = true
+nivel_por_defecto = "cpu-16gb"
+
+[configuraciones.pruebas]
+descripcion = "Sin red: embeddings y LLM falsos. Para tests, CI y el notebook sin claves."
+embeddings = "fake"
+llm = "fake"
+
+# Niveles de hardware de la configuración local. Son explícitos (no se autodetectan): la RAM se
+# lee fácil, la VRAM y el ancho de banda de memoria no. Solo cpu-16gb se ejecuta en el taller.
+[niveles.cpu-8gb]
+llm_model = "gemma4:e2b"
+ram_min_gb = 8
+
+[niveles.cpu-16gb]
+llm_model = "gemma4:e4b"
+ram_min_gb = 16
+
+[niveles.gpu-12gb]
+llm_model = "gemma4:12b"
+vram_gb = 12
+
+[niveles.gpu-24gb]
+llm_model = "gemma4:26b"
+vram_gb = 24

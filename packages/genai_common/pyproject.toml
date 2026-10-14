@@ -13,6 +13,14 @@ dependencies = [
 [project.optional-dependencies]
 # Para talleres futuros que necesiten RAG real (embeddings / base vectorial).
 rag = ["numpy>=2.0"]
+# Taller 2 en adelante: modelos de chat y de embeddings como objetos de LangChain.
+langchain = [
+    "langchain-core==1.6.10",
+    "langchain-classic==1.0.8",
+    "langchain-openai==1.7.2",
+    "langchain-google-genai==4.4.2",
+    "langchain-ollama==1.1.0",
+]
 
 [build-system]
 requires = ["hatchling"]
