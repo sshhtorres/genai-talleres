@@ -17,6 +17,11 @@ status = "implementado"
 #    y devuelve texto vacío. Para redactar sobre un contexto ya recuperado ese razonamiento no aporta.
 #  - gemini-3.5-flash-lite responde en menos de 1 s, no gasta tokens en razonamiento y tiene cuota
 #    gratuita suficiente: es el modelo recomendado en la Fase 1 y el que ejecuta su evidencia.
+# Precio del nivel PAGADO estándar (prompts ≤ 200k tokens), consultado el 2026-10-15 en agregadores
+# que citan ai.google.dev/gemini-api/docs/pricing (pricepertoken.com, eesel.ai, anotherwrapper.com);
+# coincide con el que cita el documento del Taller 1. En el nivel gratuito el costo es 0: E8 lo
+# reporta como el costo equivalente si se pasara a producción en el nivel pagado.
+precios_usd_mtok = { "gemini-3.5-flash-lite" = { entrada = 0.30, salida = 2.50 } }
 notas = "Tier gratuito. Motor del 80% repetitivo: gemini-3.5-flash-lite. El modelo 'robusto' (pro) es de pago."
 
 # Taller 2: integración nativa de LangChain (genai_common.lc). El Taller 1 sigue usando base_url,
