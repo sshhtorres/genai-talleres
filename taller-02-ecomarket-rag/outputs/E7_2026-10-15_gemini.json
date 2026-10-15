@@ -1,0 +1,1181 @@
+{
+  "perfil": "gemini",
+  "variantes": {
+    "tal cual": {
+      "resumen": {
+        "global": {
+          "casos": 36,
+          "hit@1": 0.833,
+          "hit@4": 0.972,
+          "mrr": 0.892
+        },
+        "doc:politicas-y-faq": {
+          "casos": 15,
+          "hit@1": 0.867,
+          "hit@4": 1.0,
+          "mrr": 0.922
+        },
+        "doc:reglas-credito": {
+          "casos": 10,
+          "hit@1": 0.7,
+          "hit@4": 1.0,
+          "mrr": 0.808
+        },
+        "doc:catalogo": {
+          "casos": 6,
+          "hit@1": 1.0,
+          "hit@4": 1.0,
+          "mrr": 1.0
+        },
+        "doc:terminos-y-condiciones": {
+          "casos": 5,
+          "hit@1": 0.8,
+          "hit@4": 0.8,
+          "mrr": 0.84
+        },
+        "translingue": {
+          "casos": 4,
+          "hit@1": 1.0,
+          "hit@4": 1.0,
+          "mrr": 1.0
+        }
+      },
+      "sesgo": {
+        "es_a_es": 0.7229,
+        "es_a_en": 0.7121,
+        "n_es_es": 4,
+        "n_es_en": 2
+      },
+      "casos": [
+        {
+          "caso_id": "pol-envios-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7896,
+          "score_acierto": 0.7896,
+          "fuentes_top": [
+            "Envíos › Preguntas frecuentes › ¿Cuánto cuesta el envío?",
+            "Envíos › Costos de envío",
+            "Reglas de crédito › CR-05 · Monto mínimo financiable"
+          ]
+        },
+        {
+          "caso_id": "pol-envios-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.753,
+          "score_acierto": 0.753,
+          "fuentes_top": [
+            "Envíos › Preguntas frecuentes › ¿Hacen envíos fuera de Colombia?",
+            "Envíos › Cobertura",
+            "Envíos › Costos de envío"
+          ]
+        },
+        {
+          "caso_id": "pol-pagos-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.746,
+          "score_acierto": 0.746,
+          "fuentes_top": [
+            "Pagos y cuenta › Preguntas frecuentes › ¿Puedo pagar contra entrega?",
+            "Pagos y cuenta › Medios de pago",
+            "Términos y condiciones › página 1"
+          ]
+        },
+        {
+          "caso_id": "pol-pagos-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.8404,
+          "score_acierto": 0.8404,
+          "fuentes_top": [
+            "Pagos y cuenta › Preguntas frecuentes › ¿Puedo usar dos cupones en la misma compra?",
+            "Pagos y cuenta › Cupones de descuento",
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Me devuelven el dinero o me dan un cupón?"
+          ]
+        },
+        {
+          "caso_id": "pol-sostenibilidad-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7233,
+          "score_acierto": 0.7233,
+          "fuentes_top": [
+            "Sostenibilidad › Preguntas frecuentes › ¿Qué hago con los envases vacíos?",
+            "Sostenibilidad › Programa de reciclaje de envases",
+            "Sostenibilidad › Preguntas frecuentes › ¿Puedo devolver envases de productos que no compré en EcoMarket?"
+          ]
+        },
+        {
+          "caso_id": "pol-sostenibilidad-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.8232,
+          "score_acierto": 0.8232,
+          "fuentes_top": [
+            "Sostenibilidad › Preguntas frecuentes › ¿Los empaques de los pedidos tienen plástico?",
+            "Sostenibilidad › Empaques",
+            "Envíos › Seguimiento del pedido"
+          ]
+        },
+        {
+          "caso_id": "pol-devoluciones-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7697,
+          "score_acierto": 0.7697,
+          "fuentes_top": [
+            "Devoluciones y garantías › Tiempos de reembolso",
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Me devuelven el dinero o me dan un cupón?",
+            "Devoluciones y garantías › Derecho de retracto"
+          ]
+        },
+        {
+          "caso_id": "cred-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 2,
+          "mejor_score": 0.7724,
+          "score_acierto": 0.7698,
+          "fuentes_top": [
+            "Reglas de crédito › CR-06 · Número de cuotas según el monto",
+            "Reglas de crédito › CR-05 · Monto mínimo financiable",
+            "Reglas de crédito › CR-01 · Requisitos para solicitar la financiación"
+          ]
+        },
+        {
+          "caso_id": "cred-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.729,
+          "score_acierto": 0.729,
+          "fuentes_top": [
+            "Reglas de crédito › CR-14 · Aviso previo antes de reportar a centrales de riesgo",
+            "Reglas de crédito › CR-13 · Mora e intereses de mora",
+            "Reglas de crédito › CR-17 · Consulta del estado del crédito de cada cliente"
+          ]
+        },
+        {
+          "caso_id": "cred-03",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7555,
+          "score_acierto": 0.7555,
+          "fuentes_top": [
+            "Reglas de crédito › CR-10 · Pago anticipado",
+            "Reglas de crédito › CR-17 · Consulta del estado del crédito de cada cliente",
+            "Reglas de crédito › CR-12 · Cómo pagar las cuotas"
+          ]
+        },
+        {
+          "caso_id": "cred-04",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7534,
+          "score_acierto": 0.7534,
+          "fuentes_top": [
+            "Reglas de crédito › CR-09 · Costos adicionales",
+            "Reglas de crédito › CR-18 · Uso responsable de la financiación",
+            "Reglas de crédito › CR-11 · Fechas de corte y de pago"
+          ]
+        },
+        {
+          "caso_id": "cred-05",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7765,
+          "score_acierto": 0.7765,
+          "fuentes_top": [
+            "Reglas de crédito › CR-16 · Productos y compras no financiables",
+            "Reglas de crédito › CR-04 · Quién aprueba la financiación",
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Puedo devolver una tarjeta de regalo?"
+          ]
+        },
+        {
+          "caso_id": "cat-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7078,
+          "score_acierto": 0.7078,
+          "fuentes_top": [
+            "Catálogo › P-103 · Café orgánico en grano 500 g",
+            "Envíos › Costos de envío",
+            "Envíos › Tiempos de entrega"
+          ]
+        },
+        {
+          "caso_id": "cat-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7223,
+          "score_acierto": 0.7223,
+          "fuentes_top": [
+            "Catálogo › P-105 · Detergente concentrado a granel 1 L",
+            "Catálogo › P-109 · Jabón de castilla 250 ml",
+            "Sostenibilidad › Preguntas frecuentes › ¿Qué hago con los envases vacíos?"
+          ]
+        },
+        {
+          "caso_id": "cat-03",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7108,
+          "score_acierto": 0.7108,
+          "fuentes_top": [
+            "Catálogo › P-108 · Vaso de vidrio con tapa de bambú 500 ml",
+            "Catálogo › P-109 · Jabón de castilla 250 ml",
+            "Sostenibilidad › Programa de reciclaje de envases"
+          ]
+        },
+        {
+          "caso_id": "cat-04",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7508,
+          "score_acierto": 0.7508,
+          "fuentes_top": [
+            "Catálogo › P-115 · Esponjas vegetales de lufa (pack x3)",
+            "Catálogo › P-110 · Home compost bin 20 L",
+            "Catálogo › P-102 · Desodorante natural en barra"
+          ]
+        },
+        {
+          "caso_id": "ter-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7404,
+          "score_acierto": 0.7404,
+          "fuentes_top": [
+            "Términos y condiciones › página 1",
+            "Envíos › Seguimiento del pedido",
+            "Envíos › Preguntas frecuentes › ¿Cuánto se demora en llegar mi pedido?"
+          ]
+        },
+        {
+          "caso_id": "ter-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.701,
+          "score_acierto": 0.701,
+          "fuentes_top": [
+            "Términos y condiciones › página 1",
+            "Términos y condiciones › página 1",
+            "Términos y condiciones › página 1"
+          ]
+        },
+        {
+          "caso_id": "ter-03",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7332,
+          "score_acierto": 0.7332,
+          "fuentes_top": [
+            "Términos y condiciones › página 2",
+            "Términos y condiciones › página 1",
+            "Pagos y cuenta › Preguntas frecuentes › ¿Cómo elimino mi cuenta?"
+          ]
+        },
+        {
+          "caso_id": "ter-04",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.723,
+          "score_acierto": 0.723,
+          "fuentes_top": [
+            "Términos y condiciones › página 1",
+            "Envíos › Retrasos y pedidos extraviados",
+            "Pagos y cuenta › Pagos rechazados"
+          ]
+        },
+        {
+          "caso_id": "ter-05",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 5,
+          "mejor_score": 0.6837,
+          "score_acierto": 0.5741,
+          "fuentes_top": [
+            "Catálogo › P-111 · Portable solar charger 10,000 mAh",
+            "Devoluciones y garantías › Preguntas frecuentes › Mi cargador solar dejó de funcionar a los tres meses, ¿qué hago?",
+            "Devoluciones y garantías › Garantía legal"
+          ]
+        },
+        {
+          "caso_id": "mixto-01",
+          "tipo": "mixto",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 2,
+          "mejor_score": 0.7352,
+          "score_acierto": 0.7255,
+          "fuentes_top": [
+            "Catálogo › P-106 · Stainless steel thermal bottle 750 ml",
+            "Devoluciones y garantías › Plazo para solicitar una devolución",
+            "Devoluciones y garantías › Derecho de retracto"
+          ]
+        },
+        {
+          "caso_id": "mixto-02",
+          "tipo": "mixto",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 3,
+          "mejor_score": 0.7471,
+          "score_acierto": 0.7046,
+          "fuentes_top": [
+            "Envíos › Seguimiento del pedido",
+            "Envíos › Preguntas frecuentes › ¿Dónde encuentro el número de seguimiento?",
+            "Envíos › Retrasos y pedidos extraviados"
+          ]
+        },
+        {
+          "caso_id": "mixto-03",
+          "tipo": "mixto",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7418,
+          "score_acierto": 0.7418,
+          "fuentes_top": [
+            "Envíos › Preguntas frecuentes › ¿Puedo cambiar la dirección de entrega después de comprar?",
+            "Envíos › Seguimiento del pedido",
+            "Términos y condiciones › página 1"
+          ]
+        },
+        {
+          "caso_id": "iny-01",
+          "tipo": "inyeccion",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7481,
+          "score_acierto": 0.7481,
+          "fuentes_top": [
+            "Devoluciones y garantías › Plazo para solicitar una devolución",
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Cuánto tiempo tengo para devolver un producto?",
+            "Devoluciones y garantías › Condiciones para que una devolución proceda"
+          ]
+        },
+        {
+          "caso_id": "iny-02",
+          "tipo": "inyeccion",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.6943,
+          "score_acierto": 0.6943,
+          "fuentes_top": [
+            "Reglas de crédito › CR-04 · Quién aprueba la financiación",
+            "Reglas de crédito › CR-03 · Cupo de financiación",
+            "Reglas de crédito › CR-08 · Simulador de cuotas"
+          ]
+        },
+        {
+          "caso_id": "reform-01",
+          "tipo": "reformulacion",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7971,
+          "score_acierto": 0.7971,
+          "fuentes_top": [
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Puedo devolver un producto que ya abrí?",
+            "Devoluciones y garantías › Productos no retornables",
+            "Devoluciones y garantías › Condiciones para que una devolución proceda"
+          ]
+        },
+        {
+          "caso_id": "reform-02",
+          "tipo": "reformulacion",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7419,
+          "score_acierto": 0.7419,
+          "fuentes_top": [
+            "Envíos › Preguntas frecuentes › ¿Cuánto se demora en llegar mi pedido?",
+            "Envíos › Tiempos de entrega",
+            "Envíos › Costos de envío"
+          ]
+        },
+        {
+          "caso_id": "reform-03",
+          "tipo": "reformulacion",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7458,
+          "score_acierto": 0.7458,
+          "fuentes_top": [
+            "Reglas de crédito › CR-13 · Mora e intereses de mora",
+            "Reglas de crédito › CR-11 · Fechas de corte y de pago",
+            "Reglas de crédito › CR-12 · Cómo pagar las cuotas"
+          ]
+        },
+        {
+          "caso_id": "transl-01",
+          "tipo": "translingue",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "en",
+          "rango": 1,
+          "mejor_score": 0.6964,
+          "score_acierto": 0.6964,
+          "fuentes_top": [
+            "Catálogo › P-101 · Bamboo toothbrush (pack of 4)",
+            "Catálogo › P-108 · Vaso de vidrio con tapa de bambú 500 ml",
+            "Catálogo › P-114 · Cubiertos de bambú de viaje"
+          ]
+        },
+        {
+          "caso_id": "transl-02",
+          "tipo": "translingue",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "en",
+          "rango": 1,
+          "mejor_score": 0.7278,
+          "score_acierto": 0.7278,
+          "fuentes_top": [
+            "Catálogo › P-106 · Stainless steel thermal bottle 750 ml",
+            "Catálogo › P-108 · Vaso de vidrio con tapa de bambú 500 ml",
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Puedo devolver un producto que ya abrí?"
+          ]
+        },
+        {
+          "caso_id": "transl-03",
+          "tipo": "translingue",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "en",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7414,
+          "score_acierto": 0.7414,
+          "fuentes_top": [
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Cuánto tiempo tengo para devolver un producto?",
+            "Devoluciones y garantías › Plazo para solicitar una devolución",
+            "Devoluciones y garantías › Derecho de retracto"
+          ]
+        },
+        {
+          "caso_id": "transl-04",
+          "tipo": "translingue",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "en",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7661,
+          "score_acierto": 0.7661,
+          "fuentes_top": [
+            "Envíos › Preguntas frecuentes › ¿Hacen envíos fuera de Colombia?",
+            "Envíos › Cobertura",
+            "Envíos › Costos de envío"
+          ]
+        },
+        {
+          "caso_id": "trampa-01",
+          "tipo": "credito_trampa",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 4,
+          "mejor_score": 0.7292,
+          "score_acierto": 0.7203,
+          "fuentes_top": [
+            "Reglas de crédito › CR-15 · Devolución de una compra financiada",
+            "Reglas de crédito › CR-08 · Simulador de cuotas",
+            "Reglas de crédito › CR-03 · Cupo de financiación"
+          ]
+        },
+        {
+          "caso_id": "trampa-02",
+          "tipo": "credito_trampa",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7302,
+          "score_acierto": 0.7302,
+          "fuentes_top": [
+            "Reglas de crédito › CR-06 · Número de cuotas según el monto",
+            "Reglas de crédito › CR-08 · Simulador de cuotas",
+            "Reglas de crédito › CR-05 · Monto mínimo financiable"
+          ]
+        },
+        {
+          "caso_id": "trampa-03",
+          "tipo": "credito_trampa",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 3,
+          "mejor_score": 0.6888,
+          "score_acierto": 0.659,
+          "fuentes_top": [
+            "Catálogo › P-111 · Portable solar charger 10,000 mAh",
+            "Devoluciones y garantías › Preguntas frecuentes › Mi cargador solar dejó de funcionar a los tres meses, ¿qué hago?",
+            "Reglas de crédito › CR-18 · Uso responsable de la financiación"
+          ]
+        }
+      ]
+    },
+    "enriquecido": {
+      "resumen": {
+        "global": {
+          "casos": 36,
+          "hit@1": 0.861,
+          "hit@4": 0.972,
+          "mrr": 0.906
+        },
+        "doc:politicas-y-faq": {
+          "casos": 15,
+          "hit@1": 0.933,
+          "hit@4": 1.0,
+          "mrr": 0.956
+        },
+        "doc:reglas-credito": {
+          "casos": 10,
+          "hit@1": 0.7,
+          "hit@4": 1.0,
+          "mrr": 0.808
+        },
+        "doc:catalogo": {
+          "casos": 6,
+          "hit@1": 1.0,
+          "hit@4": 1.0,
+          "mrr": 1.0
+        },
+        "doc:terminos-y-condiciones": {
+          "casos": 5,
+          "hit@1": 0.8,
+          "hit@4": 0.8,
+          "mrr": 0.84
+        },
+        "translingue": {
+          "casos": 4,
+          "hit@1": 1.0,
+          "hit@4": 1.0,
+          "mrr": 1.0
+        }
+      },
+      "sesgo": {
+        "es_a_es": 0.7229,
+        "es_a_en": 0.7233,
+        "n_es_es": 4,
+        "n_es_en": 2
+      },
+      "casos": [
+        {
+          "caso_id": "pol-envios-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7896,
+          "score_acierto": 0.7896,
+          "fuentes_top": [
+            "Envíos › Preguntas frecuentes › ¿Cuánto cuesta el envío?",
+            "Envíos › Costos de envío",
+            "Reglas de crédito › CR-05 · Monto mínimo financiable"
+          ]
+        },
+        {
+          "caso_id": "pol-envios-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.753,
+          "score_acierto": 0.753,
+          "fuentes_top": [
+            "Envíos › Preguntas frecuentes › ¿Hacen envíos fuera de Colombia?",
+            "Envíos › Cobertura",
+            "Envíos › Costos de envío"
+          ]
+        },
+        {
+          "caso_id": "pol-pagos-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.746,
+          "score_acierto": 0.746,
+          "fuentes_top": [
+            "Pagos y cuenta › Preguntas frecuentes › ¿Puedo pagar contra entrega?",
+            "Pagos y cuenta › Medios de pago",
+            "Términos y condiciones › página 1"
+          ]
+        },
+        {
+          "caso_id": "pol-pagos-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.8404,
+          "score_acierto": 0.8404,
+          "fuentes_top": [
+            "Pagos y cuenta › Preguntas frecuentes › ¿Puedo usar dos cupones en la misma compra?",
+            "Pagos y cuenta › Cupones de descuento",
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Me devuelven el dinero o me dan un cupón?"
+          ]
+        },
+        {
+          "caso_id": "pol-sostenibilidad-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7233,
+          "score_acierto": 0.7233,
+          "fuentes_top": [
+            "Sostenibilidad › Preguntas frecuentes › ¿Qué hago con los envases vacíos?",
+            "Sostenibilidad › Programa de reciclaje de envases",
+            "Sostenibilidad › Preguntas frecuentes › ¿Puedo devolver envases de productos que no compré en EcoMarket?"
+          ]
+        },
+        {
+          "caso_id": "pol-sostenibilidad-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.8232,
+          "score_acierto": 0.8232,
+          "fuentes_top": [
+            "Sostenibilidad › Preguntas frecuentes › ¿Los empaques de los pedidos tienen plástico?",
+            "Sostenibilidad › Empaques",
+            "Envíos › Seguimiento del pedido"
+          ]
+        },
+        {
+          "caso_id": "pol-devoluciones-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7697,
+          "score_acierto": 0.7697,
+          "fuentes_top": [
+            "Devoluciones y garantías › Tiempos de reembolso",
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Me devuelven el dinero o me dan un cupón?",
+            "Devoluciones y garantías › Derecho de retracto"
+          ]
+        },
+        {
+          "caso_id": "cred-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 2,
+          "mejor_score": 0.7724,
+          "score_acierto": 0.7698,
+          "fuentes_top": [
+            "Reglas de crédito › CR-06 · Número de cuotas según el monto",
+            "Reglas de crédito › CR-05 · Monto mínimo financiable",
+            "Reglas de crédito › CR-01 · Requisitos para solicitar la financiación"
+          ]
+        },
+        {
+          "caso_id": "cred-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.729,
+          "score_acierto": 0.729,
+          "fuentes_top": [
+            "Reglas de crédito › CR-14 · Aviso previo antes de reportar a centrales de riesgo",
+            "Reglas de crédito › CR-13 · Mora e intereses de mora",
+            "Reglas de crédito › CR-17 · Consulta del estado del crédito de cada cliente"
+          ]
+        },
+        {
+          "caso_id": "cred-03",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7555,
+          "score_acierto": 0.7555,
+          "fuentes_top": [
+            "Reglas de crédito › CR-10 · Pago anticipado",
+            "Reglas de crédito › CR-17 · Consulta del estado del crédito de cada cliente",
+            "Reglas de crédito › CR-12 · Cómo pagar las cuotas"
+          ]
+        },
+        {
+          "caso_id": "cred-04",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7534,
+          "score_acierto": 0.7534,
+          "fuentes_top": [
+            "Reglas de crédito › CR-09 · Costos adicionales",
+            "Reglas de crédito › CR-18 · Uso responsable de la financiación",
+            "Reglas de crédito › CR-11 · Fechas de corte y de pago"
+          ]
+        },
+        {
+          "caso_id": "cred-05",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7765,
+          "score_acierto": 0.7765,
+          "fuentes_top": [
+            "Reglas de crédito › CR-16 · Productos y compras no financiables",
+            "Reglas de crédito › CR-04 · Quién aprueba la financiación",
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Puedo devolver una tarjeta de regalo?"
+          ]
+        },
+        {
+          "caso_id": "cat-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7078,
+          "score_acierto": 0.7078,
+          "fuentes_top": [
+            "Catálogo › P-103 · Café orgánico en grano 500 g",
+            "Envíos › Costos de envío",
+            "Envíos › Tiempos de entrega"
+          ]
+        },
+        {
+          "caso_id": "cat-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7223,
+          "score_acierto": 0.7223,
+          "fuentes_top": [
+            "Catálogo › P-105 · Detergente concentrado a granel 1 L",
+            "Catálogo › P-109 · Jabón de castilla 250 ml",
+            "Sostenibilidad › Preguntas frecuentes › ¿Qué hago con los envases vacíos?"
+          ]
+        },
+        {
+          "caso_id": "cat-03",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7108,
+          "score_acierto": 0.7108,
+          "fuentes_top": [
+            "Catálogo › P-108 · Vaso de vidrio con tapa de bambú 500 ml",
+            "Catálogo › P-109 · Jabón de castilla 250 ml",
+            "Sostenibilidad › Programa de reciclaje de envases"
+          ]
+        },
+        {
+          "caso_id": "cat-04",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7508,
+          "score_acierto": 0.7508,
+          "fuentes_top": [
+            "Catálogo › P-115 · Esponjas vegetales de lufa (pack x3)",
+            "Catálogo › P-110 · Home compost bin 20 L",
+            "Catálogo › P-102 · Desodorante natural en barra"
+          ]
+        },
+        {
+          "caso_id": "ter-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7404,
+          "score_acierto": 0.7404,
+          "fuentes_top": [
+            "Términos y condiciones › página 1",
+            "Envíos › Seguimiento del pedido",
+            "Envíos › Preguntas frecuentes › ¿Cuánto se demora en llegar mi pedido?"
+          ]
+        },
+        {
+          "caso_id": "ter-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.701,
+          "score_acierto": 0.701,
+          "fuentes_top": [
+            "Términos y condiciones › página 1",
+            "Términos y condiciones › página 1",
+            "Términos y condiciones › página 1"
+          ]
+        },
+        {
+          "caso_id": "ter-03",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7332,
+          "score_acierto": 0.7332,
+          "fuentes_top": [
+            "Términos y condiciones › página 2",
+            "Términos y condiciones › página 1",
+            "Pagos y cuenta › Preguntas frecuentes › ¿Cómo elimino mi cuenta?"
+          ]
+        },
+        {
+          "caso_id": "ter-04",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.723,
+          "score_acierto": 0.723,
+          "fuentes_top": [
+            "Términos y condiciones › página 1",
+            "Envíos › Retrasos y pedidos extraviados",
+            "Pagos y cuenta › Pagos rechazados"
+          ]
+        },
+        {
+          "caso_id": "ter-05",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 5,
+          "mejor_score": 0.677,
+          "score_acierto": 0.5741,
+          "fuentes_top": [
+            "Catálogo › P-111 · Portable solar charger 10,000 mAh",
+            "Devoluciones y garantías › Preguntas frecuentes › Mi cargador solar dejó de funcionar a los tres meses, ¿qué hago?",
+            "Devoluciones y garantías › Garantía legal"
+          ]
+        },
+        {
+          "caso_id": "mixto-01",
+          "tipo": "mixto",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7255,
+          "score_acierto": 0.7255,
+          "fuentes_top": [
+            "Devoluciones y garantías › Plazo para solicitar una devolución",
+            "Devoluciones y garantías › Derecho de retracto",
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Cuánto tiempo tengo para devolver un producto?"
+          ]
+        },
+        {
+          "caso_id": "mixto-02",
+          "tipo": "mixto",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 3,
+          "mejor_score": 0.7471,
+          "score_acierto": 0.7046,
+          "fuentes_top": [
+            "Envíos › Seguimiento del pedido",
+            "Envíos › Preguntas frecuentes › ¿Dónde encuentro el número de seguimiento?",
+            "Envíos › Retrasos y pedidos extraviados"
+          ]
+        },
+        {
+          "caso_id": "mixto-03",
+          "tipo": "mixto",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7418,
+          "score_acierto": 0.7418,
+          "fuentes_top": [
+            "Envíos › Preguntas frecuentes › ¿Puedo cambiar la dirección de entrega después de comprar?",
+            "Envíos › Seguimiento del pedido",
+            "Términos y condiciones › página 1"
+          ]
+        },
+        {
+          "caso_id": "iny-01",
+          "tipo": "inyeccion",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7481,
+          "score_acierto": 0.7481,
+          "fuentes_top": [
+            "Devoluciones y garantías › Plazo para solicitar una devolución",
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Cuánto tiempo tengo para devolver un producto?",
+            "Devoluciones y garantías › Condiciones para que una devolución proceda"
+          ]
+        },
+        {
+          "caso_id": "iny-02",
+          "tipo": "inyeccion",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.6943,
+          "score_acierto": 0.6943,
+          "fuentes_top": [
+            "Reglas de crédito › CR-04 · Quién aprueba la financiación",
+            "Reglas de crédito › CR-03 · Cupo de financiación",
+            "Reglas de crédito › CR-08 · Simulador de cuotas"
+          ]
+        },
+        {
+          "caso_id": "reform-01",
+          "tipo": "reformulacion",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7971,
+          "score_acierto": 0.7971,
+          "fuentes_top": [
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Puedo devolver un producto que ya abrí?",
+            "Devoluciones y garantías › Productos no retornables",
+            "Devoluciones y garantías › Condiciones para que una devolución proceda"
+          ]
+        },
+        {
+          "caso_id": "reform-02",
+          "tipo": "reformulacion",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7419,
+          "score_acierto": 0.7419,
+          "fuentes_top": [
+            "Envíos › Preguntas frecuentes › ¿Cuánto se demora en llegar mi pedido?",
+            "Envíos › Tiempos de entrega",
+            "Envíos › Costos de envío"
+          ]
+        },
+        {
+          "caso_id": "reform-03",
+          "tipo": "reformulacion",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7458,
+          "score_acierto": 0.7458,
+          "fuentes_top": [
+            "Reglas de crédito › CR-13 · Mora e intereses de mora",
+            "Reglas de crédito › CR-11 · Fechas de corte y de pago",
+            "Reglas de crédito › CR-12 · Cómo pagar las cuotas"
+          ]
+        },
+        {
+          "caso_id": "transl-01",
+          "tipo": "translingue",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "en",
+          "rango": 1,
+          "mejor_score": 0.7082,
+          "score_acierto": 0.7082,
+          "fuentes_top": [
+            "Catálogo › P-101 · Bamboo toothbrush (pack of 4)",
+            "Catálogo › P-108 · Vaso de vidrio con tapa de bambú 500 ml",
+            "Catálogo › P-114 · Cubiertos de bambú de viaje"
+          ]
+        },
+        {
+          "caso_id": "transl-02",
+          "tipo": "translingue",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "en",
+          "rango": 1,
+          "mejor_score": 0.7384,
+          "score_acierto": 0.7384,
+          "fuentes_top": [
+            "Catálogo › P-106 · Stainless steel thermal bottle 750 ml",
+            "Catálogo › P-108 · Vaso de vidrio con tapa de bambú 500 ml",
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Puedo devolver un producto que ya abrí?"
+          ]
+        },
+        {
+          "caso_id": "transl-03",
+          "tipo": "translingue",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "en",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7414,
+          "score_acierto": 0.7414,
+          "fuentes_top": [
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Cuánto tiempo tengo para devolver un producto?",
+            "Devoluciones y garantías › Plazo para solicitar una devolución",
+            "Devoluciones y garantías › Derecho de retracto"
+          ]
+        },
+        {
+          "caso_id": "transl-04",
+          "tipo": "translingue",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "en",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7661,
+          "score_acierto": 0.7661,
+          "fuentes_top": [
+            "Envíos › Preguntas frecuentes › ¿Hacen envíos fuera de Colombia?",
+            "Envíos › Cobertura",
+            "Envíos › Costos de envío"
+          ]
+        },
+        {
+          "caso_id": "trampa-01",
+          "tipo": "credito_trampa",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 4,
+          "mejor_score": 0.7292,
+          "score_acierto": 0.7203,
+          "fuentes_top": [
+            "Reglas de crédito › CR-15 · Devolución de una compra financiada",
+            "Reglas de crédito › CR-08 · Simulador de cuotas",
+            "Reglas de crédito › CR-03 · Cupo de financiación"
+          ]
+        },
+        {
+          "caso_id": "trampa-02",
+          "tipo": "credito_trampa",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7302,
+          "score_acierto": 0.7302,
+          "fuentes_top": [
+            "Reglas de crédito › CR-06 · Número de cuotas según el monto",
+            "Reglas de crédito › CR-08 · Simulador de cuotas",
+            "Reglas de crédito › CR-05 · Monto mínimo financiable"
+          ]
+        },
+        {
+          "caso_id": "trampa-03",
+          "tipo": "credito_trampa",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 3,
+          "mejor_score": 0.6731,
+          "score_acierto": 0.659,
+          "fuentes_top": [
+            "Catálogo › P-111 · Portable solar charger 10,000 mAh",
+            "Devoluciones y garantías › Preguntas frecuentes › Mi cargador solar dejó de funcionar a los tres meses, ¿qué hago?",
+            "Reglas de crédito › CR-18 · Uso responsable de la financiación"
+          ]
+        }
+      ]
+    }
+  }
+}

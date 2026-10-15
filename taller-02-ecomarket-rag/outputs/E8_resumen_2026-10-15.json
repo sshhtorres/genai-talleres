@@ -1,0 +1,14 @@
+{
+  "configuraciones": [
+    "nube",
+    "hibrida:gemini",
+    "hibrida:anthropic",
+    "local"
+  ],
+  "reportes": [
+    "E8_2026-10-15_nube.md",
+    "E8_2026-10-15_hibrida-gemini.md",
+    "E8_2026-10-15_hibrida-anthropic.md",
+    "E8_2026-10-15_local.md"
+  ]
+}
