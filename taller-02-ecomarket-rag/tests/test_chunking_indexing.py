@@ -125,3 +125,14 @@ def test_reindexar_borra_los_chunks_que_ya_no_existen(chunks_por_tipo):
     reporte = indexing.indexar(almacen, chunks_por_tipo[1:], pausa_s=0)
     assert reporte.eliminados == 1
     assert len(almacen.ids()) == len(chunks_por_tipo) - 1
+
+
+def test_reporte_de_indexacion_enriquecida_no_pisa_el_principal(tmp_path):
+    from taller02_rag import indexing
+
+    reporte = indexing.ReporteIndexacion("kb", "por_tipo", 1, 1, 0, 0)
+    _, principal = indexing.escribir_reporte(reporte, "gemini", "m", 768, [], tmp_path)
+    _, enriq = indexing.escribir_reporte(
+        reporte, "gemini", "m", 768, [], tmp_path, variante="enriq"
+    )
+    assert principal != enriq and enriq.stem.endswith("_gemini_enriq")

@@ -93,7 +93,23 @@ def _llm(opciones: Opciones, model_role: str | None = None) -> BaseChatModel:
 
 def _casos(opciones: Opciones, predicado: Callable[[dict], bool]) -> list[dict]:
     casos = [c for c in kb.casos_rag() if predicado(c)]
-    return casos[: opciones.limite] if opciones.limite else casos
+    return muestra_estratificada(casos, opciones.limite) if opciones.limite else casos
+
+
+def muestra_estratificada(casos: list[dict], n: int) -> list[dict]:
+    """Los primeros `n` casos tomando uno de cada tipo por turno, en el orden del set.
+
+    Con `casos[:n]` la muestra de E8 salió toda de `dentro_alcance`, los casos más fáciles.
+    """
+    grupos: dict[str, list[dict]] = {}
+    for caso in casos:
+        grupos.setdefault(caso["tipo"], []).append(caso)
+    muestra: list[dict] = []
+    while len(muestra) < min(n, len(casos)):
+        for grupo in grupos.values():
+            if grupo and len(muestra) < n:
+                muestra.append(grupo.pop(0))
+    return muestra
 
 
 def _parametros_ruta(caso: dict, variante: str) -> dict[str, Any]:
@@ -126,9 +142,9 @@ def _anexar(md: Path, titulo: str, lineas: list[str]) -> None:
         fh.write("\n".join(["", f"## {titulo}", "", *lineas, ""]))
 
 
-def _media(valores) -> float | None:
+def _media(valores, decimales: int = 3) -> float | None:
     valores = [v for v in valores if v is not None]
-    return round(statistics.mean(valores), 3) if valores else None
+    return round(statistics.mean(valores), decimales) if valores else None
 
 
 def _con_pausa(opciones: Opciones, i: int, total: int) -> None:
@@ -168,8 +184,42 @@ def _respuestas_rag(exp: str, opciones: Opciones, variantes: list[tuple[str, dic
     return md
 
 
+CHEQUEO_CITAS = "cita_una_fuente"
+
+
+def tabla_e1(registros: list[dict]) -> list[str]:
+    """Casos con todos los chequeos en verde, con y sin `cita_una_fuente`.
+
+    El prompt básico no pide citas, así que falla ese chequeo por construcción; la segunda columna
+    aísla el efecto del resto de reglas (como el Taller 1 excluyó el chequeo de JSON del básico).
+    """
+    grupos: dict[str, list[dict]] = {}
+    for registro in registros:
+        grupos.setdefault(registro["variante"], []).append(registro)
+    lineas = [
+        "| Variante | Casos | Todos los chequeos | % | Sin contar `cita_una_fuente` | % |",
+        "|---|---:|---:|---:|---:|---:|",
+    ]
+    for variante, grupo in grupos.items():
+        todos = sum(1 for r in grupo if all(c["ok"] for c in r["checks"]))
+        sin_citas = sum(
+            1 for r in grupo if all(c["ok"] for c in r["checks"] if c["nombre"] != CHEQUEO_CITAS)
+        )
+        n = len(grupo)
+        lineas.append(
+            f"| {variante} | {n} | {todos} | {100 * todos / n:.1f} | "
+            f"{sin_citas} | {100 * sin_citas / n:.1f} |"
+        )
+    return lineas
+
+
 def e1(opciones: Opciones) -> list[Path]:
     md = _respuestas_rag("E1", opciones, [("basico", {"variante": "basico"}), ("mejorado", {})])
+    _anexar(
+        md,
+        "Casos en verde, con y sin el chequeo de citas",
+        tabla_e1(RunRecorderLectura(md).registros),
+    )
     return [md]
 
 
@@ -334,8 +384,9 @@ def e5(opciones: Opciones) -> list[Path]:
 
         opciones.progreso(f"[{2 * i}/{total}] {caso['id']} · con_rag")
         r = atencion.atender(caso["mensaje"], almacen, llm, cliente_t1, llm_router)
-        contexto = formatear_contexto(r.detalle.recuperacion.chunks) if r.fuentes else ""
-        chks = r.checks + evaluation.checks_del_caso(caso, r.respuesta, contexto)
+        # r.contexto sirve en cualquier ruta: si el router lo manda a la cadena de devoluciones
+        # del Taller 1, es la política recuperada que recibió esa cadena (antes: AttributeError).
+        chks = r.checks + evaluation.checks_del_caso(caso, r.respuesta, r.contexto)
         meta = {**r.metadatos, "ruta": r.ruta, "llamadas": r.llamadas}
         recorder.add(_registro("E5", caso, "con_rag", r.respuesta, chks, meta, r.pasos))
         _con_pausa(opciones, 2 * i, total)
@@ -385,7 +436,8 @@ def e8(opciones: Opciones) -> list[Path]:
         reportes.append(md)
         registros = [x.to_dict() for x in recorder.records]
         ok = sum(1 for x in recorder.records if x.ok)
-        costo = _media(x["metadatos"].get("costo_usd") for x in registros)
+        # Seis decimales: con tres, el costo por respuesta de los modelos baratos salía 0.0.
+        costo = _media((x["metadatos"].get("costo_usd") for x in registros), decimales=6)
         resumen.append(
             f"| {etiqueta} | {len(registros)} | {ok} | "
             f"{_media(x['metadatos'].get('ttft_s') for x in registros)} | "
@@ -421,7 +473,7 @@ def _costo(meta: dict, precios: dict | None) -> float | None:
         return None
     entrada = meta["tokens_entrada"] * precios["entrada"] / 1e6
     salida = (meta.get("tokens_salida") or 0) * precios["salida"] / 1e6
-    return round(entrada + salida, 6)
+    return round(entrada + salida, 8)
 
 
 # -- utilidades ---------------------------------------------------------------------------------

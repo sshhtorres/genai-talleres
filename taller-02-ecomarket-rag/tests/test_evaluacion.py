@@ -187,3 +187,55 @@ def test_costo_con_precio_verificado():
     meta = {"tokens_entrada": 1_000_000, "tokens_salida": 1_000_000}
     assert experimentos._costo(meta, {"entrada": 0.10, "salida": 0.50}) == 0.6
     assert experimentos._costo(meta, None) is None
+
+
+def test_e1_reporta_con_y_sin_el_chequeo_de_citas(opciones):
+    (md,) = experimentos.correr("E1", opciones)
+    texto = md.read_text()
+    assert "Sin contar `cita_una_fuente`" in texto
+    assert "| basico |" in texto and "| mejorado |" in texto
+
+
+def test_tabla_e1_excluye_solo_las_citas():
+    def registro(variante, *checks):
+        return {"variante": variante, "checks": [{"nombre": n, "ok": ok} for n, ok in checks]}
+
+    registros = [
+        registro("basico", ("cita_una_fuente", False), ("idioma", True)),
+        registro("basico", ("cita_una_fuente", False), ("idioma", False)),
+        registro("mejorado", ("cita_una_fuente", True), ("idioma", True)),
+    ]
+    filas = experimentos.tabla_e1(registros)
+    assert "| basico | 2 | 0 | 0.0 | 1 | 50.0 |" in filas
+    assert "| mejorado | 1 | 1 | 100.0 | 1 | 100.0 |" in filas
+
+
+def test_e5_no_falla_si_el_router_manda_a_devolucion(opciones, monkeypatch):
+    # Antes: AttributeError al leer r.detalle.recuperacion de un resultado del Taller 1.
+    caso = {
+        "id": "x-01",
+        "mensaje": "¿Puedo devolver un producto que ya abrí?",
+        "tipo": "reformulacion",
+        "intencion_esperada": "consulta_general",
+        "fuentes_esperadas": [],
+        "debe_contener": [],
+        "no_debe_contener": [],
+        "debe_abstenerse": False,
+        "idioma_respuesta": "es",
+        "cifras_con_respaldo": True,
+    }
+    monkeypatch.setattr(kb, "casos_rag", lambda: [caso])
+    (md,) = experimentos.correr("E5", opciones)
+    registros = [json.loads(x) for x in md.with_suffix(".jsonl").read_text().splitlines()]
+    con_rag = next(r for r in registros if r["variante"] == "con_rag")
+    assert con_rag["metadatos"]["ruta"] == "devolucion"
+
+
+def test_muestra_estratificada_alterna_tipos():
+    casos = [{"id": f"d{i}", "tipo": "dentro_alcance"} for i in range(5)] + [
+        {"id": "f1", "tipo": "fuera_alcance"},
+        {"id": "t1", "tipo": "translingue"},
+    ]
+    muestra = experimentos.muestra_estratificada(casos, 4)
+    assert [c["id"] for c in muestra] == ["d0", "f1", "t1", "d1"]
+    assert len(experimentos.muestra_estratificada(casos, 50)) == len(casos)

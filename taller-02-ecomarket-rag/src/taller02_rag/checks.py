@@ -17,12 +17,18 @@ Check = tuple[str, bool, str]
 
 FRASES_ABSTENCION = (
     "no tengo informacion",
+    "no tengo esa informacion",
     "no encontre informacion",
     "no cuento con informacion",
     "no dispongo de informacion",
+    "no lo se",
+    "no se la respuesta",
     "i don't have information",
+    "i don't have that information",
     "i do not have information",
+    "i don't know",
 )
+REMISIONES_HUMANAS = ("agente", "asesor", "humano", "human agent", "servicio al cliente")
 _CITA = re.compile(r"\[([^\[\]]{3,200})\]")
 _NUMERO = re.compile(r"\$?\s?\d{1,3}(?:[.,]\d{3})+(?:[.,]\d+)?|\$?\s?\d+(?:[.,]\d+)?\s?%|\$\s?\d+")
 _PALABRAS_EN = {
@@ -74,9 +80,23 @@ def detectar_idioma(texto: str) -> str:
     return "en" if en > es else "es"
 
 
-def es_abstencion(respuesta: str) -> bool:
-    plano = normalizar(respuesta)
+def _tiene_frase_de_abstencion(texto: str) -> bool:
+    plano = normalizar(texto)
     return any(normalizar(f) in plano for f in FRASES_ABSTENCION)
+
+
+def es_abstencion(respuesta: str) -> bool:
+    """La respuesta se niega a responder: la frase de abstención abre la respuesta o, si aparece
+    más adelante, la respuesta no cita ninguna fuente.
+
+    Antes bastaba con que la frase apareciera en cualquier parte, y una respuesta correcta y citada
+    que terminaba con "no tengo información sobre el envío exprés…" contaba como abstención.
+    """
+    texto = (respuesta or "").strip()
+    primera = re.split(r"(?<=[.!?])\s", texto, maxsplit=1)[0]
+    if _tiene_frase_de_abstencion(primera):
+        return True
+    return _tiene_frase_de_abstencion(texto) and not citas(texto)
 
 
 def citas(respuesta: str) -> list[str]:
@@ -103,8 +123,16 @@ def cita_fuentes_validas(respuesta: str, fuentes: list[str]) -> Check:
     return ("cita_una_fuente", True, f"{len(encontradas)} cita(s) válidas")
 
 
-def abstencion_correcta(respuesta: str, debe_abstenerse: bool) -> Check:
+def abstencion_correcta(respuesta: str, debe_abstenerse: bool | str) -> Check:
+    """`debe_abstenerse` = True, False u "opcional" (vale responder con la regla general o
+    abstenerse, siempre que la abstención remita a una persona: p. ej. el stock, que no se indexa).
+    """
     se_abstuvo = es_abstencion(respuesta)
+    if debe_abstenerse == "opcional":
+        remite = any(normalizar(p) in normalizar(respuesta) for p in REMISIONES_HUMANAS)
+        ok = not se_abstuvo or remite
+        detalle = "respondió" if not se_abstuvo else ("se abstuvo y remite" if remite else "")
+        return ("abstencion_opcional", ok, detalle or "se abstuvo sin remitir a una persona")
     if debe_abstenerse:
         return (
             "se_abstiene_cuando_debe",

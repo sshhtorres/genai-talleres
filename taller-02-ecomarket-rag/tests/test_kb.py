@@ -263,7 +263,8 @@ def test_casos_con_esquema_valido_e_ids_unicos():
         assert caso["tipo"] in TIPOS, caso["id"]
         assert caso["intencion_esperada"] in INTENCIONES, caso["id"]
         assert caso["idioma_respuesta"] in {"es", "en"}, caso["id"]
-        if caso["debe_abstenerse"]:
+        assert caso["debe_abstenerse"] in (True, False, "opcional"), caso["id"]
+        if caso["debe_abstenerse"] is True:
             assert not caso["fuentes_esperadas"], caso["id"]
         else:
             assert caso["fuentes_esperadas"], caso["id"]

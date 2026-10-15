@@ -164,11 +164,14 @@ def escribir_reporte(
     dimensiones: int,
     humo: list[dict],
     outputs_dir: Path,
+    variante: str = "",
 ) -> tuple[Path, Path]:
-    """Evidencia de una indexación real: outputs/indexacion_<fecha>_<perfil>[_<estrategia>]."""
+    """Evidencia de una indexación real: outputs/indexacion_<fecha>_<perfil>[_<estrategia>]
+    [_<variante>]. La variante (p. ej. `enriq`) evita pisar el reporte de la base tal cual."""
     outputs_dir.mkdir(parents=True, exist_ok=True)
     fecha = date.today().isoformat()
     sufijo = "" if reporte.estrategia in ("", "por_tipo") else f"_{reporte.estrategia}"
+    sufijo += f"_{variante}" if variante else ""
     base = outputs_dir / f"indexacion_{fecha}_{perfil_nombre}{sufijo}"
     datos = {
         "fecha": fecha,

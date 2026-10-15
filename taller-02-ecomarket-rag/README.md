@@ -66,7 +66,8 @@ uv run taller02 preguntar "¿Cuánto cuesta el envío?" --variante basico --k 2
 `indexar` es idempotente: el id de cada chunk es un hash de su contenido, así que repetirlo sin
 cambios no vuelve a calcular embeddings, y si un documento cambió, sus chunks viejos se borran. Al
 terminar ejecuta una consulta de humo por tipo de documento y guarda la evidencia en
-`outputs/indexacion_<fecha>_<perfil>.md`.
+`outputs/indexacion_<fecha>_<perfil>[_<estrategia>][_enriq].md` (las variantes no pisan el reporte
+de la base principal).
 
 `preguntar` ejecuta solo la cadena RAG (sin router) y muestra los chunks recuperados con su
 similitud, la decisión de abstención, la respuesta con sus citas y los chequeos automáticos.
@@ -99,6 +100,7 @@ uv run taller02 atender "¿Qué hago con los frascos de vidrio vacíos?"     # c
 ```bash
 uv run taller02 calibrar --embeddings gemini            # umbral de abstención del perfil
 uv run taller02 evaluar --experimento E2 --embeddings gemini     # chunking (sin LLM)
+uv run taller02 evaluar --experimento E2 --embeddings embeddinggemma  # requiere indexar sus 3 tablas
 uv run taller02 evaluar --experimento E4                          # embeddings (sin LLM)
 uv run taller02 enriquecer && uv run taller02 indexar --enriquecer-ingles
 uv run taller02 evaluar --experimento E7 --embeddings gemini     # fichas en inglés (sin LLM)
@@ -106,12 +108,13 @@ uv run taller02 evaluar --experimento E1 --pausa 4               # prompt basico
 uv run taller02 evaluar --experimento E3 --pausa 4               # k = 1, 4, 8
 uv run taller02 evaluar --experimento E5 --pausa 4               # sin RAG vs con RAG
 uv run taller02 evaluar --experimento E8 --limite 10             # nube, hibrida y local
+# --limite toma una muestra estratificada: un caso de cada tipo por turno, no los N primeros.
 ```
 
 | Exp. | Qué se modifica | LLM | Requisitos previos |
 |---|---|---|---|
-| E1 | Prompt `basico` vs `mejorado` | Sí | Base indexada con los embeddings de `RAG_CONFIG` |
-| E2 | Chunking `por_tipo` / `fija300` / `fija1000` | No | `indexar --estrategia …` para las tres |
+| E1 | Prompt `basico` vs `mejorado` (casos en verde con y sin el chequeo de citas, que el básico no pide) | Sí | Base indexada con los embeddings de `RAG_CONFIG` |
+| E2 | Chunking `por_tipo` / `fija300` / `fija1000` | No | `indexar --estrategia …` para las tres, con el perfil de `--embeddings` (cada perfil y estrategia es otra tabla: `kb_embeddinggemma_768_fija300`…) |
 | E3 | *k* = 1, 4, 8 | Sí | Base indexada |
 | E4 | `gemini` / `embeddinggemma` / `bge_m3` | No | `indexar --embeddings …` para los tres (`--perfiles` elige cuáles) |
 | E5 | Asistente sin RAG vs `atender` con RAG | Sí | Base indexada |

@@ -148,3 +148,20 @@ def test_respuesta_con_bloques_de_pensamiento_se_lee_como_texto(almacen_memoria)
     llm = _ConPensamiento(default=respuesta_extractiva)
     resultado = chains.responder("¿Cuánto cuesta el envío?", almacen_memoria, llm, umbral=0.0)
     assert resultado.respuesta.endswith("]") and "thinking" not in resultado.respuesta
+
+
+def test_abstencion_solo_si_abre_la_respuesta_o_no_hay_citas():
+    citada = (
+        "El envío es gratis desde 150.000 pesos [Envíos › Costos de envío]. No tengo información "
+        "sobre envíos exprés."
+    )
+    assert not checks.es_abstencion(citada)
+    assert checks.es_abstencion("Lo siento, no lo sé. Le comunico con un agente.")
+    assert checks.es_abstencion("Gracias por escribir. No tengo información sobre eso.")
+
+
+def test_abstencion_opcional():
+    ok, remite = checks.abstencion_correcta, "No tengo esa información; le comunico con un agente."
+    assert ok("La disponibilidad cambia a diario [3. Precios]", "opcional")[1]
+    assert ok(remite, "opcional")[1]
+    assert not ok("No tengo esa información.", "opcional")[1]

@@ -42,6 +42,7 @@ class ResultadoAtencion:
     pasos: dict[str, Any] = field(default_factory=dict)
     metadatos: dict[str, Any] = field(default_factory=dict)
     detalle: Any = None  # ResultadoRAG o ResultadoCadena del Taller 1
+    contexto: str = ""  # evidencia que vio el LLM (contexto RAG o política recuperada)
 
     @property
     def ok(self) -> bool:
@@ -71,15 +72,18 @@ def atender(
 
     if ruta == "devolucion":
         politica = recuperar(almacen, mensaje, k=k, filtro=FILTRO_DEVOLUCIONES, umbral=0.0)
+        texto_politica = formatear_contexto(politica.chunks)
         r = t1_chains.gestionar_devolucion(
             mensaje,
             cliente_t1,
             tracking=clasificacion.trackings[0] if clasificacion.trackings else None,
             variante=variante,
-            politica=formatear_contexto(politica.chunks),
+            politica=texto_politica,
         )
         base["politica_recuperada"] = [c.resumen() for c in politica.chunks]
-        return _desde_t1(mensaje, ruta, clasificacion, r, base, politica.fuentes)
+        resultado = _desde_t1(mensaje, ruta, clasificacion, r, base, politica.fuentes)
+        resultado.contexto = texto_politica
+        return resultado
 
     if ruta == "credito":
         r = responder(
@@ -140,6 +144,7 @@ def _desde_rag(mensaje, ruta, clasificacion, r: ResultadoRAG, base, extra) -> Re
         pasos={**base, **r.pasos()},
         metadatos=r.metadatos,
         detalle=r,
+        contexto=formatear_contexto(r.recuperacion.chunks),
     )
 
 

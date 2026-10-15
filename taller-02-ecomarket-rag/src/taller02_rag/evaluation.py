@@ -157,7 +157,7 @@ def mejores_scores(
         score = encontrados[0][1] if encontrados else 0.0
         if caso["tipo"] == "translingue":
             grupos["translingue"].append((caso["id"], score))
-        elif caso["debe_abstenerse"]:
+        elif caso["debe_abstenerse"] is True:  # "opcional" tiene fuente: cuenta como dentro
             grupos["fuera"].append((caso["id"], score))
         else:
             grupos["dentro"].append((caso["id"], score))

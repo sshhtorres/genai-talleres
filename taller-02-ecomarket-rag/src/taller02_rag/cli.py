@@ -234,7 +234,13 @@ def indexar(
         )
     if reporte_md if reporte_md is not None else perfil.backend != "fake":
         _, md = indexing.escribir_reporte(
-            reporte, perfil.name, perfil.model, perfil.dimensions, humo, OUTPUTS_DIR
+            reporte,
+            perfil.name,
+            perfil.model,
+            perfil.dimensions,
+            humo,
+            OUTPUTS_DIR,
+            variante="enriq" if enriquecer_ingles else "",
         )
         typer.echo(f"\n  Evidencia: {md}")
 

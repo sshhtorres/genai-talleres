@@ -171,7 +171,10 @@ if __name__ == "__main__":
         print(resultado["respuesta"])
         print("\nFuentes:")
         for documento in resultado["documentos"]:
-            print(f"  · {documento.metadata.get('fuente')}: {documento.page_content.strip()[:80]}…")
+            # El chunk empieza con el título, que ya es la fuente: se muestra lo que sigue.
+            fuente = documento.metadata.get("fuente", "")
+            texto = documento.page_content.strip().removeprefix(f"{fuente}:").strip()
+            print(f"  · {fuente}: {texto[:80]}…")
 
 
 # -- Qué cambió y por qué -------------------------------------------------------------------------------
