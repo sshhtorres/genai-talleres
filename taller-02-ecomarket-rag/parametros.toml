@@ -16,9 +16,9 @@ k = 4
 # desplazan: 0,68 → 0,50 en la prueba local), así que un umbral no sirve para otro modelo.
 # 0.0 = desactivado. Se calibra con `taller02 calibrar` (H7); no se adivina.
 [recuperacion.umbral]
-gemini = 0.0
-embeddinggemma = 0.0
-bge_m3 = 0.0
+gemini = 0.6681
+embeddinggemma = 0.4048
+bge_m3 = 0.5029
 fake = 0.0
 
 [indexacion]

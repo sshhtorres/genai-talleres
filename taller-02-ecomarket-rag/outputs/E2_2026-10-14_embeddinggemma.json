@@ -1,0 +1,1752 @@
+{
+  "perfil": "embeddinggemma",
+  "k_max": 8,
+  "estrategias": {
+    "por_tipo": {
+      "resumen": {
+        "global": {
+          "casos": 36,
+          "hit@1": 0.778,
+          "hit@4": 0.889,
+          "mrr": 0.833
+        },
+        "doc:politicas-y-faq": {
+          "casos": 15,
+          "hit@1": 0.867,
+          "hit@4": 0.933,
+          "mrr": 0.9
+        },
+        "doc:reglas-credito": {
+          "casos": 10,
+          "hit@1": 0.6,
+          "hit@4": 0.9,
+          "mrr": 0.733
+        },
+        "doc:catalogo": {
+          "casos": 6,
+          "hit@1": 1.0,
+          "hit@4": 1.0,
+          "mrr": 1.0
+        },
+        "doc:terminos-y-condiciones": {
+          "casos": 5,
+          "hit@1": 0.6,
+          "hit@4": 0.6,
+          "mrr": 0.629
+        },
+        "translingue": {
+          "casos": 4,
+          "hit@1": 1.0,
+          "hit@4": 1.0,
+          "mrr": 1.0
+        }
+      },
+      "casos": [
+        {
+          "caso_id": "pol-envios-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5926,
+          "score_acierto": 0.5926,
+          "fuentes_top": [
+            "Envíos › Preguntas frecuentes › ¿Cuánto cuesta el envío?",
+            "Envíos › Costos de envío",
+            "Reglas de crédito › CR-05 · Monto mínimo financiable"
+          ]
+        },
+        {
+          "caso_id": "pol-envios-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5038,
+          "score_acierto": 0.5038,
+          "fuentes_top": [
+            "Envíos › Preguntas frecuentes › ¿Hacen envíos fuera de Colombia?",
+            "Envíos › Cobertura",
+            "Envíos › Preguntas frecuentes › ¿Cuánto cuesta el envío?"
+          ]
+        },
+        {
+          "caso_id": "pol-pagos-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5391,
+          "score_acierto": 0.5391,
+          "fuentes_top": [
+            "Pagos y cuenta › Preguntas frecuentes › ¿Puedo pagar contra entrega?",
+            "Pagos y cuenta › Medios de pago",
+            "Términos y condiciones › página 1"
+          ]
+        },
+        {
+          "caso_id": "pol-pagos-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7535,
+          "score_acierto": 0.7535,
+          "fuentes_top": [
+            "Pagos y cuenta › Preguntas frecuentes › ¿Puedo usar dos cupones en la misma compra?",
+            "Pagos y cuenta › Cupones de descuento",
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Me devuelven el dinero o me dan un cupón?"
+          ]
+        },
+        {
+          "caso_id": "pol-sostenibilidad-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5078,
+          "score_acierto": 0.5078,
+          "fuentes_top": [
+            "Sostenibilidad › Preguntas frecuentes › ¿Qué hago con los envases vacíos?",
+            "Sostenibilidad › Programa de reciclaje de envases",
+            "Sostenibilidad › Preguntas frecuentes › ¿Puedo devolver envases de productos que no compré en EcoMarket?"
+          ]
+        },
+        {
+          "caso_id": "pol-sostenibilidad-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.7059,
+          "score_acierto": 0.7059,
+          "fuentes_top": [
+            "Sostenibilidad › Preguntas frecuentes › ¿Los empaques de los pedidos tienen plástico?",
+            "Sostenibilidad › Empaques",
+            "Sostenibilidad › Preguntas frecuentes › ¿Puedo devolver envases de productos que no compré en EcoMarket?"
+          ]
+        },
+        {
+          "caso_id": "pol-devoluciones-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5964,
+          "score_acierto": 0.5964,
+          "fuentes_top": [
+            "Devoluciones y garantías › Tiempos de reembolso",
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Me devuelven el dinero o me dan un cupón?",
+            "Devoluciones y garantías › Derecho de retracto"
+          ]
+        },
+        {
+          "caso_id": "cred-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 2,
+          "mejor_score": 0.5788,
+          "score_acierto": 0.5275,
+          "fuentes_top": [
+            "Reglas de crédito › CR-06 · Número de cuotas según el monto",
+            "Reglas de crédito › CR-05 · Monto mínimo financiable",
+            "Reglas de crédito › CR-03 · Cupo de financiación"
+          ]
+        },
+        {
+          "caso_id": "cred-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5445,
+          "score_acierto": 0.5445,
+          "fuentes_top": [
+            "Reglas de crédito › CR-14 · Aviso previo antes de reportar a centrales de riesgo",
+            "Reglas de crédito › CR-13 · Mora e intereses de mora",
+            "Reglas de crédito › CR-10 · Pago anticipado"
+          ]
+        },
+        {
+          "caso_id": "cred-03",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5517,
+          "score_acierto": 0.5517,
+          "fuentes_top": [
+            "Reglas de crédito › CR-10 · Pago anticipado",
+            "Reglas de crédito › CR-14 · Aviso previo antes de reportar a centrales de riesgo",
+            "Reglas de crédito › CR-13 · Mora e intereses de mora"
+          ]
+        },
+        {
+          "caso_id": "cred-04",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5696,
+          "score_acierto": 0.5696,
+          "fuentes_top": [
+            "Reglas de crédito › CR-09 · Costos adicionales",
+            "Reglas de crédito › CR-07 · Tasa de interés",
+            "Reglas de crédito › CR-12 · Cómo pagar las cuotas"
+          ]
+        },
+        {
+          "caso_id": "cred-05",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5815,
+          "score_acierto": 0.5815,
+          "fuentes_top": [
+            "Reglas de crédito › CR-16 · Productos y compras no financiables",
+            "Reglas de crédito › CR-01 · Requisitos para solicitar la financiación",
+            "Reglas de crédito › CR-04 · Quién aprueba la financiación"
+          ]
+        },
+        {
+          "caso_id": "cat-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.4875,
+          "score_acierto": 0.4875,
+          "fuentes_top": [
+            "Catálogo › P-103 · Café orgánico en grano 500 g",
+            "Envíos › Tiempos de entrega",
+            "Catálogo › P-104 · Frutos secos mixtos 300 g"
+          ]
+        },
+        {
+          "caso_id": "cat-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.4733,
+          "score_acierto": 0.4733,
+          "fuentes_top": [
+            "Catálogo › P-105 · Detergente concentrado a granel 1 L",
+            "Catálogo › P-109 · Jabón de castilla 250 ml",
+            "Catálogo › P-115 · Esponjas vegetales de lufa (pack x3)"
+          ]
+        },
+        {
+          "caso_id": "cat-03",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.4908,
+          "score_acierto": 0.4908,
+          "fuentes_top": [
+            "Catálogo › P-108 · Vaso de vidrio con tapa de bambú 500 ml",
+            "Sostenibilidad › Programa de reciclaje de envases",
+            "Sostenibilidad › Preguntas frecuentes › ¿Puedo devolver envases de productos que no compré en EcoMarket?"
+          ]
+        },
+        {
+          "caso_id": "cat-04",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.6108,
+          "score_acierto": 0.6108,
+          "fuentes_top": [
+            "Catálogo › P-115 · Esponjas vegetales de lufa (pack x3)",
+            "Catálogo › P-110 · Home compost bin 20 L",
+            "Sostenibilidad › Preguntas frecuentes › ¿Cómo compensan las emisiones de los envíos?"
+          ]
+        },
+        {
+          "caso_id": "ter-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.4922,
+          "score_acierto": 0.4922,
+          "fuentes_top": [
+            "Términos y condiciones › página 1",
+            "Términos y condiciones › página 1",
+            "Reglas de crédito › CR-11 · Fechas de corte y de pago"
+          ]
+        },
+        {
+          "caso_id": "ter-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.4431,
+          "score_acierto": 0.4431,
+          "fuentes_top": [
+            "Términos y condiciones › página 1",
+            "Reglas de crédito › CR-11 · Fechas de corte y de pago",
+            "Reglas de crédito › CR-01 · Requisitos para solicitar la financiación"
+          ]
+        },
+        {
+          "caso_id": "ter-03",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.4347,
+          "score_acierto": 0.4347,
+          "fuentes_top": [
+            "Términos y condiciones › página 2",
+            "Términos y condiciones › página 1",
+            "Pagos y cuenta › Preguntas frecuentes › ¿Cómo elimino mi cuenta?"
+          ]
+        },
+        {
+          "caso_id": "ter-04",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 7,
+          "mejor_score": 0.4463,
+          "score_acierto": 0.4024,
+          "fuentes_top": [
+            "Reglas de crédito › CR-15 · Devolución de una compra financiada",
+            "Devoluciones y garantías › Producto defectuoso, incompleto o que llegó dañado",
+            "Devoluciones y garantías › Tiempos de reembolso"
+          ]
+        },
+        {
+          "caso_id": "ter-05",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": null,
+          "mejor_score": 0.471,
+          "score_acierto": null,
+          "fuentes_top": [
+            "Devoluciones y garantías › Preguntas frecuentes › Mi cargador solar dejó de funcionar a los tres meses, ¿qué hago?",
+            "Catálogo › P-111 · Portable solar charger 10,000 mAh",
+            "Devoluciones y garantías › Garantía legal"
+          ]
+        },
+        {
+          "caso_id": "mixto-01",
+          "tipo": "mixto",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 6,
+          "mejor_score": 0.5492,
+          "score_acierto": 0.5002,
+          "fuentes_top": [
+            "Devoluciones y garantías › Tiempos de reembolso",
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Puedo devolver un producto que ya abrí?",
+            "Devoluciones y garantías › Cómo tramitar una devolución aprobada"
+          ]
+        },
+        {
+          "caso_id": "mixto-02",
+          "tipo": "mixto",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 3,
+          "mejor_score": 0.5041,
+          "score_acierto": 0.4675,
+          "fuentes_top": [
+            "Envíos › Preguntas frecuentes › ¿Dónde encuentro el número de seguimiento?",
+            "Envíos › Seguimiento del pedido",
+            "Envíos › Retrasos y pedidos extraviados"
+          ]
+        },
+        {
+          "caso_id": "mixto-03",
+          "tipo": "mixto",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5935,
+          "score_acierto": 0.5935,
+          "fuentes_top": [
+            "Envíos › Preguntas frecuentes › ¿Puedo cambiar la dirección de entrega después de comprar?",
+            "Términos y condiciones › página 1",
+            "Envíos › Preguntas frecuentes › ¿Dónde encuentro el número de seguimiento?"
+          ]
+        },
+        {
+          "caso_id": "iny-01",
+          "tipo": "inyeccion",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5307,
+          "score_acierto": 0.5307,
+          "fuentes_top": [
+            "Devoluciones y garantías › Plazo para solicitar una devolución",
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Cuánto tiempo tengo para devolver un producto?",
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Puedo devolver un producto que ya abrí?"
+          ]
+        },
+        {
+          "caso_id": "iny-02",
+          "tipo": "inyeccion",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 3,
+          "mejor_score": 0.4546,
+          "score_acierto": 0.3744,
+          "fuentes_top": [
+            "Reglas de crédito › CR-03 · Cupo de financiación",
+            "Reglas de crédito › CR-06 · Número de cuotas según el monto",
+            "Reglas de crédito › CR-04 · Quién aprueba la financiación"
+          ]
+        },
+        {
+          "caso_id": "reform-01",
+          "tipo": "reformulacion",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5127,
+          "score_acierto": 0.5127,
+          "fuentes_top": [
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Puedo devolver un producto que ya abrí?",
+            "Devoluciones y garantías › Condiciones para que una devolución proceda",
+            "Devoluciones y garantías › Productos no retornables"
+          ]
+        },
+        {
+          "caso_id": "reform-02",
+          "tipo": "reformulacion",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5622,
+          "score_acierto": 0.5622,
+          "fuentes_top": [
+            "Envíos › Tiempos de entrega",
+            "Envíos › Preguntas frecuentes › ¿Cuánto se demora en llegar mi pedido?",
+            "Envíos › Cobertura"
+          ]
+        },
+        {
+          "caso_id": "reform-03",
+          "tipo": "reformulacion",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.4781,
+          "score_acierto": 0.4781,
+          "fuentes_top": [
+            "Reglas de crédito › CR-13 · Mora e intereses de mora",
+            "Reglas de crédito › CR-10 · Pago anticipado",
+            "Reglas de crédito › CR-12 · Cómo pagar las cuotas"
+          ]
+        },
+        {
+          "caso_id": "transl-01",
+          "tipo": "translingue",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "en",
+          "rango": 1,
+          "mejor_score": 0.5839,
+          "score_acierto": 0.5839,
+          "fuentes_top": [
+            "Catálogo › P-101 · Bamboo toothbrush (pack of 4)",
+            "Catálogo › P-108 · Vaso de vidrio con tapa de bambú 500 ml",
+            "Catálogo › P-114 · Cubiertos de bambú de viaje"
+          ]
+        },
+        {
+          "caso_id": "transl-02",
+          "tipo": "translingue",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "en",
+          "rango": 1,
+          "mejor_score": 0.5334,
+          "score_acierto": 0.5334,
+          "fuentes_top": [
+            "Catálogo › P-106 · Stainless steel thermal bottle 750 ml",
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Puedo devolver un producto que ya abrí?",
+            "Catálogo › P-108 · Vaso de vidrio con tapa de bambú 500 ml"
+          ]
+        },
+        {
+          "caso_id": "transl-03",
+          "tipo": "translingue",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "en",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5622,
+          "score_acierto": 0.5622,
+          "fuentes_top": [
+            "Devoluciones y garantías › Plazo para solicitar una devolución",
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Cuánto tiempo tengo para devolver un producto?",
+            "Devoluciones y garantías › Preguntas frecuentes › ¿Puedo devolver un producto que ya abrí?"
+          ]
+        },
+        {
+          "caso_id": "transl-04",
+          "tipo": "translingue",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "en",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.6257,
+          "score_acierto": 0.6257,
+          "fuentes_top": [
+            "Envíos › Preguntas frecuentes › ¿Hacen envíos fuera de Colombia?",
+            "Envíos › Cobertura",
+            "Envíos › Costos de envío"
+          ]
+        },
+        {
+          "caso_id": "trampa-01",
+          "tipo": "credito_trampa",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": null,
+          "mejor_score": 0.4534,
+          "score_acierto": null,
+          "fuentes_top": [
+            "Reglas de crédito › CR-06 · Número de cuotas según el monto",
+            "Reglas de crédito › CR-15 · Devolución de una compra financiada",
+            "Reglas de crédito › CR-01 · Requisitos para solicitar la financiación"
+          ]
+        },
+        {
+          "caso_id": "trampa-02",
+          "tipo": "credito_trampa",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.6152,
+          "score_acierto": 0.6152,
+          "fuentes_top": [
+            "Reglas de crédito › CR-06 · Número de cuotas según el monto",
+            "Reglas de crédito › CR-08 · Simulador de cuotas",
+            "Reglas de crédito › CR-03 · Cupo de financiación"
+          ]
+        },
+        {
+          "caso_id": "trampa-03",
+          "tipo": "credito_trampa",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 2,
+          "mejor_score": 0.4671,
+          "score_acierto": 0.4287,
+          "fuentes_top": [
+            "Devoluciones y garantías › Preguntas frecuentes › Mi cargador solar dejó de funcionar a los tres meses, ¿qué hago?",
+            "Reglas de crédito › CR-18 · Uso responsable de la financiación",
+            "Catálogo › P-111 · Portable solar charger 10,000 mAh"
+          ]
+        }
+      ]
+    },
+    "fija300": {
+      "resumen": {
+        "global": {
+          "casos": 36,
+          "hit@1": 0.611,
+          "hit@4": 0.861,
+          "mrr": 0.736
+        },
+        "doc:politicas-y-faq": {
+          "casos": 15,
+          "hit@1": 0.667,
+          "hit@4": 0.933,
+          "mrr": 0.8
+        },
+        "doc:reglas-credito": {
+          "casos": 10,
+          "hit@1": 0.3,
+          "hit@4": 0.7,
+          "mrr": 0.5
+        },
+        "doc:catalogo": {
+          "casos": 6,
+          "hit@1": 1.0,
+          "hit@4": 1.0,
+          "mrr": 1.0
+        },
+        "doc:terminos-y-condiciones": {
+          "casos": 5,
+          "hit@1": 0.6,
+          "hit@4": 0.8,
+          "mrr": 0.7
+        },
+        "translingue": {
+          "casos": 4,
+          "hit@1": 0.75,
+          "hit@4": 1.0,
+          "mrr": 0.875
+        }
+      },
+      "casos": [
+        {
+          "caso_id": "pol-envios-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 2,
+          "mejor_score": 0.4414,
+          "score_acierto": 0.4335,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "pol-envios-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 2,
+          "mejor_score": 0.4289,
+          "score_acierto": 0.4257,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "pol-pagos-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.476,
+          "score_acierto": 0.476,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "pol-pagos-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.6099,
+          "score_acierto": 0.6099,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "pol-sostenibilidad-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5303,
+          "score_acierto": 0.5303,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "pol-sostenibilidad-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5655,
+          "score_acierto": 0.5655,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "pol-devoluciones-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5581,
+          "score_acierto": 0.5581,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "terminos-y-condiciones"
+          ]
+        },
+        {
+          "caso_id": "cred-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5365,
+          "score_acierto": 0.5365,
+          "fuentes_top": [
+            "reglas-credito",
+            "reglas-credito",
+            "reglas-credito"
+          ]
+        },
+        {
+          "caso_id": "cred-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 3,
+          "mejor_score": 0.5663,
+          "score_acierto": 0.4475,
+          "fuentes_top": [
+            "reglas-credito",
+            "reglas-credito",
+            "reglas-credito"
+          ]
+        },
+        {
+          "caso_id": "cred-03",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5434,
+          "score_acierto": 0.5434,
+          "fuentes_top": [
+            "reglas-credito",
+            "reglas-credito",
+            "reglas-credito"
+          ]
+        },
+        {
+          "caso_id": "cred-04",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.4899,
+          "score_acierto": 0.4899,
+          "fuentes_top": [
+            "reglas-credito",
+            "reglas-credito",
+            "reglas-credito"
+          ]
+        },
+        {
+          "caso_id": "cred-05",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 3,
+          "mejor_score": 0.5005,
+          "score_acierto": 0.4416,
+          "fuentes_top": [
+            "reglas-credito",
+            "reglas-credito",
+            "reglas-credito"
+          ]
+        },
+        {
+          "caso_id": "cat-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5371,
+          "score_acierto": 0.5371,
+          "fuentes_top": [
+            "catalogo",
+            "catalogo",
+            "reglas-credito"
+          ]
+        },
+        {
+          "caso_id": "cat-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.4283,
+          "score_acierto": 0.4283,
+          "fuentes_top": [
+            "catalogo",
+            "catalogo",
+            "catalogo"
+          ]
+        },
+        {
+          "caso_id": "cat-03",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.4408,
+          "score_acierto": 0.4408,
+          "fuentes_top": [
+            "catalogo",
+            "catalogo",
+            "catalogo"
+          ]
+        },
+        {
+          "caso_id": "cat-04",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.6276,
+          "score_acierto": 0.6276,
+          "fuentes_top": [
+            "catalogo",
+            "catalogo",
+            "catalogo"
+          ]
+        },
+        {
+          "caso_id": "ter-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 2,
+          "mejor_score": 0.3995,
+          "score_acierto": 0.3867,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "terminos-y-condiciones",
+            "terminos-y-condiciones"
+          ]
+        },
+        {
+          "caso_id": "ter-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5674,
+          "score_acierto": 0.5674,
+          "fuentes_top": [
+            "terminos-y-condiciones",
+            "reglas-credito",
+            "terminos-y-condiciones"
+          ]
+        },
+        {
+          "caso_id": "ter-03",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.4686,
+          "score_acierto": 0.4686,
+          "fuentes_top": [
+            "terminos-y-condiciones",
+            "terminos-y-condiciones",
+            "terminos-y-condiciones"
+          ]
+        },
+        {
+          "caso_id": "ter-04",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5015,
+          "score_acierto": 0.5015,
+          "fuentes_top": [
+            "terminos-y-condiciones",
+            "reglas-credito",
+            "reglas-credito"
+          ]
+        },
+        {
+          "caso_id": "ter-05",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": null,
+          "mejor_score": 0.4639,
+          "score_acierto": null,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "catalogo",
+            "catalogo"
+          ]
+        },
+        {
+          "caso_id": "mixto-01",
+          "tipo": "mixto",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": null,
+          "mejor_score": 0.5497,
+          "score_acierto": null,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "mixto-02",
+          "tipo": "mixto",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 2,
+          "mejor_score": 0.5671,
+          "score_acierto": 0.4852,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "terminos-y-condiciones"
+          ]
+        },
+        {
+          "caso_id": "mixto-03",
+          "tipo": "mixto",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.6436,
+          "score_acierto": 0.6436,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "iny-01",
+          "tipo": "inyeccion",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5098,
+          "score_acierto": 0.5098,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "iny-02",
+          "tipo": "inyeccion",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 6,
+          "mejor_score": 0.4656,
+          "score_acierto": 0.3681,
+          "fuentes_top": [
+            "reglas-credito",
+            "reglas-credito",
+            "reglas-credito"
+          ]
+        },
+        {
+          "caso_id": "reform-01",
+          "tipo": "reformulacion",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5106,
+          "score_acierto": 0.5106,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "reform-02",
+          "tipo": "reformulacion",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.493,
+          "score_acierto": 0.493,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "reform-03",
+          "tipo": "reformulacion",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 2,
+          "mejor_score": 0.4634,
+          "score_acierto": 0.4528,
+          "fuentes_top": [
+            "reglas-credito",
+            "reglas-credito",
+            "reglas-credito"
+          ]
+        },
+        {
+          "caso_id": "transl-01",
+          "tipo": "translingue",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "en",
+          "rango": 1,
+          "mejor_score": 0.5582,
+          "score_acierto": 0.5582,
+          "fuentes_top": [
+            "catalogo",
+            "catalogo",
+            "catalogo"
+          ]
+        },
+        {
+          "caso_id": "transl-02",
+          "tipo": "translingue",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "en",
+          "rango": 1,
+          "mejor_score": 0.5207,
+          "score_acierto": 0.5207,
+          "fuentes_top": [
+            "catalogo",
+            "catalogo",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "transl-03",
+          "tipo": "translingue",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "en",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5371,
+          "score_acierto": 0.5371,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "transl-04",
+          "tipo": "translingue",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "en",
+          "idioma_documento": "es",
+          "rango": 2,
+          "mejor_score": 0.5362,
+          "score_acierto": 0.473,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "trampa-01",
+          "tipo": "credito_trampa",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": null,
+          "mejor_score": 0.4937,
+          "score_acierto": null,
+          "fuentes_top": [
+            "reglas-credito",
+            "reglas-credito",
+            "reglas-credito"
+          ]
+        },
+        {
+          "caso_id": "trampa-02",
+          "tipo": "credito_trampa",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 2,
+          "mejor_score": 0.5698,
+          "score_acierto": 0.5684,
+          "fuentes_top": [
+            "reglas-credito",
+            "reglas-credito",
+            "reglas-credito"
+          ]
+        },
+        {
+          "caso_id": "trampa-03",
+          "tipo": "credito_trampa",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 6,
+          "mejor_score": 0.4617,
+          "score_acierto": 0.3609,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "catalogo"
+          ]
+        }
+      ]
+    },
+    "fija1000": {
+      "resumen": {
+        "global": {
+          "casos": 36,
+          "hit@1": 0.694,
+          "hit@4": 0.917,
+          "mrr": 0.801
+        },
+        "doc:politicas-y-faq": {
+          "casos": 15,
+          "hit@1": 0.667,
+          "hit@4": 1.0,
+          "mrr": 0.822
+        },
+        "doc:reglas-credito": {
+          "casos": 10,
+          "hit@1": 0.7,
+          "hit@4": 0.9,
+          "mrr": 0.8
+        },
+        "doc:catalogo": {
+          "casos": 6,
+          "hit@1": 0.833,
+          "hit@4": 1.0,
+          "mrr": 0.917
+        },
+        "doc:terminos-y-condiciones": {
+          "casos": 5,
+          "hit@1": 0.6,
+          "hit@4": 0.6,
+          "mrr": 0.6
+        },
+        "translingue": {
+          "casos": 4,
+          "hit@1": 1.0,
+          "hit@4": 1.0,
+          "mrr": 1.0
+        }
+      },
+      "casos": [
+        {
+          "caso_id": "pol-envios-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 2,
+          "mejor_score": 0.4385,
+          "score_acierto": 0.4035,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "pol-envios-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.4169,
+          "score_acierto": 0.4169,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "pol-pagos-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.3583,
+          "score_acierto": 0.3583,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "reglas-credito",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "pol-pagos-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 3,
+          "mejor_score": 0.3516,
+          "score_acierto": 0.3392,
+          "fuentes_top": [
+            "reglas-credito",
+            "reglas-credito",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "pol-sostenibilidad-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.3856,
+          "score_acierto": 0.3856,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "catalogo",
+            "catalogo"
+          ]
+        },
+        {
+          "caso_id": "pol-sostenibilidad-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.4856,
+          "score_acierto": 0.4856,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "pol-devoluciones-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5325,
+          "score_acierto": 0.5325,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "cred-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5007,
+          "score_acierto": 0.5007,
+          "fuentes_top": [
+            "reglas-credito",
+            "reglas-credito",
+            "reglas-credito"
+          ]
+        },
+        {
+          "caso_id": "cred-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5001,
+          "score_acierto": 0.5001,
+          "fuentes_top": [
+            "reglas-credito",
+            "reglas-credito",
+            "reglas-credito"
+          ]
+        },
+        {
+          "caso_id": "cred-03",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.4805,
+          "score_acierto": 0.4805,
+          "fuentes_top": [
+            "reglas-credito",
+            "reglas-credito",
+            "reglas-credito"
+          ]
+        },
+        {
+          "caso_id": "cred-04",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.4359,
+          "score_acierto": 0.4359,
+          "fuentes_top": [
+            "reglas-credito",
+            "reglas-credito",
+            "reglas-credito"
+          ]
+        },
+        {
+          "caso_id": "cred-05",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.4347,
+          "score_acierto": 0.4347,
+          "fuentes_top": [
+            "reglas-credito",
+            "reglas-credito",
+            "reglas-credito"
+          ]
+        },
+        {
+          "caso_id": "cat-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.4056,
+          "score_acierto": 0.4056,
+          "fuentes_top": [
+            "catalogo",
+            "politicas-y-faq",
+            "reglas-credito"
+          ]
+        },
+        {
+          "caso_id": "cat-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.3096,
+          "score_acierto": 0.3096,
+          "fuentes_top": [
+            "catalogo",
+            "catalogo",
+            "catalogo"
+          ]
+        },
+        {
+          "caso_id": "cat-03",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.3991,
+          "score_acierto": 0.3991,
+          "fuentes_top": [
+            "catalogo",
+            "catalogo",
+            "catalogo"
+          ]
+        },
+        {
+          "caso_id": "cat-04",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 2,
+          "mejor_score": 0.3844,
+          "score_acierto": 0.3484,
+          "fuentes_top": [
+            "catalogo",
+            "catalogo",
+            "catalogo"
+          ]
+        },
+        {
+          "caso_id": "ter-01",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.3881,
+          "score_acierto": 0.3881,
+          "fuentes_top": [
+            "terminos-y-condiciones",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "ter-02",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.2735,
+          "score_acierto": 0.2735,
+          "fuentes_top": [
+            "terminos-y-condiciones",
+            "reglas-credito",
+            "terminos-y-condiciones"
+          ]
+        },
+        {
+          "caso_id": "ter-03",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.3872,
+          "score_acierto": 0.3872,
+          "fuentes_top": [
+            "terminos-y-condiciones",
+            "reglas-credito",
+            "terminos-y-condiciones"
+          ]
+        },
+        {
+          "caso_id": "ter-04",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": null,
+          "mejor_score": 0.4577,
+          "score_acierto": null,
+          "fuentes_top": [
+            "reglas-credito",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "ter-05",
+          "tipo": "dentro_alcance",
+          "doc_esperado": "terminos-y-condiciones",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": null,
+          "mejor_score": 0.4181,
+          "score_acierto": null,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "catalogo",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "mixto-01",
+          "tipo": "mixto",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 2,
+          "mejor_score": 0.5657,
+          "score_acierto": 0.5453,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "mixto-02",
+          "tipo": "mixto",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 2,
+          "mejor_score": 0.5151,
+          "score_acierto": 0.46,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "mixto-03",
+          "tipo": "mixto",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 2,
+          "mejor_score": 0.5383,
+          "score_acierto": 0.492,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "iny-01",
+          "tipo": "inyeccion",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5359,
+          "score_acierto": 0.5359,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "iny-02",
+          "tipo": "inyeccion",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.4412,
+          "score_acierto": 0.4412,
+          "fuentes_top": [
+            "reglas-credito",
+            "reglas-credito",
+            "reglas-credito"
+          ]
+        },
+        {
+          "caso_id": "reform-01",
+          "tipo": "reformulacion",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5181,
+          "score_acierto": 0.5181,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "reform-02",
+          "tipo": "reformulacion",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5234,
+          "score_acierto": 0.5234,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "reform-03",
+          "tipo": "reformulacion",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 2,
+          "mejor_score": 0.4842,
+          "score_acierto": 0.4417,
+          "fuentes_top": [
+            "reglas-credito",
+            "reglas-credito",
+            "reglas-credito"
+          ]
+        },
+        {
+          "caso_id": "transl-01",
+          "tipo": "translingue",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "en",
+          "rango": 1,
+          "mejor_score": 0.5308,
+          "score_acierto": 0.5308,
+          "fuentes_top": [
+            "catalogo",
+            "catalogo",
+            "catalogo"
+          ]
+        },
+        {
+          "caso_id": "transl-02",
+          "tipo": "translingue",
+          "doc_esperado": "catalogo",
+          "idioma_pregunta": "es",
+          "idioma_documento": "en",
+          "rango": 1,
+          "mejor_score": 0.4371,
+          "score_acierto": 0.4371,
+          "fuentes_top": [
+            "catalogo",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "transl-03",
+          "tipo": "translingue",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "en",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5472,
+          "score_acierto": 0.5472,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "transl-04",
+          "tipo": "translingue",
+          "doc_esperado": "politicas-y-faq",
+          "idioma_pregunta": "en",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5663,
+          "score_acierto": 0.5663,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "politicas-y-faq",
+            "politicas-y-faq"
+          ]
+        },
+        {
+          "caso_id": "trampa-01",
+          "tipo": "credito_trampa",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 6,
+          "mejor_score": 0.4502,
+          "score_acierto": 0.4101,
+          "fuentes_top": [
+            "reglas-credito",
+            "reglas-credito",
+            "reglas-credito"
+          ]
+        },
+        {
+          "caso_id": "trampa-02",
+          "tipo": "credito_trampa",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 1,
+          "mejor_score": 0.5098,
+          "score_acierto": 0.5098,
+          "fuentes_top": [
+            "reglas-credito",
+            "reglas-credito",
+            "reglas-credito"
+          ]
+        },
+        {
+          "caso_id": "trampa-03",
+          "tipo": "credito_trampa",
+          "doc_esperado": "reglas-credito",
+          "idioma_pregunta": "es",
+          "idioma_documento": "es",
+          "rango": 3,
+          "mejor_score": 0.4276,
+          "score_acierto": 0.3286,
+          "fuentes_top": [
+            "politicas-y-faq",
+            "catalogo",
+            "reglas-credito"
+          ]
+        }
+      ]
+    }
+  }
+}

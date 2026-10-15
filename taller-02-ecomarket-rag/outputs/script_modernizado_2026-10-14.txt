@@ -1,0 +1,38 @@
+$ uv run --with "langchain-chroma==1.1.0" python taller-02-ecomarket-rag/scripts/rag_ejemplo_modernizado.py
+# Capturado con script(1) el 2026-10-14 en un equipo solo CPU (WSL2, ARM64, 19 GiB; Ollama 0.40.4: embeddinggemma:300m + gemma4:e4b).
+# Se omite la barra de progreso de uv al resolver e instalar Chroma; se conserva su línea final.
+
+Installed 96 packages in 196ms
+Paso 3: 1 chunk(s) de un documento de 656 caracteres.
+Creando y cargando la base de datos vectorial...
+
+¡El sistema RAG para EcoMarket está listo!
+Escribe una pregunta y presiona Enter. Escribe 'salir' para terminar.
+
+Tu pregunta: ¿Cuántos días tengo para devolver un producto?
+Buscando y generando respuesta...
+
+Respuesta del Asistente:
+
+Puedes devolver productos dentro de los 30 días posteriores a la fecha de compra.
+
+Fuentes:
+  · Política de Devoluciones de EcoMarket: Política de Devoluciones de EcoMarket:
+
+Nuestra política de devoluciones permite…
+
+Tu pregunta: ¿Puedo devolver unas flores?
+Buscando y generando respuesta...
+
+Respuesta del Asistente:
+
+No, los productos perecederos, como flores, no son elegibles para devolución.
+
+Fuentes:
+  · Política de Devoluciones de EcoMarket: Política de Devoluciones de EcoMarket:
+
+Nuestra política de devoluciones permite…
+
+Tu pregunta: salir
+
+# Tiempo total de la sesión (incluye instalar Chroma con uv y las pausas entre preguntas): 540.5 s

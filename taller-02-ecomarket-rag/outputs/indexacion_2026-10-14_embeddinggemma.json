@@ -1,0 +1,55 @@
+{
+  "fecha": "2026-10-14",
+  "perfil": "embeddinggemma",
+  "modelo": "embeddinggemma:300m",
+  "dimensiones": 768,
+  "tabla": "kb_embeddinggemma_768",
+  "estrategia": "por_tipo",
+  "total_chunks": 89,
+  "agregados": 0,
+  "eliminados": 0,
+  "sin_cambios": 89,
+  "por_tipo": {
+    "politicas": 49,
+    "credito": 18,
+    "producto": 15,
+    "terminos": 7
+  },
+  "tokens_aproximados": 9491,
+  "segundos": 0.01,
+  "indice": "HNSW coseno (kb_embeddinggemma_768_hnsw)",
+  "consultas_de_humo": [
+    {
+      "tipo_esperado": "politicas",
+      "pregunta": "¿Cuántos días tengo para devolver un producto?",
+      "tipo_obtenido": "politicas",
+      "fuente": "Devoluciones y garantías › Plazo para solicitar una devolución",
+      "similitud": 0.6153,
+      "ok": true
+    },
+    {
+      "tipo_esperado": "credito",
+      "pregunta": "¿Cuál es el monto mínimo para financiar una compra en cuotas?",
+      "tipo_obtenido": "credito",
+      "fuente": "Reglas de crédito › CR-05 · Monto mínimo financiable",
+      "similitud": 0.6416,
+      "ok": true
+    },
+    {
+      "tipo_esperado": "producto",
+      "pregunta": "¿El vaso de vidrio se puede lavar en el lavavajillas?",
+      "tipo_obtenido": "producto",
+      "fuente": "Catálogo › P-108 · Vaso de vidrio con tapa de bambú 500 ml",
+      "similitud": 0.4924,
+      "ok": true
+    },
+    {
+      "tipo_esperado": "terminos",
+      "pregunta": "¿En cuánto tiempo llega la factura electrónica?",
+      "tipo_obtenido": "terminos",
+      "fuente": "Términos y condiciones › página 1",
+      "similitud": 0.4876,
+      "ok": true
+    }
+  ]
+}

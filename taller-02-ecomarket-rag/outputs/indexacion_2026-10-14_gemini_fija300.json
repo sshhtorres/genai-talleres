@@ -1,0 +1,55 @@
+{
+  "fecha": "2026-10-14",
+  "perfil": "gemini",
+  "modelo": "gemini-embedding-001",
+  "dimensiones": 768,
+  "tabla": "kb_gemini_768_fija300",
+  "estrategia": "fija300",
+  "total_chunks": 124,
+  "agregados": 124,
+  "eliminados": 0,
+  "sin_cambios": 0,
+  "por_tipo": {
+    "politicas": 51,
+    "credito": 27,
+    "producto": 31,
+    "terminos": 15
+  },
+  "tokens_aproximados": 9086,
+  "segundos": 4.69,
+  "indice": "HNSW coseno (kb_gemini_768_fija300_hnsw)",
+  "consultas_de_humo": [
+    {
+      "tipo_esperado": "politicas",
+      "pregunta": "¿Cuántos días tengo para devolver un producto?",
+      "tipo_obtenido": "politicas",
+      "fuente": "politicas-y-faq",
+      "similitud": 0.7873,
+      "ok": true
+    },
+    {
+      "tipo_esperado": "credito",
+      "pregunta": "¿Cuál es el monto mínimo para financiar una compra en cuotas?",
+      "tipo_obtenido": "credito",
+      "fuente": "reglas-credito",
+      "similitud": 0.7736,
+      "ok": true
+    },
+    {
+      "tipo_esperado": "producto",
+      "pregunta": "¿El vaso de vidrio se puede lavar en el lavavajillas?",
+      "tipo_obtenido": "producto",
+      "fuente": "catalogo",
+      "similitud": 0.7001,
+      "ok": true
+    },
+    {
+      "tipo_esperado": "terminos",
+      "pregunta": "¿En cuánto tiempo llega la factura electrónica?",
+      "tipo_obtenido": "politicas",
+      "fuente": "politicas-y-faq",
+      "similitud": 0.6984,
+      "ok": false
+    }
+  ]
+}
