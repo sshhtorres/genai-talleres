@@ -78,15 +78,20 @@ def test_histograma_marca_el_umbral():
 
 
 def test_guardar_umbral_solo_toca_su_perfil(tmp_path):
+    import tomllib
+
     from taller02_rag.config import PARAMETROS
 
     copia = tmp_path / "parametros.toml"
     copia.write_text(PARAMETROS.read_text(encoding="utf-8"), encoding="utf-8")
+    antes = tomllib.loads(copia.read_text(encoding="utf-8"))["recuperacion"]["umbral"]
     evaluation.guardar_umbral("embeddinggemma", 0.4321, copia)
-    import tomllib
-
-    umbrales = tomllib.loads(copia.read_text(encoding="utf-8"))["recuperacion"]["umbral"]
-    assert umbrales["embeddinggemma"] == 0.4321 and umbrales["gemini"] == 0.0
+    despues = tomllib.loads(copia.read_text(encoding="utf-8"))["recuperacion"]["umbral"]
+    # Solo cambia el perfil indicado; los demás conservan su valor (calibrado o no).
+    assert despues["embeddinggemma"] == 0.4321
+    assert {k: v for k, v in despues.items() if k != "embeddinggemma"} == {
+        k: v for k, v in antes.items() if k != "embeddinggemma"
+    }
     with pytest.raises(ValueError):
         evaluation.guardar_umbral("inexistente", 0.1, copia)
 
