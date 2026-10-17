@@ -96,7 +96,7 @@ def atender(
             reglas_extra=cargar_prompts()["credito"]["reglas"],
             es_credito=True,
         )
-        extra = [] if r.abstuvo else checks.validar_credito(r.respuesta)
+        extra = [] if r.abstuvo else checks.validar_credito(r.respuesta, mensaje)
         return _desde_rag(mensaje, ruta, clasificacion, r, base, extra)
 
     if ruta == "consulta_general":

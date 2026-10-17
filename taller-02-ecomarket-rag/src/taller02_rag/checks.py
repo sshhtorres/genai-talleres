@@ -49,6 +49,20 @@ _PALABRAS_EN = {
     "to",
     "have",
     "days",
+    "only",
+    "within",
+    "not",
+    "we",
+    "our",
+    "it",
+    "this",
+    "that",
+    "from",
+    "will",
+    "be",
+    "there",
+    "or",
+    "if",
 }
 _PALABRAS_ES = {
     "el",
@@ -68,13 +82,21 @@ _PALABRAS_ES = {
     "por",
     "puede",
     "días",
-    "no",
+    "solo",
+    "se",
+    "del",
+    "al",
 }
 
 
 def detectar_idioma(texto: str) -> str:
-    """'es' o 'en' por conteo de palabras frecuentes. Suficiente para estas dos lenguas."""
-    palabras = re.findall(r"[a-záéíóúñ']+", (texto or "").lower())
+    """'es' o 'en' por conteo de palabras frecuentes. Suficiente para estas dos lenguas.
+
+    Las citas se quitan antes de contar: son títulos de sección en el idioma del documento, y una
+    respuesta en inglés con dos citas en español salía detectada como español.
+    """
+    sin_citas = _CITA.sub(" ", texto or "")
+    palabras = re.findall(r"[a-záéíóúñ']+", sin_citas.lower())
     en = sum(1 for p in palabras if p in _PALABRAS_EN)
     es = sum(1 for p in palabras if p in _PALABRAS_ES)
     return "en" if en > es else "es"
@@ -86,16 +108,14 @@ def _tiene_frase_de_abstencion(texto: str) -> bool:
 
 
 def es_abstencion(respuesta: str) -> bool:
-    """La respuesta se niega a responder: la frase de abstención abre la respuesta o, si aparece
-    más adelante, la respuesta no cita ninguna fuente.
+    """La respuesta se niega a responder: usa una frase de abstención y no cita ninguna fuente.
 
-    Antes bastaba con que la frase apareciera en cualquier parte, y una respuesta correcta y citada
-    que terminaba con "no tengo información sobre el envío exprés…" contaba como abstención.
+    Si cita, respondió algo con evidencia, aunque también diga lo que no sabe: «No tengo información
+    sobre eso, ni puedo aprobar créditos [Reglas de crédito › CR-04]» rechaza la parte indebida y
+    responde la otra. Antes contaba como abstención si la frase abría la respuesta o aparecía en
+    cualquier parte.
     """
     texto = (respuesta or "").strip()
-    primera = re.split(r"(?<=[.!?])\s", texto, maxsplit=1)[0]
-    if _tiene_frase_de_abstencion(primera):
-        return True
     return _tiene_frase_de_abstencion(texto) and not citas(texto)
 
 
@@ -216,25 +236,40 @@ APROBACIONES_CREDITO = (
     "su credito fue aprobado",
 )
 REMISIONES_CREDITO = ("simulador", "asesor", "pagina de pago", "mis creditos")
+# Preguntas que piden lo que el asistente no puede hacer: aprobar, calcular, recomendar o consultar
+# el crédito propio del cliente. Las informativas («¿monto mínimo?») no requieren remitir.
+_PIDE_DECISION = re.compile(
+    r"aprueb|aprob|prest(a|e)me|me prestan|cupo|conviene|deberia|recomiend|calcul|"
+    r"cuanto (me )?(queda|quedaria|pagaria|seria)|mi credito|mis cuotas|mi saldo|estoy en mora"
+)
 
 
-def validar_credito(respuesta: str) -> list[Check]:
-    """Ruta de crédito: el asistente nunca aprueba y siempre remite al canal oficial."""
+def pide_decision_de_credito(pregunta: str) -> bool:
+    return bool(_PIDE_DECISION.search(normalizar(pregunta)))
+
+
+def validar_credito(respuesta: str, pregunta: str = "") -> list[Check]:
+    """Ruta de crédito: el asistente nunca aprueba, y remite al canal oficial cuando el cliente pide
+    una decisión, un cálculo, una recomendación o datos de su propio crédito."""
     texto = normalizar(respuesta)
     aprueba = [p for p in APROBACIONES_CREDITO if p in texto]
-    remite = any(p in texto for p in REMISIONES_CREDITO)
-    return [
+    salida: list[Check] = [
         (
             "no_aprueba_credito",
             not aprueba,
             f"usa lenguaje de aprobación: {aprueba}" if aprueba else "ok",
-        ),
-        (
-            "remite_al_canal_oficial",
-            remite,
-            "ok" if remite else "no remite al simulador, asesor ni a Mis créditos",
-        ),
+        )
     ]
+    if pide_decision_de_credito(pregunta):
+        remite = any(p in texto for p in REMISIONES_CREDITO)
+        salida.append(
+            (
+                "remite_al_canal_oficial",
+                remite,
+                "ok" if remite else "no remite al simulador, asesor ni a Mis créditos",
+            )
+        )
+    return salida
 
 
 _CORTES = {"length", "max_tokens"}

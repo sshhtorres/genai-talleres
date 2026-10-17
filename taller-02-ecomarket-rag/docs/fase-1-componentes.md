@@ -104,8 +104,37 @@ recuperación híbrida nativa, que **no está disponible vía Ollama** (solo ent
 Además, `bge-m3` no está entrenado con Matryoshka: Ollama acepta truncarlo sin avisar, pero el perfil lo
 fija en 1024.
 
-> ⏳ **Resultados de E4** (`outputs/E4_<fecha>.md`): hit@1, hit@4 y MRR de los tres modelos (global,
-> por tipo de documento y translingüe), latencia por consulta y memoria de Ollama.
+**Resultados de E4** ([`outputs/E4_2026-10-14.md`](../outputs/E4_2026-10-14.md)). Los 36 casos del
+set con fuente esperada, buscados sin filtro y con la estrategia `por_tipo`. Un acierto es un fragmento
+del documento esperado que contiene la evidencia literal del caso.
+
+| Modelo | hit@1 | hit@4 | MRR | Políticas (MRR, 15) | Crédito (MRR, 10) | Catálogo (MRR, 6) | Términos (MRR, 5) | Translingüe (hit@1, 4) | s / consulta |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| `gemini` (768) | **0,833** | **0,972** | **0,892** | 0,922 | **0,808** | 1,0 | **0,84** | 1,0 | 0,319 |
+| `embeddinggemma` (768) | 0,778 | 0,889 | 0,833 | 0,900 | 0,733 | 1,0 | 0,629 | 1,0 | 1,687 |
+| `bge_m3` (1024) | 0,806 | 0,917 | 0,845 | 0,922 | 0,758 | 1,0 | 0,600 | 1,0 | 0,387 |
+
+Lo que muestran:
+
+- **`gemini` gana en todas las columnas donde hay diferencia**, y las diferencias se concentran en
+  crédito y en términos y condiciones. Políticas, catálogo y translingüe quedan casi empatados.
+- **Los locales fallan en los mismos casos difíciles** que `gemini` pone en las posiciones 2 a 5:
+  `ter-05` (stock del cargador solar), `trampa-01` y `trampa-03` (crédito con el nombre de un producto)
+  y los mixtos. En esas preguntas la palabra del producto («cargador solar») atrae su ficha del
+  catálogo por encima de la regla general. Con `embeddinggemma` y `bge_m3`, `ter-05` y `trampa-01` ni
+  siquiera aparecen entre los 8 primeros.
+- **El techo translingüe es real pero poco exigente:** los 4 casos translingües aciertan en primera
+  posición con los tres modelos. El set no distingue a los modelos en esa dimensión (ver E7).
+- **Latencia y memoria, con cautela.** Es una sola corrida en un equipo de escritorio. La latencia
+  de `embeddinggemma` (1,7 s) es más del cuádruple de la de `bge_m3` (0,4 s), un modelo más grande;
+  lo más probable es que incluya la carga del modelo en la primera consulta, y no se repitió para
+  confirmarlo. La RAM (2,02 GB en ambos) mide todos los procesos de Ollama al terminar, no cada
+  modelo por separado: no sirve para compararlos entre sí.
+
+**Decisión:** `gemini` para la configuración nube, que es la principal; `embeddinggemma` para las
+configuraciones híbrida y local, por tamaño y por los prefijos de tarea que ya se manejan.
+`embeddinggemma` pierde 0,06 de MRR frente a `gemini` y queda cerca de `bge_m3`, que ocupa más del
+doble y no aporta su búsqueda híbrida a través de Ollama.
 
 ### 2.4 Español e inglés en el mismo índice
 
@@ -117,8 +146,9 @@ que se diseñó:
 
 1. **Sesgo hacia el mismo idioma.** Con significado equivalente, un fragmento en el idioma de la pregunta
    puntúa algo más alto. Se mide en E7 como la similitud media del acierto ES→ES frente a ES→EN.
-2. **El umbral cambia.** Las similitudes translingües son en promedio más bajas; por eso la calibración
-   separa los casos translingües y no acepta un umbral que los deje sin respuesta.
+2. **El umbral cambia.** Se esperaba que las similitudes translingües fueran en promedio más bajas; por
+   eso la calibración separa los casos translingües y no acepta un umbral que los deje sin respuesta.
+   (Con los 4 casos del set no se observó: ver la calibración en la Fase 3.)
 3. **La búsqueda por palabras clave no es translingüe.** Si se añadiera búsqueda híbrida, el `tsvector`
    con configuración `spanish` estropearía el texto en inglés.
 4. **La respuesta sale en el idioma del cliente**, traduciendo el fragmento sin traducir nombres de

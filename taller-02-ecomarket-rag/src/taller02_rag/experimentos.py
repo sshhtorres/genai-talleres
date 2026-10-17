@@ -438,8 +438,11 @@ def e8(opciones: Opciones) -> list[Path]:
         ok = sum(1 for x in recorder.records if x.ok)
         # Seis decimales: con tres, el costo por respuesta de los modelos baratos salía 0.0.
         costo = _media((x["metadatos"].get("costo_usd") for x in registros), decimales=6)
+        # Las abstenciones desde código no llaman al LLM: tiempos, tokens y costo se promedian
+        # solo sobre las respuestas que sí lo llamaron, y la tabla dice cuántas son.
+        con_llm = sum(1 for x in registros if x["metadatos"].get("tokens_entrada") is not None)
         resumen.append(
-            f"| {etiqueta} | {len(registros)} | {ok} | "
+            f"| {etiqueta} | {len(registros)} | {con_llm} | {ok} | "
             f"{_media(x['metadatos'].get('ttft_s') for x in registros)} | "
             f"{_media(x['metadatos'].get('latencia_s') for x in registros)} | "
             f"{_media(x['metadatos'].get('tokens_entrada') for x in registros)} | "
@@ -451,11 +454,11 @@ def e8(opciones: Opciones) -> list[Path]:
         "E8 — Configuraciones: chequeos, tiempo hasta el primer token, latencia, tokens y costo",
         [
             (
-                "Resumen (medias por respuesta)",
+                "Resumen (tiempos, tokens y costo: medias sobre las respuestas con LLM)",
                 [
-                    "| Configuración | Casos | Chequeos OK | TTFT (s) | Latencia total (s) | "
-                    "Tokens entrada | Tokens salida | Costo (USD) |",
-                    "|---|---:|---:|---:|---:|---:|---:|---:|",
+                    "| Configuración | Casos | Con LLM | Chequeos OK | TTFT (s) | "
+                    "Latencia total (s) | Tokens entrada | Tokens salida | Costo (USD) |",
+                    "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
                     *resumen,
                     "",
                     "Detalle por caso: " + ", ".join(f"`{p.name}`" for p in reportes),

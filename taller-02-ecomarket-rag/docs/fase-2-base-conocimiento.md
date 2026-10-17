@@ -136,8 +136,32 @@ Hay **una tabla por modelo, dimensión y variante** (`kb_gemini_768`, `kb_embedd
 `kb_bge_m3_1024`, `kb_gemini_768_fija300`…): nunca se mezclan vectores incompatibles, y los experimentos
 comparan variantes sin reindexar cada vez.
 
-> ⏳ **Conteos reales** (`outputs/indexacion_<fecha>_gemini.md` y los de las demás tablas): fragmentos
-> por tipo, tokens aproximados, tiempo y resultado de las consultas de humo.
+**Conteos reales** (`outputs/indexacion_2026-10-1{4,5}_*.md`). El número de fragmentos depende solo de
+la estrategia, no del modelo de embeddings:
+
+| Estrategia | Fragmentos | Políticas | Crédito | Catálogo | Términos | Tokens aprox. | Tablas indexadas |
+|---|---:|---:|---:|---:|---:|---:|---|
+| `por_tipo` | 89 | 49 | 18 | 15 | 7 | 9.491 | `kb_gemini_768`, `kb_embeddinggemma_768`, `kb_bge_m3_1024`, `kb_gemini_768_enriq`* |
+| `fija300` | 124 | 51 | 27 | 31 | 15 | 9.086 | `kb_gemini_768_fija300`, `kb_embeddinggemma_768_fija300` |
+| `fija1000` | 39 | 16 | 8 | 10 | 5 | 9.103 | `kb_gemini_768_fija1000`, `kb_embeddinggemma_768_fija1000` |
+
+\* La variante enriquecida suma entre 430 y 560 tokens, según la versión de los resúmenes: los 4
+resúmenes en español de las fichas en inglés.
+
+El reporte de la tabla principal (`kb_gemini_768`) es del 2026-10-15: el del 2026-10-14 lo sobrescribió
+la indexación enriquecida, por un error en el nombre del reporte que ya se corrigió.
+
+- **`por_tipo` respeta las unidades del dominio:** 18 fragmentos de crédito para 18 reglas y 15 de
+  catálogo para 15 productos. `fija300` parte reglas y fichas (27 y 31 fragmentos); `fija1000` junta
+  varias en uno (8 y 10).
+- **Consultas de humo:** una por tipo de documento, top-1 sin filtro. Todas acertaron en todas las
+  tablas salvo una en `kb_gemini_768_fija300`: «¿En cuánto tiempo llega la factura electrónica?»
+  devolvió un fragmento de políticas en vez del de términos (similitud 0,698). El tema aparece en los
+  dos documentos, y un trozo de 300 caracteres conserva poco del contexto que los distingue.
+- **Los tiempos no son comparables entre sí** y por eso no se tabulan: dependen de la caché local de
+  embeddings (una tabla reindexada sin cambios tarda 0,01 s), de las pausas y reintentos del nivel
+  gratuito de Gemini y de la CPU para los modelos locales (`embeddinggemma` tardó 363 s y 494 s en las
+  tablas fijas).
 
 ## 6. Cómo la división afecta el rendimiento (experimento E2)
 
@@ -151,8 +175,33 @@ Un fragmento «acierta» si es del documento esperado y **contiene la evidencia 
 métrica vale igual para las estrategias de tamaño fijo, que no conservan la sección. E2 no llama al
 LLM: es barato, determinista y aísla el efecto del chunking.
 
-> ⏳ **Resultados de E2** (`outputs/E2_<fecha>_gemini.md` y `…_embeddinggemma.md`): hit@1, hit@4 y MRR
-> por estrategia, global y por tipo de documento, y su lectura.
+**Resultados de E2** ([`outputs/E2_2026-10-14_gemini.md`](../outputs/E2_2026-10-14_gemini.md) y
+[`…_embeddinggemma.md`](../outputs/E2_2026-10-14_embeddinggemma.md)), 36 casos:
+
+| Embeddings | Estrategia | hit@1 | hit@4 | MRR | Crédito (MRR) | Términos (MRR) | Catálogo (MRR) |
+|---|---|---:|---:|---:|---:|---:|---:|
+| `gemini` | **`por_tipo`** | **0,833** | **0,972** | **0,892** | **0,808** | **0,84** | 1,0 |
+| `gemini` | `fija300` | 0,611 | 0,889 | 0,756 | 0,62 | 0,60 | 1,0 |
+| `gemini` | `fija1000` | 0,694 | 0,944 | 0,794 | 0,717 | 0,65 | 0,778 |
+| `embeddinggemma` | **`por_tipo`** | **0,778** | 0,889 | **0,833** | 0,733 | 0,629 | 1,0 |
+| `embeddinggemma` | `fija300` | 0,611 | 0,861 | 0,736 | 0,50 | **0,70** | 1,0 |
+| `embeddinggemma` | `fija1000` | 0,694 | **0,917** | 0,801 | **0,80** | 0,60 | 0,917 |
+
+Lectura:
+
+- **`por_tipo` gana en hit@1 y MRR con los dos modelos**, con ventajas de 0,08 a 0,22 en hit@1. Lo que
+  más mejora es el primer puesto: con k = 4, las tres estrategias suelen tener el fragmento correcto
+  en algún lugar, pero el LLM recibe primero el que corresponde.
+- **El error de cada estrategia fija es el esperado.** `fija300` corta las reglas de crédito a la
+  mitad (MRR de crédito 0,62 y 0,50): la condición queda en un trozo y la regla en otro. `fija1000`
+  junta varias fichas en un fragmento y baja en el catálogo (0,778 con `gemini`): la ficha correcta
+  llega mezclada con otra.
+- **No hay un ganador absoluto por documento.** Con `embeddinggemma`, `fija1000` iguala a `por_tipo`
+  en crédito (0,80 frente a 0,733) y `fija300` lo supera en términos (0,70 frente a 0,629). Son 10 y 5
+  casos: una o dos preguntas cambian el resultado, así que no alcanzan para preferir otra estrategia
+  en esos documentos.
+- **La estrategia pesa más que el modelo.** Pasar de `fija300` a `por_tipo` sube el MRR 0,10 a 0,14;
+  pasar de `embeddinggemma` a `gemini` con `por_tipo` lo sube 0,06.
 
 ## 7. Conclusión
 

@@ -87,8 +87,24 @@ embeddings los convierte en vectores → la base vectorial los guarda e indexa �
 la pregunta en vector con **el mismo modelo** y trae los *k* más cercanos → la cadena los «rellena»
 (*stuff*) en el prompt → el LLM genera condicionado a ese contexto.
 
-> ⏳ **Ejecución del script modernizado** (`outputs/script_modernizado_<fecha>.txt`): salida de consola
-> con dos preguntas y sus fuentes.
+**Ejecución del script modernizado** ([`outputs/script_modernizado_2026-10-14.txt`](../outputs/script_modernizado_2026-10-14.txt)),
+en un equipo solo CPU con `embeddinggemma:300m` y `gemma4:e4b` en Ollama:
+
+```text
+Paso 3: 1 chunk(s) de un documento de 656 caracteres.
+
+Tu pregunta: ¿Cuántos días tengo para devolver un producto?
+Puedes devolver productos dentro de los 30 días posteriores a la fecha de compra.
+
+Tu pregunta: ¿Puedo devolver unas flores?
+No, los productos perecederos, como flores, no son elegibles para devolución.
+```
+
+Las dos respuestas son correctas y salen del documento. La primera línea confirma el diagnóstico del
+paso 3: con 656 caracteres y `chunk_size=1000`, todo el documento es **un solo fragmento**, así que el
+recuperador siempre devuelve el texto completo y no se está probando la recuperación. La lista de
+fuentes de esa corrida repetía el título del documento; se corrigió después, sin cambiar las respuestas.
+La sesión completa tardó 540 s, incluida la instalación de Chroma y las pausas entre preguntas.
 
 ## 3. Integración con el Taller 1
 
@@ -139,6 +155,7 @@ y la pregunta. La variante `mejorado` aplica:
 | Privacidad | No mencionar pedidos ni datos de clientes |
 | Idioma | Responder siempre en el idioma de la pregunta, aunque los fragmentos estén en otro; traducir sin traducir nombres de producto ni marcas |
 | Formato | Máximo 120 palabras, trato de «usted» |
+| Sin detalles internos | No hablar al cliente de «fragmentos», del «contexto» ni de textos que «se cortan» |
 | *Few-shot* | Un caso normal, uno de abstención y dos translingües (pregunta ES → ficha EN y pregunta EN → política ES), ninguno igual a un caso del set de evaluación |
 
 En la ruta de crédito se añaden las reglas de «no decidir». Un detalle que salió de la prueba local: el
@@ -155,8 +172,44 @@ dentro y fuera de alcance, separa los translingües (que puntúan más bajo) y e
 separa los dos grupos sin dejar sin respuesta a ningún caso translingüe. Hay **un umbral por modelo de
 embeddings**, porque cada modelo tiene su propia escala de similitudes.
 
-> ⏳ **Calibración** (`outputs/calibracion_<fecha>_<perfil>.md`): histogramas, umbral propuesto y
-> exactitud por perfil.
+**Calibración** (`outputs/calibracion_2026-10-14_<perfil>.md`), sobre 32 casos dentro de alcance,
+6 fuera y 4 translingües:
+
+| Perfil | Umbral | Exactitud | Mínimo dentro | Máximo fuera | Mínimo translingüe | Errores |
+|---|---:|---:|---:|---:|---:|---|
+| `gemini` | 0,6681 | 0,947 | 0,684 | 0,736 | 0,696 | `fuera-01`, `fuera-05` responden |
+| `embeddinggemma` | 0,4048 | 0,947 | 0,435 | 0,501 | 0,533 | `fuera-01`, `fuera-05` responden |
+| `bge_m3` | 0,5029 | 0,947 | 0,508 | 0,600 | 0,622 | `fuera-01`, `fuera-05` responden |
+
+Histograma de `gemini` (D = dentro, F = fuera, T = translingüe):
+
+```text
+0.50-0.55 | F
+0.55-0.60 | F
+0.60-0.65 | F
+0.65-0.70 | DDDFT ← umbral
+0.70-0.75 | DDDDDDDDDDDDDDDDDDFFTT
+0.75-0.80 | DDDDDDDDDT
+0.80-0.85 | DD
+```
+
+- **Las escalas no se parecen:** el mismo papel lo cumple 0,67 en `gemini` y 0,40 en `embeddinggemma`.
+  Confirma que el umbral es por modelo.
+- **Ningún umbral separa todo, y los tres modelos fallan en los mismos dos casos.** «¿Cuál es el
+  precio de la botella térmica?» (`fuera-01`) se parece mucho a la ficha de la botella, que no trae
+  precio; «¿Cuántos empleados tiene EcoMarket?» (`fuera-05`) se parece a los textos institucionales.
+  La similitud mide el **tema**, no si el fragmento **contiene la respuesta**. Esos casos los tiene
+  que atajar la regla de abstención del prompt, no el umbral.
+- **Con `gemini`, un caso translingüe (0,696) puntúa por debajo de un caso fuera de alcance (0,736).**
+  La calibración prioriza no dejar sin respuesta a los translingües, como se decidió en la Fase 1.
+  En promedio, sin embargo, los translingües **no** puntuaron más bajo que el resto: 0,733 frente a
+  0,744 con `gemini`, y más alto con los locales (0,576 frente a 0,534 con `embeddinggemma`, 0,674
+  frente a 0,657 con `bge_m3`). Con 4 casos, la penalización por idioma que se esperaba no se observa.
+- **El umbral se calibra sin filtro y se aplica también con filtro.** En la ruta de crédito, la
+  búsqueda se limita a las reglas de crédito, y las similitudes bajan. En E1 (2026-10-14), `trampa-03`
+  («¿Me conviene endeudarme para comprar el cargador solar?») trajo primero la regla correcta, CR-18,
+  con 0,659: por debajo del umbral, y el código se abstuvo sin llamar al LLM. Es un costo conocido del
+  umbral único. Se deja como hallazgo, sin ajustar el caso ni la base.
 
 **Validador después del LLM** ([`src/taller02_rag/checks.py`](../src/taller02_rag/checks.py)), sin LLM:
 

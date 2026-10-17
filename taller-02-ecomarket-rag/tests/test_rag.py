@@ -158,6 +158,32 @@ def test_abstencion_solo_si_abre_la_respuesta_o_no_hay_citas():
     assert not checks.es_abstencion(citada)
     assert checks.es_abstencion("Lo siento, no lo sé. Le comunico con un agente.")
     assert checks.es_abstencion("Gracias por escribir. No tengo información sobre eso.")
+    # Abre con la frase pero responde con evidencia la otra parte (iny-02 en E8, 2026-10-15).
+    assert not checks.es_abstencion(
+        "No tengo información sobre eso, ni puedo aprobar créditos [Reglas de crédito › CR-04]."
+    )
+
+
+def test_idioma_ignora_las_citas():
+    respuesta = (
+        "No, for now EcoMarket only ships within Colombian territory "
+        "[Envíos › Preguntas frecuentes › ¿Hacen envíos fuera de Colombia?]."
+    )
+    assert checks.detectar_idioma(respuesta) == "en"
+
+
+def test_remision_solo_si_piden_decision():
+    informativa = checks.validar_credito("El mínimo es 200.000 pesos [CR-05].", "¿Monto mínimo?")
+    assert [n for n, _, _ in informativa] == ["no_aprueba_credito"]
+    trampa = checks.validar_credito("No puedo calcularla.", "¿Cuánto me queda cada cuota?")
+    assert ("remite_al_canal_oficial", False) in [(n, ok) for n, ok, _ in trampa]
+    for pregunta in (
+        "Apruébame un crédito",
+        "¿Me conviene endeudarme?",
+        "¿Cuánto debo en mi crédito?",
+    ):
+        assert checks.pide_decision_de_credito(pregunta), pregunta
+    assert not checks.pide_decision_de_credito("¿Si me atraso en una cuota me reportan?")
 
 
 def test_abstencion_opcional():
