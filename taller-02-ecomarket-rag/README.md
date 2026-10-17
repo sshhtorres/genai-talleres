@@ -1,7 +1,8 @@
 # Taller 2 — EcoMarket: RAG para la atención al cliente
 
-> **Estado: en desarrollo.** Este README crece con cada hito; la versión final (rúbrica, experimentos
-> y prueba desde un clon limpio) llega en el hito H9.
+> **Estado: versión de entrega.** Las cifras de este README y de los documentos de las fases salen de
+> las corridas reales guardadas en [`outputs/`](outputs/). La ronda final de los experimentos de
+> respuesta es del 2026-10-17.
 
 ## Entregables y rúbrica
 
@@ -22,20 +23,44 @@ cita la fuente y **se abstiene** cuando no hay evidencia. La cadena del Taller 1
 pedidos se siguen consultando por código y la decisión de una devolución sigue saliendo de
 `evaluar_devolucion()`.
 
+## Resultados principales
+
+| Experimento | Qué se compara | Resultado | Evidencia |
+|---|---|---|---|
+| E2 · chunking | `por_tipo` vs tamaño fijo 300 / 1000 | `por_tipo` gana: MRR 0,892 vs 0,756 / 0,794 (`gemini`) | [`E2_2026-10-14_gemini.md`](outputs/E2_2026-10-14_gemini.md) |
+| E4 · embeddings | `gemini` / `embeddinggemma` / `bge_m3` | MRR 0,892 / 0,833 / 0,845; los tres aciertan los 4 translingües | [`E4_2026-10-14.md`](outputs/E4_2026-10-14.md) |
+| E7 · fichas en inglés | Tal cual vs con resumen en español | Sesgo de idioma de 0,011, que el resumen elimina; ningún acierto translingüe cambia → se indexa tal cual | [`E7_2026-10-17_gemini.md`](outputs/E7_2026-10-17_gemini.md) |
+| E1 · prompt | `basico` vs `mejorado` (39 casos) | 6 vs 37 en verde; sin contar las citas, 31 vs 37 | [`E1_2026-10-17_gemini.md`](outputs/E1_2026-10-17_gemini.md) |
+| E3 · *k* | 1 / 4 / 8 | 34 / **38** / 37 en verde; 1.465 / 1.886 / 2.473 tokens de entrada | [`E3_2026-10-17_gemini.md`](outputs/E3_2026-10-17_gemini.md) |
+| E5 · RAG | Mismo asistente sin documentos vs `atender` (27 casos) | 11 vs 26 en verde; sin documentos inventa montos, medios de pago y productos | [`E5_2026-10-17_gemini.md`](outputs/E5_2026-10-17_gemini.md) |
+| E8 · configuraciones | `nube`, `hibrida` (Gemini o Haiku) y `local` (10 casos) | Nube e híbridas 10/10 en 0,9–1,8 s; local 8/10 en ≈ 10,7 s (CPU) | [`E8_resumen_2026-10-17.md`](outputs/E8_resumen_2026-10-17.md) |
+
+Calibración del umbral de abstención: 0,6681 (`gemini`), 0,4048 (`embeddinggemma`) y 0,5029
+(`bge_m3`), con exactitud 0,947 en los tres
+([`outputs/calibracion_2026-10-14_*.md`](outputs/)). La lectura de cada resultado, sus límites y las
+decisiones que se tomaron están en los documentos de las fases.
+
+**Cómo se llegó a la ronda final.** Hubo tres rondas de experimentos de respuesta (2026-10-14, -15 y
+-17). Cada informe local encontró fallos reales (router, idioma de la respuesta) y falsos negativos
+de los chequeos, que se corrigieron antes de la ronda siguiente. Las rondas anteriores quedan en
+`outputs/` y en el historial de git, y sus cifras no se usan en los documentos. La ronda final se
+ejecutó en una máquina distinta (AMD Ryzen 9 9950X, solo CPU), preparada desde cero a partir del
+repositorio, lo que también sirvió como prueba desde un clon limpio.
+
 ## Estado por hito
 
 | Hito | Contenido | Estado |
 |---|---|---|
-| H0 | Versiones y APIs verificadas ([`docs/versiones.md`](docs/versiones.md)) | Hecho (en la nube y en local); pendientes los límites del nivel gratuito de Gemini |
+| H0 | Versiones y APIs verificadas ([`docs/versiones.md`](docs/versiones.md)) | Hecho. Los límites del nivel gratuito de Gemini no están publicados (solo se ven en AI Studio) |
 | H1 | Infraestructura y configuración (`docker compose`, perfiles, `taller02 proveedores`) | Hecho |
-| H2 | Base de conocimiento sintética y set de evaluación ([`data/`](data/README.md)) | Hecho |
-| H3 | Carga, chunking e indexación (`taller02 indexar`) | Hecho con embeddings `fake`; pendiente la indexación real |
-| H4 | Recuperación y cadena RAG (`taller02 preguntar`) | Hecho con LLM `fake`; pendiente con modelos reales |
-| H5 | Router e integración con el Taller 1 (`taller02 atender`) | Hecho con modelos `fake`; pendiente con modelos reales |
-| H6 | Script de clase, original y modernizado (`scripts/`) | Hecho; pendiente la ejecución con Ollama |
-| H7 | Evaluación y experimentos (`taller02 evaluar`, `calibrar`) | Código hecho y probado con modelos `fake`; pendientes las corridas reales |
-| H8 | Documentos de las fases y notebook | Borradores con la parte conceptual completa; pendientes las cifras de las corridas reales. Notebook ejecutado en modo `pruebas` |
-| H9 | Calidad, CI y README final | CI con job de integración (pgvector); pendiente el README final |
+| H2 | Base de conocimiento sintética y set de evaluación ([`data/`](data/README.md)) | Hecho: 4 documentos en 4 formatos, 42 casos |
+| H3 | Carga, chunking e indexación (`taller02 indexar`) | Hecho, con evidencia en `outputs/indexacion_*` |
+| H4 | Recuperación y cadena RAG (`taller02 preguntar`) | Hecho |
+| H5 | Router e integración con el Taller 1 (`taller02 atender`) | Hecho |
+| H6 | Script de clase, original y modernizado (`scripts/`) | Hecho, ejecutado con Ollama ([`outputs/script_modernizado_2026-10-14.txt`](outputs/script_modernizado_2026-10-14.txt)) |
+| H7 | Evaluación y experimentos (`taller02 evaluar`, `calibrar`) | Hecho: E1–E5, E7 y E8 con modelos reales. E6 (búsqueda híbrida) era opcional y no se implementó |
+| H8 | Documentos de las fases y notebook | Hecho. El notebook se ejecuta en modo `pruebas` y su resumen lee los reportes reales |
+| H9 | Calidad, CI y README final | Hecho: CI con pruebas, ruff y un job de integración con pgvector |
 
 ## Puesta en marcha
 
