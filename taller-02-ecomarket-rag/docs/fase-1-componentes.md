@@ -2,9 +2,8 @@
 
 **Caso:** EcoMarket · generación aumentada por recuperación (RAG) para la atención al cliente
 
-> **Estado del documento: borrador.** Las secciones marcadas con ⏳ se completan con las corridas
-> reales de los experimentos E4, E7 y E8, que se guardan en [`outputs/`](../outputs/). Ninguna cifra
-> de esas secciones se escribe antes de que exista su archivo de evidencia.
+> **Estado del documento: versión de entrega.** Todas las cifras salen de las corridas guardadas en
+> [`outputs/`](../outputs/); la ronda final de los experimentos de respuesta es del 2026-10-17.
 
 ## 0. Criterios y suposiciones
 
@@ -160,8 +159,34 @@ que se diseñó:
 | B. Enriquecer al indexar | Resumen en español generado una vez y antepuesto | Mejora el emparejamiento ES→EN | Costo de generación; riesgo de errores de traducción | **Experimento E7** |
 | C. Traducir la pregunta | Buscar con la pregunta y su traducción | No toca el índice | Una llamada extra al LLM en cada consulta | Descartada |
 
-> ⏳ **Resultados de E7** (`outputs/E7_<fecha>_gemini.md`): hit@k en los casos translingües, tal cual
-> frente a enriquecido, y sesgo de idioma.
+**Resultados de E7** ([`outputs/E7_2026-10-17_gemini.md`](../outputs/E7_2026-10-17_gemini.md)), con
+`gemini` y la estrategia `por_tipo`. Los resúmenes son la tercera versión del prompt de
+enriquecimiento (con las cifras, la nota de devolución y español de Colombia):
+
+| Variante | hit@1 global | MRR global | Translingüe (hit@1, 4 casos) | Catálogo (hit@1, 6) | Similitud ES → ficha ES (4) | Similitud ES → ficha EN (2) |
+|---|---:|---:|---:|---:|---:|---:|
+| Tal cual (A) | 0,833 | 0,892 | 1,0 | 1,0 | 0,7229 | 0,7121 |
+| Enriquecida (B) | 0,861 | 0,906 | 1,0 | 1,0 | 0,7229 | 0,7253 |
+
+- **El sesgo de idioma existe, pero es pequeño:** sin enriquecer, una pregunta en español se parece
+  0,011 menos a su ficha en inglés que a una ficha en español. Con el resumen, la diferencia
+  desaparece (0,7253 frente a 0,7229).
+- **No cambia ningún acierto translingüe:** los 4 casos ya salían primeros sin enriquecer. El set no
+  alcanza a mostrar el beneficio: harían falta preguntas en español cuya ficha en inglés compita con
+  fichas en español parecidas.
+- **El único cambio de posición es indirecto.** En `mixto-01` («…¿cuánto tiempo tengo para devolver
+  la botella térmica?»), la ficha de la botella (en inglés) salía primero y la política de
+  devoluciones segunda. Con el resumen, la política pasa al primer lugar. De ahí la subida global
+  (0,833 → 0,861): es un solo caso.
+- **El costo y el riesgo se vieron.** Generar los 4 resúmenes tomó unos 6 s, una sola vez. La primera
+  versión del prompt omitía cifras (24 h / 12 h de la botella, la garantía del cargador); la segunda,
+  la nota de devolución de tres fichas, y usaba «coche». Hubo que corregir el prompt dos veces. La versión final conserva las
+  cifras sin inventar hechos, pero omite las certificaciones de P-101 y trae una errata
+  («siliciona» en P-106).
+
+**Decisión:** indexar **tal cual** (opción A) como base. El enriquecimiento no mejora la recuperación
+translingüe medible en este set y agrega una pieza generada por un LLM que hay que revisar a mano.
+Queda como opción para un catálogo con más fichas en inglés.
 
 ## 3. Base de datos vectorial
 
@@ -248,7 +273,10 @@ hardware explícito (la RAM se detecta, la VRAM y el ancho de banda de memoria n
 | `gpu-24gb` | GPU con 24 GB | `gemma4:26b` | 18,73 GB |
 
 La «E» de E2B y E4B significa *effective*: el cómputo por token es el de un modelo de 4,5 B, pero la
-memoria es la de uno de ≈ 8 B. En la prueba local, `gemma4:e4b` ocupó ≈ 7,1 GiB de RAM residente. Gemma
+memoria es la de uno de ≈ 8 B. En la prueba local del 2026-10-14, `gemma4:e4b` ocupó ≈ 7,1 GiB de RAM residente; el 2026-10-17,
+`ollama ps` reportó 1,9 GB cargados en otra máquina. Las dos mediciones no son comparables (la
+primera es la memoria residente del proceso; la segunda, lo que Ollama declara), y no se resolvió
+cuál refleja mejor el consumo real. Gemma
 4 **piensa por defecto**: sin desactivarlo, una respuesta de una frase tardó entre 36 y 89 s y, con un
 `max_tokens` bajo, salió vacía; el perfil `ollama` lo desactiva.
 
@@ -265,15 +293,66 @@ modelo con que se indexó y el que se usa al consultar.
 La configuración `hibrida` **no hace privado el sistema**: la pregunta y los fragmentos siguen viajando
 al LLM en la nube. Lo que gana es que el corpus completo nunca sale y que reindexar no consume cuota.
 
-Medido en la verificación local del 2026-10-14 (un equipo solo CPU: Snapdragon X, ARM64, 19 GiB;
-una corrida por celda, cronometrada de punta a punta; se reemplaza por los tiempos de E8): indexar la base
-tardó 3,3 s con Gemini y 214 s con `embeddinggemma`; `atender` tardó 3,6–4,5 s por pregunta en `nube`,
-5,2–15,2 s en `hibrida` y 20–160 s en `local`. **`local` sirve para demostrar que todo corre sin salir
-de la máquina, no para uso interactivo en CPU.**
+**`local` sirve para demostrar que todo corre sin salir de la máquina, no para uso interactivo en CPU**:
+los tiempos medidos están en E8, abajo.
 
-> ⏳ **Resultados de E8** (`outputs/E8_resumen_<fecha>.md`): chequeos, tiempo hasta el primer token,
-> latencia total, tokens y costo por respuesta en cada configuración.
+**Resultados de E8** ([`outputs/E8_resumen_2026-10-17.md`](../outputs/E8_resumen_2026-10-17.md)). Diez
+casos, uno de cada tipo por turno (dentro de alcance, fuera, inyección, reformulación, translingüe y
+trampa de crédito). Uno de ellos (`fuera-03`) se abstiene desde código en las cuatro configuraciones,
+así que tiempos, tokens y costo son medias sobre las **9 respuestas que llamaron al LLM**. Los tiempos
+miden solo la llamada al LLM, con *streaming*, sin la recuperación. Equipo: AMD Ryzen 9 9950X, 23 GiB
+visibles en WSL2, **sin GPU** (Ollama al 100% en CPU).
+
+| Configuración | Embeddings + LLM | Chequeos OK | TTFT (s) | Latencia (s) | Tokens entrada | Tokens salida | US$ por respuesta | US$ por 1.000 |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| `nube` | `gemini-embedding-001` + `gemini-3.5-flash-lite` | 10/10 | 0,77 | 0,94 | 1.829 | 70 | 0,000723* | 0,72* |
+| `hibrida:gemini` | `embeddinggemma` + `gemini-3.5-flash-lite` | 10/10 | 0,90 | 1,09 | 1.863 | 81 | 0,000762* | 0,76* |
+| `hibrida:anthropic` | `embeddinggemma` + `claude-haiku-5-5` | 10/10 | 1,20 | 1,85 | 3.184 | 315 | 0,000476 | 0,48 |
+| `local` | `embeddinggemma` + `gemma4:e4b` | 8/10 | 8,11 | 10,66 | 1.908 | 70 | 0 (local) | 0 |
+
+\* Gemini se usó en el nivel gratuito, con costo real 0. La cifra es el equivalente en el nivel
+pagado (US$0,30 / US$2,50 por millón de tokens), tomada de agregadores de precios que citan la
+página oficial; no se pudo verificar en la página de Google.
+
+- **Las tres configuraciones con LLM en la nube aciertan los 10 casos.** La diferencia está en
+  tiempo y costo, no en calidad, al menos con 10 casos.
+- **Haiku es más lento y usa más tokens, pero sale más barato.** Recibe unos 1.300 tokens de entrada
+  más que Gemini con los mismos fragmentos (probablemente porque su tokenizador cuenta distinto) y produce 315 de salida
+  frente a 70. La diferencia probablemente es su razonamiento adaptativo, que se factura como salida;
+  aun así, con un precio 3 a 5 veces menor, cuesta un tercio menos por respuesta.
+- **`nube` e `hibrida:gemini` usan el mismo LLM:** su diferencia de tiempo (0,77 frente a 0,90 s)
+  no viene de los embeddings, que no se cronometran aquí. Es variación entre llamadas a la API.
+- **`local` funciona, pero es unas 10 veces más lento y falla dos casos.** En `iny-01` (una
+  inyección que pide afirmar 90 días) Gemma se abstuvo en vez de dar los 30 días, aunque tenía el
+  fragmento correcto. En `reform-01` omitió la regla general de devolución. Ninguno de los dos fallos
+  es de seguridad: no repitió la cifra inyectada ni inventó nada.
+- **La latencia local depende de la máquina.** El 2026-10-15, en el equipo ARM64 (Snapdragon X,
+  19 GiB, solo CPU), la misma configuración `local` tardó 32,1 s hasta el primer token y 37,8 s en
+  total, frente a 8,1 y 10,7 s aquí. La configuración no cambió; cambió la CPU.
 
 ## 6. Conclusión
 
-> ⏳ Se redacta con los resultados de E4, E7 y E8.
+Las dos piezas que el RAG agrega se eligieron por medición, no por ranking público:
+
+1. **Embeddings: `gemini-embedding-001` a 768 dimensiones en la nube** y `embeddinggemma:300m` en
+   local. En E4, `gemini` obtuvo el mejor MRR (0,892, frente a 0,845 de `bge_m3` y 0,833 de
+   `embeddinggemma`), con la diferencia concentrada en crédito y términos. Los tres modelos
+   recuperan bien en español e inglés: los 4 casos translingües salen primeros con todos. Este set
+   no alcanza para separarlos en esa dimensión.
+2. **Base vectorial: PostgreSQL + pgvector.** EcoMarket ya tiene sus datos en un modelo relacional.
+   pgvector agrega la búsqueda semántica sin otro servicio, con filtros por metadatos (tipo, área,
+   idioma) en la misma consulta y un índice HNSW coseno. A esta escala (89 fragmentos, y miles con un
+   catálogo real) no hace falta una base vectorial dedicada.
+3. **Un solo índice bilingüe, sin enriquecer.** E7 midió un sesgo de idioma pequeño (0,011 de
+   similitud), que el resumen en español elimina sin cambiar ningún acierto translingüe. El costo, en
+   cambio, se vio: dos correcciones del prompt para que los resúmenes no perdieran cifras ni
+   condiciones.
+4. **El LLM se vuelve intercambiable.** Con el conocimiento en los documentos, el generador solo tiene
+   que leer bien y obedecer reglas. En E8, Gemini y Haiku aciertan los 10 casos, en 0,9 y 1,8 s
+   respectivamente. Haiku cuesta un tercio menos por respuesta que el equivalente pagado de Gemini.
+   Gemma 4 en CPU acierta 8 de 10 en unos 10 s: sirve para demostrar que todo corre sin salir de la
+   máquina, no para atender clientes.
+
+La configuración recomendada para EcoMarket es **`nube`**, con el nivel gratuito de Gemini para el
+piloto. La configuración `hibrida` con Haiku es la alternativa si se quiere que el corpus completo no
+salga de la empresa, sabiendo que cada pregunta y sus fragmentos sí viajan al proveedor del LLM.

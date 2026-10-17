@@ -2,8 +2,8 @@
 
 **Caso:** EcoMarket · generación aumentada por recuperación (RAG) para la atención al cliente
 
-> **Estado del documento: borrador.** Las secciones marcadas con ⏳ se completan con las corridas
-> reales (indexación y experimento E2), que se guardan en [`outputs/`](../outputs/).
+> **Estado del documento: versión de entrega.** Todas las cifras salen de las corridas guardadas en
+> [`outputs/`](../outputs/); la ronda final de los experimentos de respuesta es del 2026-10-17.
 
 ## 0. Criterios y suposiciones
 
@@ -23,7 +23,7 @@
 | Políticas, preguntas frecuentes, reglas de financiación, fichas de producto, términos | **Sí** | Conocimiento estable y público: lo que el asistente debe explicar |
 | **Pedidos** | **No** | El hallazgo principal del Taller 1 fue que el prompt básico filtraba datos de otros clientes. En una base vectorial, una pregunta parecida podría recuperar el pedido de otra persona. Se siguen consultando por número de seguimiento, desde código |
 | **Datos de crédito de cada cliente** (cupo, saldo, cuotas, mora) | **No** | Son personales y financieros. Al RAG solo van las reglas generales; el asistente remite a la sección «Mis créditos» |
-| **Precio y stock** | **No** | Cambian a diario y una cifra vieja es peor que ninguna. El catálogo se indexa por su parte descriptiva; el set de evaluación incluye un caso de precio que exige abstenerse y uno de stock que exige remitir a la tienda |
+| **Precio y stock** | **No** | Cambian a diario y una cifra vieja es peor que ninguna. El catálogo se indexa por su parte descriptiva; el set de evaluación incluye un caso de precio que exige abstenerse y uno de stock que admite explicar la regla general («la disponibilidad cambia a diario») o abstenerse remitiendo a una persona, pero nunca afirmar que hay unidades |
 
 ## 2. Inventario: cuatro tipos de documento en cuatro formatos
 
@@ -196,7 +196,7 @@ Lectura:
   mitad (MRR de crédito 0,62 y 0,50): la condición queda en un trozo y la regla en otro. `fija1000`
   junta varias fichas en un fragmento y baja en el catálogo (0,778 con `gemini`): la ficha correcta
   llega mezclada con otra.
-- **No hay un ganador absoluto por documento.** Con `embeddinggemma`, `fija1000` iguala a `por_tipo`
+- **No hay un ganador absoluto por documento.** Con `embeddinggemma`, `fija1000` supera a `por_tipo`
   en crédito (0,80 frente a 0,733) y `fija300` lo supera en términos (0,70 frente a 0,629). Son 10 y 5
   casos: una o dos preguntas cambian el resultado, así que no alcanzan para preferir otra estrategia
   en esos documentos.
@@ -205,4 +205,22 @@ Lectura:
 
 ## 7. Conclusión
 
-> ⏳ Se redacta con los conteos de indexación y los resultados de E2.
+- **La base cubre lo que el Taller 1 no podía responder** con cuatro tipos de documento en cuatro
+  formatos: políticas y FAQ, reglas de crédito, catálogo y términos. Deja fuera, a propósito, lo
+  transaccional y personal (pedidos, datos de crédito de cada cliente, precio y stock), que se
+  consulta con herramientas exactas o se remite al canal oficial.
+- **Dividir respetando la estructura de cada documento es la decisión que más pesa en la
+  recuperación.** En E2, `por_tipo` gana en hit@1 y MRR con los dos modelos medidos, y su ventaja
+  sobre los tamaños fijos (0,10 a 0,14 de MRR frente a `fija300`) es mayor que la de cambiar de
+  modelo de embeddings (0,06). Un fragmento por regla y uno por producto evita los dos errores típicos
+  del tamaño fijo: partir una regla y mezclar dos fichas.
+- **La calidad se verifica, no se supone.** Las pruebas de coherencia con el Taller 1 y las corridas
+  reales encontraron contradicciones (transportadoras, plazos de daño frente a garantía, la condición
+  de empaque sellado) que se corrigieron antes de medir.
+- **La indexación es reproducible y barata:** idempotente, con caché de embeddings, una tabla por
+  modelo y variante, y evidencia de cada corrida en `outputs/`. Reindexar la base completa en una
+  máquina nueva tomó unos 10 s con Gemini y 9 s con `embeddinggemma` (2026-10-17).
+
+Lo que queda abierto: con 5 a 15 casos por documento, las diferencias de un caso cambian el ganador
+dentro de un documento. Un set más grande permitiría ajustar la estrategia por tipo de documento con
+más confianza.
